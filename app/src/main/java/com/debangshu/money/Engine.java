@@ -96,7 +96,7 @@ public final class Engine {
         t.ref = r.ref;
         if (r.cardPayment || r.selfTransfer) t.kind = Txn.TRANSFER;
         else if (r.refund) t.kind = Txn.REFUND;
-        else if (r.atm && !Store.get(ctx).flag(Store.S_ATM_SPEND)) t.kind = Txn.TRANSFER;
+        else if (r.atm && (Cash.on(ctx) || !Store.get(ctx).flag(Store.S_ATM_SPEND))) t.kind = Txn.TRANSFER;   // into the cash wallet
         if (r.atm) t.category = Cats.CASH;
     }
 
@@ -110,6 +110,7 @@ public final class Engine {
             if (!saved.account.isEmpty()) s.setGaps(saved.account, Ledger.gaps(s.txns(), saved.account));
         }
         if (!s.inBatch() && saved.kind != Txn.SNAPSHOT) ScanPay.match(ctx, saved);   // started from Scan & Pay? → name + category
+        if (isNew[0] && !saved.credit && Cats.CASH.equals(saved.category) && saved.raw.toLowerCase(java.util.Locale.ROOT).contains("atm")) Cash.atm(ctx, saved);
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);
         if (!s.inBatch() && !saved.account.isEmpty()) {
             for (Txn g : s.txns()) {

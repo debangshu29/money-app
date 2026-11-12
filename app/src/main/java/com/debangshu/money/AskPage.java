@@ -17,17 +17,17 @@ import java.util.Map;
 /** Ask your money in plain words. Answered on the phone — the question never leaves it. */
 final class AskPage {
 
-    private final MainActivity a;
+    private final android.app.Activity a;
     private LinearLayout root, chat;
     private ScrollView scroll;
     private EditText input;
 
-    AskPage(MainActivity a) { this.a = a; }
+    AskPage(android.app.Activity a) { this.a = a; }
 
     View view() {
         if (root != null) return root;
         root = Ui.vbox(a);
-        root.addView(a.topBar("Ask", null));
+        root.addView(Screens.bar(a, "Ask your money"));
 
         scroll = new ScrollView(a);
         chat = Ui.vbox(a);
@@ -35,8 +35,8 @@ final class AskPage {
         scroll.addView(chat);
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
 
-        TextView hello = bubble("Ask me anything about your money — like “food this month”, “biggest expenses last month” "
-                + "or “how many times Uber”. Everything is worked out on your phone.", false);
+        TextView hello = bubble("Ask anything about your money in plain words — or tap an example below. "
+                + "Everything is worked out on your phone.", false);
         chat.addView(hello);
 
         HorizontalScrollView hs = new HorizontalScrollView(a);
@@ -76,6 +76,8 @@ final class AskPage {
         root.addView(bar);
         return root;
     }
+
+    void ask(String q) { view(); send(q); }
 
     private void send(String q) {
         q = q.trim();

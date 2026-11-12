@@ -14,9 +14,9 @@ import android.widget.TextView;
 /** Four tabs: Home · Activity · Insights · Ask. */
 public class MainActivity extends Activity {
 
-    public static final int HOME = 0, ACTIVITY = 1, INSIGHTS = 2, ASK = 3;
-    private static final String[] TABS = {"Home", "Activity", "Insights", "Ask"};
-    private static final int[] ICONS = {R.drawable.ic_home, R.drawable.ic_list, R.drawable.ic_pie, R.drawable.ic_chat};
+    public static final int HOME = 0, ACTIVITY = 1, INSIGHTS = 2, PLAN = 3;
+    private static final String[] TABS = {"Home", "Activity", "Insights", "Plan"};
+    private static final int[] ICONS = {R.drawable.ic_home, R.drawable.ic_list, R.drawable.ic_pie, R.drawable.ic_grid};
 
     int tab = HOME;
     private FrameLayout content;
@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     final HomePage home = new HomePage(this);
     final ActivityPage activity = new ActivityPage(this);
     final InsightsPage insights = new InsightsPage(this);
-    final AskPage ask = new AskPage(this);
+    final PlanPage plan = new PlanPage(this);
 
     @Override
     protected void onCreate(Bundle b) {
@@ -134,14 +134,14 @@ public class MainActivity extends Activity {
             case HOME: home.refresh(); break;
             case ACTIVITY: activity.refresh(); break;
             case INSIGHTS: insights.refresh(); break;
-            default: break;   // Ask keeps its conversation
+            default: plan.refresh(); break;
         }
     }
 
     void show(int t) {
         tab = t;
         content.removeAllViews();
-        View v = t == HOME ? home.view() : t == ACTIVITY ? activity.view() : t == INSIGHTS ? insights.view() : ask.view();
+        View v = t == HOME ? home.view() : t == ACTIVITY ? activity.view() : t == INSIGHTS ? insights.view() : plan.view();
         if (v.getParent() != null) ((ViewGroup) v.getParent()).removeView(v);
         content.addView(v);
         for (int i = 0; i < 4; i++) {

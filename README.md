@@ -1,10 +1,24 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.4.1 — Scan & Pay, and fixing wrong accounts.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.5 — a calmer layout, Safe to spend today, cash wallet, spending calendar.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Finding your way (version 1.5)
+
+| Tab | What's there |
+|---|---|
+| 🏠 **Home** | **Safe to spend today** (with a budget) or *Spent this month* · Today ⇄ Month: Money out / Money in (tap for where it went) · Balances · Latest 5 · strips for “needs a look” and bills due soon |
+| 📄 **Activity** | **List ⇄ Calendar** — the calendar colours each day by spending (green within your daily budget share, red over); tap a day for its payments · search · filters · **+** for a cash spend |
+| ⭕ **Scan & Pay** | the round button |
+| 📊 **Insights** | **Ask** bar · any month: spent / in / saved · categories · day by day · top places · **Where you spend** (areas, tap for the map) |
+| 🧩 **Plan** | **Budget** (with category limits) · **Bills & subscriptions** · **Accounts** (tap one to rename, correct, merge, delete) · **Cash wallet** |
+
+**Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
+
+**Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
 
 ## Fixing a wrong account (version 1.4.1)
 

@@ -36,6 +36,7 @@ public class BgJob extends JobService {
             try { Engine.catchUp(c); } catch (Exception ignored) { }
             try { Alerts.reminders(c); } catch (Exception ignored) { }
             try { Alerts.rollPlan(c); } catch (Exception ignored) { }
+            try { Cash.maybeCheckIn(c); } catch (Exception ignored) { }
             try { Backup.auto(c); } catch (Exception ignored) { }
             try {
                 if (!PayListener.connected && Setup.listenerOn(c)) {

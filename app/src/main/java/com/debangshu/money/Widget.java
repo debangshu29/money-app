@@ -36,9 +36,9 @@ public class Widget extends AppWidgetProvider {
             v.setTextViewText(R.id.w_month_label, "Spent in " + Fmt.monthShort(now));
             Plan plan = s.plan();
             if (plan != null && plan.started(now) && !plan.finished(now)) {
-                long left = plan.amount - plan.spent(all);
-                v.setTextViewText(R.id.w_bal_label, left >= 0 ? "Left in budget" : "Over budget");
-                v.setTextViewText(R.id.w_bal, hide ? "₹ ••••" : Fmt.plain(Math.abs(left)));
+                long safe = plan.safeToday(all, Ledger.recurring(all, now), now);
+                v.setTextViewText(R.id.w_bal_label, safe >= 0 ? "Safe to spend today" : "Over today's share by");
+                v.setTextViewText(R.id.w_bal, hide ? "₹ ••••" : Fmt.plain(Math.abs(safe)));
             } else {
                 v.setTextViewText(R.id.w_bal_label, "Balance (all accounts)");
                 v.setTextViewText(R.id.w_bal, !any ? "—" : hide ? "₹ ••••" : Fmt.plain(bal));

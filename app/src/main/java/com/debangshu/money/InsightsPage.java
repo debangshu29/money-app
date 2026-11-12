@@ -42,6 +42,20 @@ final class InsightsPage {
         body.setPadding(p, 0, p, 0);
         box.addView(body);
 
+        // ---- Ask bar
+        LinearLayout ask = Ui.hbox(a);
+        ask.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 24));
+        ask.setPadding(Ui.dp(a, 16), Ui.dp(a, 12), Ui.dp(a, 16), Ui.dp(a, 12));
+        android.widget.ImageView ai = new android.widget.ImageView(a);
+        ai.setImageResource(R.drawable.ic_chat);
+        ai.setColorFilter(Ui.col(a, R.color.accent));
+        ask.addView(ai, Ui.lp(Ui.dp(a, 20), Ui.dp(a, 20)));
+        TextView at = Ui.text(a, "Ask: “food this month”, “biggest expenses”…", 14.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
+        at.setPadding(Ui.dp(a, 10), 0, 0, 0);
+        ask.addView(Ui.oneLine(at), Ui.weight1());
+        ask.setOnClickListener(v -> a.startActivity(new android.content.Intent(a, AskActivity.class)));
+        body.addView(ask, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+
         Store s = Store.get(a);
         List<Txn> all = s.txns();
         long now = System.currentTimeMillis();
@@ -157,61 +171,58 @@ final class InsightsPage {
             body.addView(tc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
         }
 
-        // ---- repeating payments
-        List<Ledger.Recurring> rec = Ledger.recurring(all, now);
-        LinearLayout rcard = Ui.card(a);
-        long monthly = 0;
-        for (Ledger.Recurring r : rec) monthly += r.amount * 30 / Math.max(1, r.period);
-        LinearLayout rh = Ui.hbox(a);
-        rh.addView(Ui.sectionTitle(a, "Repeating payments"), Ui.weight1());
-        if (!rec.isEmpty()) {
-            TextView m = Ui.text(a, "≈ " + Fmt.rs(monthly) + "/mo", 14, Ui.col(a, R.color.text2), Ui.BOLD);
-            m.setPadding(0, 0, 0, Ui.dp(a, 8));
-            rh.addView(m);
-        }
-        rcard.addView(rh);
-        if (rec.isEmpty()) rcard.addView(Ui.sub(a, "Subscriptions, EMIs, rent and bills show up here by themselves after they repeat."));
-        for (Ledger.Recurring r : rec) {
-            String sub = r.periodName() + " · next " + Fmt.day(r.next) + " · seen " + r.count + "×";
-            if (r.lastAmount > r.prevAmount * 1.05 && r.prevAmount > 0)
-                sub += "\n▲ Price went up: " + Fmt.rs(r.prevAmount) + " → " + Fmt.rs(r.lastAmount);
-            rcard.addView(Rows.amountRow(a, Cats.emoji(r.category), Cats.color(r.category), r.name, sub, r.lastAmount, -1));
-        }
-        body.addView(rcard, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+        // ---- where you spend (places, from saved locations)
+        View places = places(all, month, end);
+        if (places != null) body.addView(places, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+    }
 
-        // ---- your budget + category limits
-        LinearLayout bc = Ui.card(a);
-        bc.addView(Ui.sectionTitle(a, "Budget"));
-        Plan plan = s.plan();
-        View pr = Rows.amountRow(a, "🎯", Ui.col(a, R.color.accent), plan == null ? "Start a budget" : "Your budget · " + plan.range(),
-                plan == null ? "Pick an amount and a start date — Money counts every payment against it" : plan.status(all, now),
-                plan == null ? 0 : plan.spent(all), plan == null ? -1 : plan.spent(all) / (float) Math.max(1, plan.amount));
-        pr.setOnClickListener(v -> a.startActivity(new android.content.Intent(a, BudgetActivity.class)));
-        bc.addView(pr);
-        TextView lt = Ui.text(a, "Category limits (per month)", 14, Ui.col(a, R.color.text2), Ui.BOLD);
-        lt.setPadding(Ui.dp(a, 4), Ui.dp(a, 14), 0, Ui.dp(a, 2));
-        bc.addView(lt);
-        Map<String, Long> budgets = s.budgets();
-        if (budgets.isEmpty()) {
-            bc.addView(Ui.sub(a, "Optional: limits for single categories (e.g. Food ₹6,000), with a warning at 80% and 100%."));
-        } else {
-            for (Map.Entry<String, Long> e : budgets.entrySet()) {
-                String c = e.getKey();
-                long used = 0;
-                for (Txn t : all) if (t.isSpend() && t.time >= month && t.time < end && (c.isEmpty() || c.equals(t.category))) used += t.amount;
-                float f = used / (float) e.getValue();
-                String label = c.isEmpty() ? "Whole month" : c;
-                bc.addView(Rows.amountRow(a, c.isEmpty() ? "🎯" : Cats.emoji(c), f >= 1 ? Ui.col(a, R.color.danger) : f >= 0.8 ? Ui.col(a, R.color.warn) : Ui.col(a, R.color.accent),
-                        label, Fmt.rs(used) + " of " + Fmt.rs(e.getValue()) + (f >= 1 ? " · over" : " · " + Fmt.rs(e.getValue() - used) + " left"), used, f));
-            }
+    /** Groups this month's payments by the area they were made in (needs “Save where you paid”). */
+    private View places(List<Txn> all, long from, long to) {
+        Map<String, long[]> byPlace = new java.util.HashMap<>();
+        Map<String, Txn> sample = new java.util.HashMap<>();
+        int located = 0, total = 0;
+        for (Txn t : all) {
+            if (!t.isSpend() || t.time < from || t.time >= to) continue;
+            total++;
+            if (!t.hasLoc()) continue;
+            located++;
+            String k = t.place.isEmpty() ? String.format(java.util.Locale.ROOT, "Pin %.3f, %.3f", t.lat, t.lng) : t.place.replaceFirst("^near ", "");
+            String[] parts = k.split(", ");
+            if (parts.length > 1) k = parts[parts.length - 1];   // group by area, not by shop
+            long[] v = byPlace.get(k);
+            if (v == null) byPlace.put(k, v = new long[2]);
+            v[0] += t.amount;
+            v[1]++;
+            sample.put(k, t);
         }
-        TextView setB = Ui.button(a, budgets.isEmpty() ? "Set category limits" : "Edit limits", false);
-        setB.setOnClickListener(v -> editBudgets());
-        LinearLayout br = Ui.hbox(a);
-        br.setPadding(0, Ui.dp(a, 10), 0, 0);
-        br.addView(setB);
-        bc.addView(br);
-        body.addView(bc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+        LinearLayout c = Ui.card(a);
+        c.addView(Ui.sectionTitle(a, "Where you spend"));
+        if (located == 0) {
+            TextView t = Ui.sub(a, Store.get(a).flag(Store.S_LOCATION)
+                    ? "Places appear here as you pay (only payments made after turning on “Save where you paid”)."
+                    : "Turn on Settings → Remember every payment → Save where you paid, to see the areas where your money goes.");
+            c.addView(t);
+            return c;
+        }
+        Map<String, Long> sums = new java.util.HashMap<>();
+        for (Map.Entry<String, long[]> e : byPlace.entrySet()) sums.put(e.getKey(), e.getValue()[0]);
+        long top = 1;
+        for (long v : sums.values()) top = Math.max(top, v);
+        int i = 0;
+        for (Map.Entry<String, Long> e : Ledger.sorted(sums).entrySet()) {
+            if (i++ >= 6) break;
+            long n = byPlace.get(e.getKey())[1];
+            View row = Rows.amountRow(a, "📍", 0xFFEF4444, e.getKey(), n + (n == 1 ? " payment" : " payments") + " · tap for map", e.getValue(), e.getValue() / (float) top);
+            Txn s0 = sample.get(e.getKey());
+            row.setOnClickListener(v -> Locator.openMap(a, s0));
+            c.addView(row);
+        }
+        if (located < total) {
+            TextView t = Ui.text(a, located + " of " + total + " payments have a place", 11.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
+            t.setPadding(Ui.dp(a, 4), Ui.dp(a, 6), 0, 0);
+            c.addView(t);
+        }
+        return c;
     }
 
     private View stat(String label, String value, int color) {
@@ -242,55 +253,4 @@ final class InsightsPage {
                 .setNegativeButton("Close", null).show();
     }
 
-    /** Budgets: suggested from the average of the last 3 full months (rounded up to ₹500). */
-    private void editBudgets() {
-        Store s = Store.get(a);
-        List<Txn> all = s.txns();
-        long now = System.currentTimeMillis();
-        long ms = Fmt.startOfMonth(now);
-        long from = Fmt.addMonths(ms, -3);
-        Map<String, Long> cur = s.budgets();
-        LinkedHashMap<String, Long> avg = Ledger.byCategory(all, from, ms);
-        List<String> cats = new ArrayList<>();
-        for (String c : avg.keySet()) if (!cats.contains(c) && !Cats.CASH.equals(c) && !Cats.UNRECORDED.equals(c)) cats.add(c);
-        for (String c : cur.keySet()) if (!cats.contains(c)) cats.add(c);
-        int months = 3;
-        LinearLayout b = Ui.vbox(a);
-        int p = Ui.dp(a, 20);
-        b.setPadding(p, 0, p, 0);
-        TextView info = Ui.sub(a, "Filled in from your average over the last 3 months. Clear a box for no limit.");
-        info.setPadding(0, 0, 0, Ui.dp(a, 8));
-        b.addView(info);
-        List<EditText> fields = new ArrayList<>();
-        long total = 0;
-        for (Long v : avg.values()) total += v;
-        for (String c : cats) {
-            LinearLayout r = Ui.hbox(a);
-            r.addView(Ui.oneLine(Ui.text(a, c.isEmpty() ? "🎯  Whole month" : Cats.emoji(c) + "  " + c, 14.5f, Ui.SEMIBOLD)), Ui.weight1());
-            EditText e = new EditText(a);
-            e.setInputType(InputType.TYPE_CLASS_NUMBER);
-            e.setTypeface(Ui.face(a, Ui.REGULAR));
-            e.setHint("—");
-            e.setGravity(Gravity.END);
-            Long have = cur.get(c);
-            long suggest = c.isEmpty() ? total / months : (avg.containsKey(c) ? avg.get(c) / months : 0);
-            suggest = ((suggest / 100 + 499) / 500) * 500;   // rupees, rounded up to 500
-            if (have != null) e.setText(String.valueOf(have / 100));
-            else if (cur.isEmpty() && suggest >= 500) e.setText(String.valueOf(suggest));
-            r.addView(e, Ui.lp(Ui.dp(a, 110), -2));
-            b.addView(r);
-            fields.add(e);
-        }
-        android.widget.ScrollView sv = new android.widget.ScrollView(a);
-        sv.addView(b);
-        new Ui.Popup(a).setTitle("Category limits per month (₹)").setView(Ui.capHeight(sv, 0.55f))
-                .setPositiveButton("Save", (d, w) -> {
-                    for (int i = 0; i < cats.size(); i++) {
-                        String txt = fields.get(i).getText().toString().trim();
-                        long v = txt.isEmpty() ? 0 : SmsParser.paise(txt);
-                        s.setBudget(cats.get(i), Math.max(0, v));
-                    }
-                })
-                .setNegativeButton("Cancel", null).show();
-    }
 }

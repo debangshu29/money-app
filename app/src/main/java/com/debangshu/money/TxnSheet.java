@@ -284,7 +284,8 @@ public final class TxnSheet {
         what.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         amt.setTypeface(Ui.face(a, Ui.REGULAR));
         what.setTypeface(Ui.face(a, Ui.REGULAR));
-        TextView info = Ui.sub(a, "Only for cash — everything paid by UPI, card or bank is added by itself.");
+        TextView info = Ui.sub(a, "Only for cash — everything paid by UPI, card or bank is added by itself."
+                + (Cash.on(a) ? " Taken from your cash wallet (" + Fmt.plain(Cash.balance(a)) + ")." : ""));
         info.setPadding(0, 0, 0, Ui.dp(a, 8));
         box.addView(info);
         box.addView(amt);
@@ -293,14 +294,7 @@ public final class TxnSheet {
                 .setPositiveButton("Add", (d, w) -> {
                     long paise = SmsParser.paise(amt.getText().toString());
                     if (paise <= 0) { Ui.toast(a, "Enter an amount"); return; }
-                    Txn t = new Txn();
-                    t.time = System.currentTimeMillis();
-                    t.amount = paise;
-                    t.merchant = what.getText().toString().trim();
-                    t.sources = Txn.SRC_MANUAL;
-                    t.account = "";
-                    t.raw = "";
-                    Store.get(a).addOrMerge(t, null);
+                    Txn t = Cash.spend(a, paise, what.getText().toString().trim(), null);
                     if (Cats.OTHER.equals(t.category)) pickCategory(a, t, null);
                 })
                 .setNegativeButton("Cancel", null).show();

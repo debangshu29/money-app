@@ -1,4 +1,7 @@
-Fix wrong accounts 🔧
-• Long-press an account in Balances for: Rename · Correct the balance · Same as another account (merge) · Delete account
-• Delete keeps or removes its payments — your choice; deleted accounts don't come back from new messages
-• Bring a deleted account back in Settings → Your data → Deleted accounts
+A fresh, calmer Money ✨
+• Four simple tabs: Home · Activity · Insights · Plan (+ the round Scan & Pay)
+• Home: one big number — Safe to spend today — then Today / This month, balances, latest
+• Activity: new spending calendar (List ⇄ Calendar) — tap a day to see it
+• Insights: Ask bar on top, and “Where you spend” (places)
+• Plan: Budget, Bills & subscriptions, Accounts, and the new Cash wallet
+• Cash wallet: ATM cash goes in, Money asks now and then how much is left

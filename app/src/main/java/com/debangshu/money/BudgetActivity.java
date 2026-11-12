@@ -89,6 +89,7 @@ public class BudgetActivity extends Activity {
         Plan p = Store.get(this).plan();
         if (p == null || editing) form(p);
         else dashboard(p);
+        if (!editing) box.addView(Limits.card(this), Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
         history();
     }
 

@@ -65,7 +65,8 @@ public class SettingsActivity extends Activity {
                 Store.S_READ_SMS_NOTIF, null);
         sw(cap, "Find missed messages", "If the balance in a new SMS doesn't add up, an “Unrecorded” entry shows the difference",
                 Store.S_GAPS, on -> new Thread(() -> Engine.recheckGaps(getApplicationContext())).start());
-        sw(cap, "Count ATM cash as spending", "Turn off if you'd rather add cash spends yourself (Activity → +)", Store.S_ATM_SPEND,
+        sw(cap, "Count ATM cash as spending", Cash.on(this) ? "Not used while the cash wallet is on (Plan → Cash wallet)"
+                : "Or turn on the cash wallet in Plan, which counts cash as you spend it", Store.S_ATM_SPEND,
                 on -> atmChanged(on));
         row(cap, "Read older messages again", "Bring in bank SMS already on your phone", v -> SetupActivity.importPast(this, this::build));
         int unread = s.unread().size();

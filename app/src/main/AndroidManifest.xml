@@ -90,6 +90,9 @@
         <activity android:name=".SetupActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".BudgetActivity" android:exported="false" />
+        <activity android:name=".AccountsActivity" android:exported="false" />
+        <activity android:name=".BillsActivity" android:exported="false" />
+        <activity android:name=".AskActivity" android:exported="false" android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".LockActivity"
             android:exported="false"
@@ -142,6 +145,7 @@
 
         <!-- names typed into the "Who was it?" notification -->
         <receiver android:name=".NameReceiver" android:exported="false" />
+        <receiver android:name=".CashReceiver" android:exported="false" />
 
         <!-- home-screen widget -->
         <receiver android:name=".Widget" android:exported="true" android:label="@string/widget_label">

@@ -28,11 +28,16 @@ final class ActivityPage {
     private ListView list;
     private final Adapter adapter = new Adapter();
     private int quick = 0;   // 0 all, 1 spent, 2 money in, 3 needs a look, 4 not spending / hidden
+    private int mode = 0;    // 0 list, 1 calendar
+    private LinearLayout listPart, seg;
+    private android.widget.ScrollView calPart;
+    private LinearLayout calBox;
+    private long calMonth = Fmt.startOfMonth(System.currentTimeMillis()), calDay = Fmt.startOfDay(System.currentTimeMillis());
     private static final String[] QUICK = {"All", "Spent", "Money in", "Needs a look", "Not counted"};
 
     ActivityPage(MainActivity a) { this.a = a; }
 
-    void setQuick(int q) { quick = Math.max(0, Math.min(QUICK.length - 1, q)); }
+    void setQuick(int q) { quick = Math.max(0, Math.min(QUICK.length - 1, q)); mode = 0; }
 
     View view() {
         if (root != null) return root;
@@ -41,6 +46,18 @@ final class ActivityPage {
         add.setContentDescription("Add cash spend");
         add.setOnClickListener(v -> TxnSheet.addManual(a));
         root.addView(a.topBar("Activity", add));
+
+        // List ⇄ Calendar
+        seg = Ui.hbox(a);
+        seg.setBackground(Ui.round(Ui.col(a, R.color.surface2), Ui.dp(a, 20)));
+        seg.setPadding(Ui.dp(a, 4), Ui.dp(a, 4), Ui.dp(a, 4), Ui.dp(a, 4));
+        root.addView(seg, Ui.margins(Ui.matchWrap(), a, 16, 0, 16, 10));
+
+        listPart = Ui.vbox(a);
+        calPart = new android.widget.ScrollView(a);
+        calBox = Ui.vbox(a);
+        calBox.setPadding(Ui.dp(a, 16), 0, Ui.dp(a, 16), Ui.dp(a, 24));
+        calPart.addView(calBox);
 
         search = new EditText(a);
         search.setHint("Search name, amount, note…");
@@ -55,19 +72,19 @@ final class ActivityPage {
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) { refresh(); }
             @Override public void afterTextChanged(Editable e) { }
         });
-        root.addView(search, Ui.margins(Ui.matchWrap(), a, 16, 0, 16, 8));
+        listPart.addView(search, Ui.margins(Ui.matchWrap(), a, 16, 0, 16, 8));
 
         HorizontalScrollView hs = new HorizontalScrollView(a);
         hs.setHorizontalScrollBarEnabled(false);
         chips = Ui.hbox(a);
         chips.setPadding(Ui.dp(a, 16), 0, Ui.dp(a, 16), Ui.dp(a, 6));
         hs.addView(chips);
-        root.addView(hs);
+        listPart.addView(hs);
 
         filterBar = Ui.text(a, "", 13, Ui.col(a, R.color.accent), Ui.BOLD);
         filterBar.setPadding(Ui.dp(a, 20), Ui.dp(a, 2), Ui.dp(a, 20), Ui.dp(a, 4));
         filterBar.setOnClickListener(v -> { a.filterCategory = null; a.filterLabel = null; a.filterFrom = 0; a.filterTo = 0; quick = 0; refresh(); });
-        root.addView(filterBar);
+        listPart.addView(filterBar);
 
         list = new ListView(a);
         list.setDivider(null);
@@ -75,7 +92,9 @@ final class ActivityPage {
         list.setPadding(Ui.dp(a, 12), 0, Ui.dp(a, 12), Ui.dp(a, 24));
         list.setClipToPadding(false);
         list.setAdapter(adapter);
-        root.addView(list, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+        listPart.addView(list, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+        root.addView(listPart, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+        root.addView(calPart, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         return root;
     }
 
@@ -89,8 +108,132 @@ final class ActivityPage {
         }
     }
 
+    private void buildSeg() {
+        seg.removeAllViews();
+        String[] names = {"☰  List", "📅  Calendar"};
+        for (int i = 0; i < 2; i++) {
+            boolean on = i == mode;
+            TextView t = Ui.text(a, names[i], 14, on ? Ui.col(a, R.color.text) : Ui.col(a, R.color.text2), on ? Ui.BOLD : Ui.SEMIBOLD);
+            t.setGravity(android.view.Gravity.CENTER);
+            t.setPadding(0, Ui.dp(a, 8), 0, Ui.dp(a, 8));
+            t.setBackground(on ? Ui.round(Ui.col(a, R.color.surface), Ui.dp(a, 16)) : null);
+            if (on) t.setElevation(Ui.dp(a, 1));
+            final int m = i;
+            t.setOnClickListener(v -> { mode = m; refresh(); });
+            seg.addView(t, Ui.weight1());
+        }
+        listPart.setVisibility(mode == 0 ? View.VISIBLE : View.GONE);
+        calPart.setVisibility(mode == 1 ? View.VISIBLE : View.GONE);
+    }
+
+    // ------------------------------------------------------------------ spending calendar
+
+    private void buildCalendar() {
+        calBox.removeAllViews();
+        Store s = Store.get(a);
+        java.util.List<Txn> all = s.txns();
+        long now = System.currentTimeMillis();
+        long end = Fmt.addMonths(calMonth, 1);
+        boolean thisMonth = calMonth == Fmt.startOfMonth(now);
+
+        LinearLayout nav = Ui.hbox(a);
+        nav.setGravity(android.view.Gravity.CENTER);
+        TextView prev = Ui.chip(a, "‹", false), next = Ui.chip(a, "›", false);
+        TextView name = Ui.text(a, Fmt.month(calMonth), 17, Ui.BOLD);
+        name.setGravity(android.view.Gravity.CENTER);
+        prev.setOnClickListener(v -> { calMonth = Fmt.addMonths(calMonth, -1); calDay = calMonth; refresh(); });
+        next.setOnClickListener(v -> { if (!thisMonth) { calMonth = Fmt.addMonths(calMonth, 1); calDay = calMonth; refresh(); } });
+        next.setAlpha(thisMonth ? 0.3f : 1f);
+        nav.addView(prev);
+        nav.addView(name, Ui.weight1());
+        nav.addView(next);
+        calBox.addView(nav, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 10));
+
+        long[] days = Ledger.byDay(all, calMonth);
+        long max = 1, total = 0;
+        for (long v : days) { max = Math.max(max, v); total += v; }
+        Plan plan = s.plan();
+        long share = plan != null && plan.start < end && plan.end > calMonth ? plan.amount / plan.days() : 0;
+
+        LinearLayout card = Ui.card(a);
+        card.setPadding(Ui.dp(a, 10), Ui.dp(a, 12), Ui.dp(a, 10), Ui.dp(a, 12));
+        LinearLayout head = Ui.hbox(a);
+        for (String d : new String[]{"M", "T", "W", "T", "F", "S", "S"}) {
+            TextView t = Ui.text(a, d, 12, Ui.col(a, R.color.hint), Ui.BOLD);
+            t.setGravity(android.view.Gravity.CENTER);
+            head.addView(t, Ui.weight1());
+        }
+        card.addView(head, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 6));
+        java.util.Calendar k = Fmt.cal(calMonth);
+        int lead = (k.get(java.util.Calendar.DAY_OF_WEEK) + 5) % 7;   // Monday first
+        int cells = lead + days.length;
+        int rows = (cells + 6) / 7;
+        long today = Fmt.startOfDay(now);
+        for (int r = 0; r < rows; r++) {
+            LinearLayout row = Ui.hbox(a);
+            for (int c = 0; c < 7; c++) {
+                int idx = r * 7 + c - lead;
+                LinearLayout cell = Ui.vbox(a);
+                cell.setGravity(android.view.Gravity.CENTER);
+                cell.setPadding(0, Ui.dp(a, 6), 0, Ui.dp(a, 6));
+                if (idx >= 0 && idx < days.length) {
+                    long day = Fmt.addDays(calMonth, idx);
+                    long v = days[idx];
+                    boolean future = day > today;
+                    int bg;
+                    if (v <= 0 || future) bg = 0x00000000;
+                    else if (share > 0) bg = (Ui.budgetColor(v / (float) share) & 0x00FFFFFF) | (Ui.dark(a) ? 0x66000000 : 0x40000000);
+                    else bg = (Ui.mix(0xFFB7EBD3, 0xFF0E9F6E, (float) Math.sqrt(v / (double) max)) & 0x00FFFFFF) | (Ui.dark(a) ? 0x88000000 : 0x99000000);
+                    android.graphics.drawable.GradientDrawable g = Ui.round(bg, Ui.dp(a, 12));
+                    if (day == calDay) g.setStroke(Ui.dp(a, 2), Ui.col(a, R.color.text));
+                    else if (day == today) g.setStroke(Ui.dp(a, 1), Ui.col(a, R.color.accent));
+                    cell.setBackground(g);
+                    TextView dn = Ui.text(a, String.valueOf(idx + 1), 14, future ? Ui.col(a, R.color.hint) : Ui.col(a, R.color.text), Ui.BOLD);
+                    dn.setGravity(android.view.Gravity.CENTER);
+                    cell.addView(dn);
+                    TextView amt = Ui.text(a, v > 0 ? Fmt.shortRs(v) : " ", 9.5f, Ui.col(a, R.color.text2), Ui.SEMIBOLD);
+                    amt.setGravity(android.view.Gravity.CENTER);
+                    cell.addView(amt);
+                    if (!future) cell.setOnClickListener(x -> { calDay = day; refresh(); });
+                }
+                row.addView(cell, Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, 2, 2, 2, 2));
+            }
+            card.addView(row);
+        }
+        calBox.addView(card, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 8));
+        TextView legend = Ui.text(a, (share > 0 ? "Green = within your daily budget share (" + Fmt.rs(share) + "), red = over · "
+                : "Darker = more spent · ") + "month total " + Fmt.rs(total), 11.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
+        legend.setPadding(Ui.dp(a, 4), 0, 0, Ui.dp(a, 12));
+        calBox.addView(legend);
+
+        // the chosen day
+        if (calDay >= calMonth && calDay < end) {
+            long dEnd = Fmt.addDays(calDay, 1);
+            java.util.List<Txn> list = new java.util.ArrayList<>();
+            long spent = 0, in = 0;
+            for (Txn t : s.visible()) {
+                if (t.time < calDay || t.time >= dEnd || t.kind == Txn.IGNORED) continue;
+                list.add(t);
+                if (t.isSpend()) spent += t.amount;
+                if (t.isIncome()) in += t.amount;
+            }
+            LinearLayout dc = Ui.card(a);
+            LinearLayout dh = Ui.hbox(a);
+            dh.addView(Ui.sectionTitle(a, Fmt.day(calDay)), Ui.weight1());
+            TextView sum = Ui.text(a, (spent > 0 ? "−" + Fmt.rs(spent) : "") + (in > 0 ? "  +" + Fmt.rs(in) : ""), 14, Ui.col(a, R.color.text2), Ui.BOLD);
+            sum.setPadding(0, 0, 0, Ui.dp(a, 8));
+            dh.addView(sum);
+            dc.addView(dh);
+            if (list.isEmpty()) dc.addView(Ui.sub(a, "No payments this day 🎉"));
+            for (Txn t : list) dc.addView(Rows.txn(a, t, false));
+            calBox.addView(dc);
+        }
+    }
+
     void refresh() {
         view();
+        buildSeg();
+        if (mode == 1) { buildCalendar(); return; }
         buildChips();
         String q = search.getText().toString().trim().toLowerCase(Locale.ROOT);
         Store s = Store.get(a);

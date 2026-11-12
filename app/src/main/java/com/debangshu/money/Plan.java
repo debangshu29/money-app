@@ -136,6 +136,32 @@ public final class Plan {
         return Math.round(spent / daysGone * days() / 100.0) * 100;
     }
 
+    /** Repeating payments (subscriptions, rent, EMIs…) still expected before this budget ends. */
+    public long upcoming(List<Ledger.Recurring> rec, long now) {
+        long today = Fmt.startOfDay(now), sum = 0;
+        for (Ledger.Recurring r : rec) {
+            if (r.next >= today && r.next < end && !skip.contains(r.category)) sum += r.amount;
+        }
+        return sum;
+    }
+
+    /**
+     * Safe to spend today = (what's left at the start of today − repeating payments still to come) ÷ days left,
+     * minus what you've already spent today. Negative = over today's share.
+     */
+    public long safeToday(List<Txn> all, List<Ledger.Recurring> rec, long now) {
+        if (now < start || now >= end) return 0;
+        long today = Fmt.startOfDay(now);
+        long before = 0, todaySpent = 0;
+        for (Txn t : all) {
+            if (!counts(t)) continue;
+            if (t.time < today) before += t.amount; else todaySpent += t.amount;
+        }
+        long pool = amount - before - upcoming(rec, now);
+        long share = pool / Math.max(1, daysLeft(now));
+        return share - todaySpent;
+    }
+
     /** One line about how it's going. */
     public String status(List<Txn> all, long now) {
         long spent = spent(all);
