@@ -1,0 +1,5 @@
+First version of Money 🎉
+• Reads bank SMS + Google Pay / PhonePe / Paytm notifications — no typing amounts
+• Same payment from SMS and app is counted once
+• Spots missed SMS from the balance (“Unrecorded”)
+• Insights, repeating payments, budgets, Ask, widget, app lock, private backups

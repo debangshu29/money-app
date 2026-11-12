@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- wallet body -->
+    <path android:fillColor="#26000000" android:pathData="M38,40h34a7,7 0,0 1,7 7v24a7,7 0,0 1,-7 7H38a7,7 0,0 1,-7 -7V47a7,7 0,0 1,7 -7z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M38,37h34a7,7 0,0 1,7 7v24a7,7 0,0 1,-7 7H38a7,7 0,0 1,-7 -7V44a7,7 0,0 1,7 -7z" />
+    <!-- clasp -->
+    <path android:fillColor="#FFD7F5E9" android:pathData="M62,49h17v14H62a7,7 0,0 1,0 -14z" />
+    <path android:fillColor="#FF0E9F6E" android:pathData="M63,56m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <!-- rising bars -->
+    <path android:fillColor="#FF0E9F6E" android:pathData="M38,62h4v6h-4zM45,57h4v11h-4zM52,52h4v16h-4z" />
+    <!-- sparkle badge (automatic) -->
+    <path android:fillColor="#FFFFC24B" android:pathData="M74,33m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M74,27l1.6,4.4 4.4,1.6 -4.4,1.6 -1.6,4.4 -1.6,-4.4 -4.4,-1.6 4.4,-1.6z" />
+</vector>

@@ -1,0 +1,105 @@
+# Builds Money.apk on GitHub's computers every time the code changes.
+# Download it from the "Releases" section of the repo, or let the app update itself.
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Check the signing password
+        env:
+          MONEY_KEY_PASSWORD: ${{ secrets.MONEY_KEY_PASSWORD }}
+        run: |
+          if [ -z "$MONEY_KEY_PASSWORD" ]; then
+            echo "SIGNED=no" >> "$GITHUB_ENV"
+            echo "::warning::Secret MONEY_KEY_PASSWORD is missing - this build is only a test and will NOT be published."
+          elif keytool -list -keystore keystore/money.p12 -storetype pkcs12 -storepass "$MONEY_KEY_PASSWORD" > /dev/null 2>&1; then
+            echo "SIGNED=yes" >> "$GITHUB_ENV"
+            echo "Signing key unlocked (password length ${#MONEY_KEY_PASSWORD})"
+          else
+            echo "SIGNED=no" >> "$GITHUB_ENV"
+            echo "::warning::MONEY_KEY_PASSWORD doesn't unlock the key (length ${#MONEY_KEY_PASSWORD}, expected 32) - check for extra spaces."
+          fi
+
+      - name: Build
+        env:
+          MONEY_KEY_PASSWORD: ${{ secrets.MONEY_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          ./gradlew assembleRelease --no-daemon --console=plain 2>&1 | tee build-log.txt
+          cp app/build/outputs/apk/release/app-release.apk Money.apk
+          python3 - <<'PY'
+          import json, re
+          g = open('app/build.gradle').read()
+          code = int(re.search(r'versionCode\s+(\d+)', g).group(1))
+          name = re.search(r"versionName\s+'([^']+)'", g).group(1)
+          try:
+              notes = open('whats-new.txt', encoding='utf-8').read().strip()
+          except FileNotFoundError:
+              notes = ''
+          json.dump({'versionCode': code, 'versionName': name, 'notes': notes},
+                    open('version.json', 'w', encoding='utf-8'), ensure_ascii=False)
+          print('version.json:', code, name)
+          PY
+
+      - name: Save the build log (so problems can be read without logging in)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f build-log.txt ] || echo "no log" > build-log.txt
+          mkdir -p "$RUNNER_TEMP/log" && tail -n 400 build-log.txt > "$RUNNER_TEMP/log/build-log.txt"
+          echo "${{ job.status }} ${GITHUB_SHA::7} signed=${SIGNED}" > "$RUNNER_TEMP/log/status.txt"
+          cd "$RUNNER_TEMP/log"
+          git init -q -b build-log
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add . && git commit -q -m "Build log ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" build-log
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Money-apk
+          path: |
+            Money.apk
+            version.json
+
+      - name: Publish as "latest" release (easy download on phone)
+        if: env.SIGNED == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest Money.apk version.json --title "Money app (latest build)" \
+            --notes "Built from commit ${GITHUB_SHA::7}. Download Money.apk below and tap it on your phone to install."
+
+      - name: Publish to the 'updates' branch (fast downloads for the app)
+        if: env.SIGNED == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/upd" && cp Money.apk version.json "$RUNNER_TEMP/upd/"
+          cd "$RUNNER_TEMP/upd"
+          git init -q -b updates
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Money.apk version.json
+          git commit -q -m "Latest build ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" updates

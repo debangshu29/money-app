@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.debangshu.money'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.debangshu.money'
+        minSdk 24          // Android 7.0 and newer
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // One fixed key for this app, so every new APK installs as an update and keeps your data.
+    // The key file is in keystore/ but locked with a long password that only GitHub's encrypted Secrets know.
+    def ksFile = rootProject.file('keystore/money.p12')
+    def ksPass = System.getenv('MONEY_KEY_PASSWORD')
+    def hasKey = ksPass != null && !ksPass.isEmpty() && ksFile.exists()
+    signingConfigs {
+        release {
+            if (hasKey) {
+                storeFile ksFile
+                storeType 'pkcs12'
+                storePassword ksPass
+                keyAlias 'money'
+                keyPassword ksPass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig hasKey ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        encoding 'UTF-8'
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+}

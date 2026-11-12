@@ -1,0 +1,402 @@
+package com.debangshu.money;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+/**
+ * Everything the app knows, kept ONLY on this phone (app-private storage, one JSON file).
+ * Nothing is ever uploaded.
+ */
+public final class Store {
+
+    private static Store inst;
+
+    public static synchronized Store get(Context c) {
+        if (inst == null) inst = new Store(c.getApplicationContext());
+        return inst;
+    }
+
+    public static final class Bill {
+        public String account = "";
+        public long due = -1, minDue = -1, dueDate = -1, seen;
+        public boolean paid;
+        public String raw = "";
+    }
+
+    private final Context ctx;
+    private final SharedPreferences prefs;
+    private final File file;
+    private final List<Txn> txns = new ArrayList<>();
+    private final Map<String, Account> accounts = new LinkedHashMap<>();
+    private final Map<String, String> catRules = new HashMap<>();     // merchant key → category
+    private final Map<String, String> nameRules = new HashMap<>();    // merchant key → your name for it
+    private final Map<String, Long> budgets = new LinkedHashMap<>();  // category ("" = whole month) → paise
+    private final List<Bill> bills = new ArrayList<>();
+    private int batch = 0;
+    private boolean dirty = false;
+    private final List<Runnable> listeners = new ArrayList<>();
+    private final Handler main = new Handler(Looper.getMainLooper());
+
+    // settings
+    public static final String S_SETUP = "setup_done", S_LOCK = "lock", S_HIDE = "hide_amounts", S_SECURE = "secure_screen",
+            S_DAILY = "daily_summary", S_UNUSUAL = "alert_unusual", S_BUDGET = "alert_budget", S_BILLS = "alert_bills",
+            S_EACH = "notify_each", S_AUTO_BACKUP = "auto_backup", S_ATM_SPEND = "atm_is_spend", S_AUTO_UPDATE = "auto_update",
+            S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif";
+
+    private Store(Context c) {
+        ctx = c;
+        prefs = c.getSharedPreferences("money", Context.MODE_PRIVATE);
+        file = new File(c.getFilesDir(), "data.json");
+        load();
+    }
+
+    public SharedPreferences prefs() { return prefs; }
+
+    public boolean flag(String key) {
+        boolean def = !(key.equals(S_LOCK) || key.equals(S_SECURE) || key.equals(S_EACH) || key.equals(S_SETUP) || key.equals(S_HIDE));
+        return prefs.getBoolean(key, def);
+    }
+
+    public void setFlag(String key, boolean v) { prefs.edit().putBoolean(key, v).apply(); }
+
+    // ------------------------------------------------------------------ listeners (screens refresh themselves)
+
+    public void listen(Runnable r) { synchronized (listeners) { listeners.add(r); } }
+
+    public void unlisten(Runnable r) { synchronized (listeners) { listeners.remove(r); } }
+
+    private void fire() {
+        List<Runnable> copy;
+        synchronized (listeners) { copy = new ArrayList<>(listeners); }
+        main.post(() -> { for (Runnable r : copy) r.run(); });
+    }
+
+    // ------------------------------------------------------------------ transactions
+
+    public synchronized List<Txn> txns() { return new ArrayList<>(txns); }
+
+    /** Visible transactions, newest first. */
+    public synchronized List<Txn> visible() {
+        List<Txn> out = new ArrayList<>();
+        for (Txn t : txns) if (t.visible() && t.kind != Txn.IGNORED) out.add(t);
+        Collections.sort(out, (a, b) -> Long.compare(b.time, a.time));
+        return out;
+    }
+
+    public synchronized Txn byId(String id) {
+        for (Txn t : txns) if (t.id.equals(id)) return t;
+        return null;
+    }
+
+    /** Adds, or merges into the same payment seen before. Returns the saved one; {@code isNew[0]} tells which. */
+    public synchronized Txn addOrMerge(Txn n, boolean[] isNew) {
+        if (n.id == null) n.id = UUID.randomUUID().toString();
+        Txn twin = n.kind == Txn.SNAPSHOT ? null : Ledger.findTwin(txns, n);
+        if (n.kind == Txn.SNAPSHOT) {
+            for (Txn e : txns) if (e.kind == Txn.SNAPSHOT && e.srcKey.equals(n.srcKey) && Math.abs(e.time - n.time) < 6L * 3600000) { twin = e; break; }
+            if (twin != null) { if (isNew != null) isNew[0] = false; return twin; }
+        }
+        if (twin != null) {
+            Ledger.merge(twin, n);
+            if (twin.category.isEmpty()) twin.category = categoryFor(twin);
+            String nm = nameRules.get(Cats.key(twin));
+            if (nm != null && !twin.userMerchant) twin.merchant = nm;
+            if (isNew != null) isNew[0] = false;
+            changed();
+            return twin;
+        }
+        String nm = nameRules.get(Cats.key(n));
+        if (nm != null) n.merchant = nm;
+        if (n.category.isEmpty()) n.category = categoryFor(n);
+        txns.add(n);
+        if (isNew != null) isNew[0] = true;
+        changed();
+        return n;
+    }
+
+    public String categoryFor(Txn t) {
+        if (t.kind == Txn.NORMAL && (t.sources & Txn.SRC_GAP) == 0) {
+            String k = Cats.key(t);
+            String r = k.isEmpty() ? null : catRules.get(k);
+            if (r == null && !t.merchant.isEmpty()) r = catRules.get("name:" + t.merchant.toLowerCase(java.util.Locale.ROOT)
+                    .replaceAll("[^a-z0-9 ]", " ").replaceAll("\\s+", " ").trim());
+            if (r != null) return r;
+        }
+        return Cats.guess(t);
+    }
+
+    public synchronized void update(Txn t) {
+        changed();
+    }
+
+    public synchronized void delete(Txn t) {
+        txns.remove(t);
+        changed();
+    }
+
+    /** "Always put Swiggy in Food": changes every past one too (except ones you picked by hand). */
+    public synchronized int learnCategory(Txn t, String cat, boolean all) {
+        t.category = cat;
+        t.userCategory = true;
+        int n = 1;
+        if (all) {
+            String k = Cats.key(t);
+            String nk = "name:" + t.merchant.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9 ]", " ").replaceAll("\\s+", " ").trim();
+            if (!k.isEmpty()) catRules.put(k, cat);
+            if (!t.merchant.isEmpty()) catRules.put(nk, cat);
+            for (Txn x : txns) {
+                if (x == t || x.userCategory || x.kind != Txn.NORMAL || x.credit != t.credit) continue;
+                if ((!k.isEmpty() && k.equals(Cats.key(x))) || (!t.merchant.isEmpty() && t.merchant.equalsIgnoreCase(x.merchant))) {
+                    x.category = cat;
+                    n++;
+                }
+            }
+        }
+        changed();
+        return n;
+    }
+
+    public synchronized int learnName(Txn t, String name, boolean all) {
+        String old = t.merchant;
+        String k = Cats.key(t);
+        t.merchant = name;
+        t.userMerchant = true;
+        int n = 1;
+        if (all) {
+            if (!k.isEmpty()) nameRules.put(k, name);
+            for (Txn x : txns) {
+                if (x == t || x.userMerchant) continue;
+                if ((!k.isEmpty() && k.equals(Cats.key(x))) || (!old.isEmpty() && old.equals(x.merchant))) { x.merchant = name; n++; }
+            }
+        }
+        changed();
+        return n;
+    }
+
+    /** Replaces the "Unrecorded" entries of one account (keeps what you wrote on them). */
+    public synchronized void setGaps(String account, List<Txn> gaps) {
+        Map<String, Txn> old = new HashMap<>();
+        for (Iterator<Txn> it = txns.iterator(); it.hasNext(); ) {
+            Txn t = it.next();
+            if ((t.sources & Txn.SRC_GAP) != 0 && account.equals(t.account)) { old.put(t.id, t); it.remove(); }
+        }
+        if (flag(S_GAPS)) {
+            for (Txn g : gaps) {
+                Txn o = old.get(g.id);
+                if (o != null && o.amount == g.amount && o.credit == g.credit) { txns.add(o); continue; }
+                if (o != null) { g.note = o.note; if (o.userCategory) { g.category = o.category; g.userCategory = true; } }
+                txns.add(g);
+            }
+        }
+        changed();
+    }
+
+    // ------------------------------------------------------------------ accounts
+
+    public synchronized List<Account> accounts() {
+        List<Account> l = new ArrayList<>(accounts.values());
+        Collections.sort(l, (a, b) -> Long.compare(b.lastUsed, a.lastUsed));
+        return l;
+    }
+
+    public synchronized Account account(String key) { return accounts.get(key); }
+
+    public synchronized void touchAccount(Txn t, boolean card, boolean wallet) {
+        if (t.account == null || t.account.isEmpty()) return;
+        Account a = accounts.get(t.account);
+        if (a == null) {
+            a = new Account();
+            a.key = t.account;
+            a.card = card;
+            a.wallet = wallet;
+            accounts.put(t.account, a);
+        }
+        if (card) a.card = true;
+        a.lastUsed = Math.max(a.lastUsed, t.time);
+        if (t.balance >= 0 && t.time >= a.balanceTime) { a.balance = t.balance; a.balanceTime = t.time; }
+        if (t.limit >= 0 && t.time >= a.limitTime) { a.limit = t.limit; a.limitTime = t.time; }
+        changed();
+    }
+
+    public synchronized void renameAccount(Account a, String name) { a.name = name; changed(); }
+
+    public synchronized void setAccountHidden(Account a, boolean h) { a.hidden = h; changed(); }
+
+    // ------------------------------------------------------------------ bills, budgets
+
+    public synchronized void addBill(Bill b) {
+        for (Bill o : bills) {
+            if (o.account.equals(b.account) && Math.abs(o.dueDate - b.dueDate) < 3L * 86400000) {
+                o.due = b.due; o.minDue = b.minDue; o.raw = b.raw; changed(); return;
+            }
+        }
+        bills.add(b);
+        changed();
+    }
+
+    public synchronized List<Bill> bills() { return new ArrayList<>(bills); }
+
+    public synchronized void setBillPaid(Bill b, boolean paid) { b.paid = paid; changed(); }
+
+    public synchronized Map<String, Long> budgets() { return new LinkedHashMap<>(budgets); }
+
+    public synchronized void setBudget(String cat, long paise) {
+        if (paise <= 0) budgets.remove(cat); else budgets.put(cat, paise);
+        changed();
+    }
+
+    // ------------------------------------------------------------------ saving
+
+    /** Many changes at once (importing old messages): saves once at the end. */
+    public synchronized void begin() { batch++; }
+
+    public synchronized void end() {
+        batch = Math.max(0, batch - 1);
+        if (batch == 0 && dirty) save();
+    }
+
+    public synchronized boolean inBatch() { return batch > 0; }
+
+    private void changed() {
+        dirty = true;
+        if (batch == 0) save();
+    }
+
+    private synchronized void save() {
+        try {
+            byte[] data = toJson().toString().getBytes(StandardCharsets.UTF_8);
+            File tmp = new File(file.getPath() + ".tmp");
+            try (FileOutputStream out = new FileOutputStream(tmp)) {
+                out.write(data);
+                out.getFD().sync();
+            }
+            if (!tmp.renameTo(file)) {
+                try (FileOutputStream out = new FileOutputStream(file)) { out.write(data); }
+                tmp.delete();
+            }
+            dirty = false;
+        } catch (Exception ignored) { }
+        fire();
+        Widget.refresh(ctx);
+    }
+
+    private void load() {
+        if (!file.exists()) return;
+        try (FileInputStream in = new FileInputStream(file)) {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            byte[] b = new byte[65536];
+            int n;
+            while ((n = in.read(b)) > 0) buf.write(b, 0, n);
+            fromJson(new JSONObject(buf.toString("UTF-8")));
+        } catch (Exception ignored) { }
+    }
+
+    public synchronized JSONObject toJson() throws Exception {
+        JSONObject o = new JSONObject();
+        o.put("version", 1);
+        JSONArray ta = new JSONArray();
+        for (Txn t : txns) ta.put(txnJson(t));
+        o.put("txns", ta);
+        JSONArray aa = new JSONArray();
+        for (Account a : accounts.values()) {
+            JSONObject j = new JSONObject();
+            j.put("key", a.key).put("name", a.name).put("card", a.card).put("wallet", a.wallet).put("bal", a.balance)
+             .put("balT", a.balanceTime).put("lim", a.limit).put("limT", a.limitTime).put("used", a.lastUsed).put("hidden", a.hidden);
+            aa.put(j);
+        }
+        o.put("accounts", aa);
+        o.put("catRules", new JSONObject(catRules));
+        o.put("nameRules", new JSONObject(nameRules));
+        JSONObject bj = new JSONObject();
+        for (Map.Entry<String, Long> e : budgets.entrySet()) bj.put(e.getKey(), e.getValue());
+        o.put("budgets", bj);
+        JSONArray bl = new JSONArray();
+        for (Bill b : bills) {
+            bl.put(new JSONObject().put("acc", b.account).put("due", b.due).put("min", b.minDue).put("date", b.dueDate)
+                    .put("seen", b.seen).put("paid", b.paid).put("raw", b.raw));
+        }
+        o.put("bills", bl);
+        return o;
+    }
+
+    public synchronized void fromJson(JSONObject o) throws Exception {
+        txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
+        JSONArray ta = o.optJSONArray("txns");
+        if (ta != null) for (int i = 0; i < ta.length(); i++) txns.add(txnFrom(ta.getJSONObject(i)));
+        JSONArray aa = o.optJSONArray("accounts");
+        if (aa != null) for (int i = 0; i < aa.length(); i++) {
+            JSONObject j = aa.getJSONObject(i);
+            Account a = new Account();
+            a.key = j.optString("key"); a.name = j.optString("name"); a.card = j.optBoolean("card"); a.wallet = j.optBoolean("wallet");
+            a.balance = j.optLong("bal", -1); a.balanceTime = j.optLong("balT"); a.limit = j.optLong("lim", -1);
+            a.limitTime = j.optLong("limT"); a.lastUsed = j.optLong("used"); a.hidden = j.optBoolean("hidden");
+            accounts.put(a.key, a);
+        }
+        readMap(o.optJSONObject("catRules"), catRules);
+        readMap(o.optJSONObject("nameRules"), nameRules);
+        JSONObject bj = o.optJSONObject("budgets");
+        if (bj != null) for (Iterator<String> it = bj.keys(); it.hasNext(); ) { String k = it.next(); budgets.put(k, bj.getLong(k)); }
+        JSONArray bl = o.optJSONArray("bills");
+        if (bl != null) for (int i = 0; i < bl.length(); i++) {
+            JSONObject j = bl.getJSONObject(i);
+            Bill b = new Bill();
+            b.account = j.optString("acc"); b.due = j.optLong("due", -1); b.minDue = j.optLong("min", -1);
+            b.dueDate = j.optLong("date", -1); b.seen = j.optLong("seen"); b.paid = j.optBoolean("paid"); b.raw = j.optString("raw");
+            bills.add(b);
+        }
+    }
+
+    /** Restore: replaces everything with a backup. */
+    public synchronized void replaceAll(JSONObject o) throws Exception {
+        fromJson(o);
+        changed();
+    }
+
+    public synchronized void wipe() {
+        txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
+        changed();
+    }
+
+    private static void readMap(JSONObject j, Map<String, String> m) {
+        if (j == null) return;
+        for (Iterator<String> it = j.keys(); it.hasNext(); ) { String k = it.next(); m.put(k, j.optString(k)); }
+    }
+
+    static JSONObject txnJson(Txn t) throws Exception {
+        JSONObject j = new JSONObject();
+        j.put("id", t.id).put("t", t.time).put("a", t.amount).put("cr", t.credit).put("acc", t.account).put("m", t.merchant)
+         .put("vpa", t.vpa).put("cat", t.category).put("k", t.kind).put("src", t.sources).put("bal", t.balance).put("lim", t.limit)
+         .put("ref", t.ref).put("raw", t.raw).put("snd", t.sender).put("note", t.note).put("key", t.srcKey)
+         .put("rev", t.review).put("uc", t.userCategory).put("um", t.userMerchant);
+        return j;
+    }
+
+    static Txn txnFrom(JSONObject j) {
+        Txn t = new Txn();
+        t.id = j.optString("id"); t.time = j.optLong("t"); t.amount = j.optLong("a"); t.credit = j.optBoolean("cr");
+        t.account = j.optString("acc"); t.merchant = j.optString("m"); t.vpa = j.optString("vpa"); t.category = j.optString("cat");
+        t.kind = j.optInt("k"); t.sources = j.optInt("src"); t.balance = j.optLong("bal", -1); t.limit = j.optLong("lim", -1);
+        t.ref = j.optString("ref"); t.raw = j.optString("raw"); t.sender = j.optString("snd"); t.note = j.optString("note");
+        t.srcKey = j.optString("key"); t.review = j.optBoolean("rev"); t.userCategory = j.optBoolean("uc"); t.userMerchant = j.optBoolean("um");
+        return t;
+    }
+}
