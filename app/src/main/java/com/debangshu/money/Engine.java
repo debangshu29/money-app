@@ -106,6 +106,7 @@ public final class Engine {
             s.touchAccount(saved, card, wallet);
             if (!saved.account.isEmpty()) s.setGaps(saved.account, Ledger.gaps(s.txns(), saved.account));
         }
+        if (!s.inBatch() && saved.kind != Txn.SNAPSHOT) ScanPay.match(ctx, saved);   // started from Scan & Pay? → name + category
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);
         if (!s.inBatch() && !saved.account.isEmpty()) {
             for (Txn g : s.txns()) {

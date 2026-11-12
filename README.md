@@ -1,10 +1,20 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.3 — never forget a payment (location, “Who was it?”, bill photos).** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.4 — Scan & Pay.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Scan & Pay (version 1.4)
+
+Tap the round **Scan & Pay** button in the middle of the bottom bar:
+1. Scan the shop's UPI QR (Google's scanner opens — Money itself needs no camera permission).
+2. Money shows the shop's **name and UPI ID** (or the name you gave it before), the amount (fixed if the QR has one), a **category**, and an optional note.
+3. **Pay** → Google Pay / PhonePe / Paytm opens with everything filled in; you enter your UPI PIN there. Money never sees the PIN.
+4. When the bank SMS / app notification arrives, the payment automatically gets that name, category and note — and every future payment to that UPI ID too.
+
+If a UPI app refuses payments started from another app, use **Pay in my app**: Money remembers who you're paying, opens your UPI app, you scan there, and the payment is still matched (by amount and time). **Long-press** the button to type a UPI ID instead of scanning.
 
 ## Remember every payment (version 1.3)
 

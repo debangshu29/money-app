@@ -26,6 +26,24 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:mimeType="application/vnd.android.package-archive" />
         </intent>
+        <!-- Scan & Pay: find the UPI apps on the phone (Google Pay, PhonePe, Paytm, BHIM…) -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="upi" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="com.phonepe.app" />
+        <package android:name="net.one97.paytm" />
+        <package android:name="in.org.npci.upiapp" />
+        <package android:name="com.dreamplug.androidapp" />
+        <package android:name="in.amazon.mShop.android.shopping" />
+        <package android:name="com.mobikwik_new" />
+        <package android:name="com.naviapp" />
+        <package android:name="money.super.payments" />
+        <package android:name="com.sbi.upi" />
         <package android:name="com.google.android.documentsui" />
         <package android:name="com.android.documentsui" />
         <package android:name="com.google.android.apps.nbu.files" />

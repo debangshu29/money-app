@@ -182,6 +182,26 @@ public final class Store {
         return n;
     }
 
+    /** Your name for this payment's UPI ID / shop, if you gave one before. */
+    public synchronized String nameFor(Txn t) {
+        String k = Cats.key(t);
+        return k.isEmpty() ? null : nameRules.get(k);
+    }
+
+    /** Scan & Pay: remember a UPI ID's name and category (also fixes earlier payments to it). */
+    public synchronized void learnVpa(String vpa, String name, String cat) {
+        if (vpa == null || vpa.isEmpty()) return;
+        String k = "vpa:" + vpa.toLowerCase(java.util.Locale.ROOT);
+        if (name != null && !name.isEmpty()) nameRules.put(k, name);
+        if (cat != null && !cat.isEmpty() && !Cats.OTHER.equals(cat)) catRules.put(k, cat);
+        for (Txn x : txns) {
+            if (!vpa.equalsIgnoreCase(x.vpa) || x.credit) continue;
+            if (!x.userMerchant && name != null && !name.isEmpty()) x.merchant = name;
+            if (!x.userCategory && x.kind == Txn.NORMAL && cat != null && !cat.isEmpty() && !Cats.OTHER.equals(cat)) x.category = cat;
+        }
+        changed();
+    }
+
     public synchronized int learnName(Txn t, String name, boolean all) {
         if ((t.sources & Txn.SRC_GAP) != 0 || (t.vpa.isEmpty() && t.unnamed())) all = false;
         String old = t.merchant;

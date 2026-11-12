@@ -113,6 +113,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(req, res, data);
         Updater.onCleanupResult(this, req, res, data);
         Photos.onResult(this, req, res, data);
+        ScanPay.onResult(this, req, res, data);
     }
 
     @Override
@@ -166,18 +167,26 @@ public class MainActivity extends Activity {
         show(ACTIVITY);
     }
 
+    /** Bottom bar: Home · Activity · ( Scan & Pay ) · Insights · Ask — the round button pops out above the bar. */
     private View navBar() {
+        FrameLayout wrap = new FrameLayout(this);
+        wrap.setClipChildren(false);
+        wrap.setClipToPadding(false);
+        int lift = Ui.dp(this, 24);
+
         LinearLayout bar = Ui.hbox(this);
-        bar.setBackgroundColor(Ui.col(this, R.color.surface));
+        bar.setBackground(Ui.round(Ui.col(this, R.color.surface), 0));
+        bar.setElevation(Ui.dp(this, 8));
         bar.setPadding(0, Ui.dp(this, 6), 0, Ui.dp(this, 8));
         for (int i = 0; i < 4; i++) {
+            if (i == 2) bar.addView(fabSlot(), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.1f));
             LinearLayout t = Ui.vbox(this);
             t.setGravity(Gravity.CENTER);
             ImageView ic = new ImageView(this);
             ic.setImageResource(ICONS[i]);
-            int ph = Ui.dp(this, 18), pv = Ui.dp(this, 5);
+            int ph = Ui.dp(this, 16), pv = Ui.dp(this, 5);
             ic.setPadding(ph, pv, ph, pv);
-            t.addView(ic, Ui.lp(Ui.dp(this, 62), Ui.dp(this, 32)));
+            t.addView(ic, Ui.lp(Ui.dp(this, 56), Ui.dp(this, 32)));
             TextView l = Ui.text(this, TABS[i], 12, Ui.SEMIBOLD);
             l.setGravity(Gravity.CENTER);
             l.setPadding(0, Ui.dp(this, 3), 0, 0);
@@ -190,7 +199,59 @@ public class MainActivity extends Activity {
             tabViews[i] = t;
             bar.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         }
-        return bar;
+        FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        blp.topMargin = lift;
+        wrap.addView(bar, blp);
+
+        // the round button: a ring in the page colour around a green gradient circle, raised above the bar
+        int size = Ui.dp(this, 66);
+        FrameLayout fab = new FrameLayout(this);
+        android.graphics.drawable.GradientDrawable ring = new android.graphics.drawable.GradientDrawable();
+        ring.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        ring.setColor(Ui.col(this, R.color.bg));
+        fab.setBackground(ring);
+        fab.setElevation(Ui.dp(this, 14));
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR, new int[]{0xFF34D399, 0xFF0E9F6E, 0xFF0B6F86});
+        g.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        ImageView core = new ImageView(this);
+        core.setImageResource(R.drawable.ic_qr_scan);
+        core.setColorFilter(0xFFFFFFFF);
+        core.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        int ip = Ui.dp(this, 15);
+        core.setPadding(ip, ip, ip, ip);
+        core.setBackground(new android.graphics.drawable.RippleDrawable(
+                android.content.res.ColorStateList.valueOf(0x40FFFFFF), g, null));
+        int pad = Ui.dp(this, 5);
+        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(size - 2 * pad, size - 2 * pad, Gravity.CENTER);
+        fab.addView(core, clp);
+        core.setContentDescription("Scan & Pay");
+        core.setOnClickListener(v -> ScanPay.start(this));
+        core.setOnLongClickListener(v -> { ScanPay.typeUpi(this); return true; });
+        core.setOnTouchListener((v, e) -> {
+            if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) fab.animate().scaleX(0.9f).scaleY(0.9f).setDuration(90).start();
+            else if (e.getAction() == android.view.MotionEvent.ACTION_UP || e.getAction() == android.view.MotionEvent.ACTION_CANCEL)
+                fab.animate().scaleX(1f).scaleY(1f).setDuration(160).setInterpolator(new android.view.animation.OvershootInterpolator(3f)).start();
+            return false;
+        });
+        FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(size, size, Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        flp.topMargin = Ui.dp(this, 2);
+        wrap.addView(fab, flp);
+        return wrap;
+    }
+
+    /** The middle slot of the bar: room for the round button, with its label underneath. */
+    private View fabSlot() {
+        LinearLayout t = Ui.vbox(this);
+        t.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
+        View space = new View(this);
+        t.addView(space, Ui.lp(1, Ui.dp(this, 32)));
+        TextView l = Ui.text(this, "Scan & Pay", 12, Ui.col(this, R.color.accent), Ui.BOLD);
+        l.setGravity(Gravity.CENTER);
+        l.setPadding(0, Ui.dp(this, 3), 0, 0);
+        t.addView(l);
+        t.setOnClickListener(v -> ScanPay.start(this));
+        return t;
     }
 
     /** Top bar used by every tab: big title, then the eye (hide amounts) and settings. */

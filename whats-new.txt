@@ -1,7 +1,6 @@
-Never forget a payment 📍
-• Saves where you paid (turn on in Settings → Remember every payment) — see it on a map from the payment
-• Area names like “near Garia Station Road” (or map pin only, your choice)
-• “Who was it?” — when a payment has no name, type it right in the notification
-• Name a shop's QR once — every future payment to it gets the name and category
-• “Probably Sharma Kirana?” — guesses from your past payments at the same spot / amount / time
-• Add a bill photo to any payment
+Scan & Pay 📷
+• New round Scan & Pay button in the middle of the bottom bar
+• Scan any shop's UPI QR → Money already knows who it is (name + UPI ID)
+• Pick the category, add a note → Google Pay / PhonePe / Paytm opens with everything filled in
+• When the bank's message arrives, the payment gets the name, category and note by itself
+• Long-press the button to pay a UPI ID by typing it
