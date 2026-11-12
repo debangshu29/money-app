@@ -68,6 +68,9 @@ public class MainActivity extends Activity {
         handle(i);
     }
 
+    /** Scan & Pay / cash spend asked for from the widget or a quick-settings tile — done once the app is unlocked. */
+    private String pendingAction;
+
     private void handle(Intent i) {
         if (i == null) return;
         String id = i.getStringExtra("txn");
@@ -76,6 +79,8 @@ public class MainActivity extends Activity {
             if (t != null) TxnSheet.show(this, t);
         }
         if (i.getBooleanExtra("showUpdate", false)) Updater.maybePrompt(this, true);
+        if (i.getBooleanExtra("scan", false)) { pendingAction = "scan"; i.removeExtra("scan"); }
+        if (i.getBooleanExtra("addCash", false)) { pendingAction = "cash"; i.removeExtra("addCash"); }
         if (i.hasExtra("filterLabel")) {
             activity.setQuick(i.getIntExtra("filterQuick", 0));
             showFiltered(i.getStringExtra("filterCat"), i.getLongExtra("filterFrom", 0), i.getLongExtra("filterTo", 0),
@@ -94,6 +99,12 @@ public class MainActivity extends Activity {
         // a quick catch-up in case an SMS slipped past while the app was asleep
         new Thread(() -> { try { Engine.catchUp(getApplicationContext()); } catch (Exception ignored) { } }).start();
         Updater.maybePrompt(this, false);
+        if (pendingAction != null && !Lock.needed(this)) {
+            String p = pendingAction;
+            pendingAction = null;
+            if (p.equals("scan")) { show(HOME); ScanPay.start(this); }
+            else TxnSheet.addManual(this);
+        }
     }
 
     @Override

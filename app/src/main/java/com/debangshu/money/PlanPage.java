@@ -97,15 +97,22 @@ final class PlanPage {
         float cu = CardsActivity.usedFrac(a);
         View cards = tile("💳", 0xFF6D28D9, "Credit cards", CardsActivity.summary(a), cu, v -> a.startActivity(new Intent(a, CardsActivity.class)));
 
+        View remind = tile("🔔", 0xFF0EA5E9, "Renewals & reminders", Reminders.summary(a), -1, v -> a.startActivity(new Intent(a, Reminders.class)));
+        View refunds = tile("↩️", 0xFFF59E0B, "Refunds", Refunds.summary(a), -1, v -> a.startActivity(new Intent(a, Refunds.class)));
+        View loans = tile("🏦", 0xFF64748B, "Loans & EMIs", Loans.summary(a), -1, v -> a.startActivity(new Intent(a, Loans.class)));
+        View rewards = tile("⭐", 0xFFEA580C, "Cashback & rewards", Rewards.summary(a), -1, v -> a.startActivity(new Intent(a, Rewards.class)));
+
         body.addView(label("Everyday"));
         body.addView(row(budget, bills));
         body.addView(row(accounts, cash));
+        body.addView(row(remind, refunds));
         body.addView(label("Grow"));
         body.addView(row(goals, chal));
         body.addView(label("Together"));
         body.addView(row(people, nw));
         body.addView(label("Tools"));
         body.addView(row(tax, cards));
+        body.addView(row(loans, rewards));
     }
 
     private TextView label(String s) {

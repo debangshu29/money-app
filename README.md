@@ -1,12 +1,12 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.8 — People, Goals, Challenges, monthly report, fraud watch, net worth, tax helper, credit cards.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.9 — refund tracker, renewals, return & warranty reminders, loans & EMIs, cashback & rewards, say a cash spend, Scan & Pay widget.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
 
-## Finding your way (version 1.8)
+## Finding your way (version 1.9)
 
 | Tab | What's there |
 |---|---|
@@ -14,11 +14,21 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 | 📄 **Activity** | **List ⇄ Calendar** — the calendar colours each day by spending (green within your daily budget share, red over); tap a day for its payments · search · filters · **+** for a cash spend |
 | ⭕ **Scan & Pay** | the round button |
 | 📊 **Insights** | **Ask** bar · any month: spent / in / saved + **savings score** + **📄 Report** (PDF) · categories · day by day · top places · **Where you spend** · **Prices you pay** · **Charges & fees** |
-| 🧩 **Plan** | *Everyday:* Budget · Bills & subscriptions · Accounts · Cash wallet — *Grow:* Goals · Challenges — *Together:* People · Net worth — *Tools:* Tax helper · Credit cards |
+| 🧩 **Plan** | *Everyday:* Budget · Bills & subscriptions · Accounts · Cash wallet · Renewals & reminders · Refunds — *Grow:* Goals · Challenges — *Together:* People · Net worth — *Tools:* Tax helper · Credit cards · Loans & EMIs · Cashback & rewards |
 
 **Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
+
+## The boring stuff, handled (version 1.9)
+
+- **Refunds** — when a payment fails but money leaves the account (“debited … failed, will be reversed”), Money keeps it out of your spending and watches for it to come back; the refund is linked by itself. If it isn't back in 5 days (and again at 10) you get a reminder with the RBI rule: failed UPI / IMPS transfers must be returned by the next day, shop / card / ATM within 5 days, and after that the bank owes ₹100 a day. Mark any payment yourself: open it → **❌ Payment failed?**
+- **Renewals & reminders** — mobile plan expiry (Jio / Airtel / Vi / BSNL), insurance renewal, PUC expiry and FASTag balance are read from SMS. Reminders: plan 3 / 1 / 0 days before, insurance 30 / 7 / 1, PUC 15 / 3 / 0. Add anything else yourself (repeats monthly / yearly).
+- **Return & warranty** — after a bill photo (shopping or ₹1,000+), or from a payment → **⏰ Return / warranty**: pick “return by” (7 / 10 / 30 days) and “warranty till” (6 months / 1 / 2 years). Reminded 2 days before the return window ends and 30 / 7 days before the warranty does.
+- **Loans & EMIs** — loans appear from EMI payments and lender SMS (“EMI of ₹4,567 received”, “principal outstanding …”). Add what's left + the interest rate once → months left, interest left, and **what a prepayment saves** (₹10k / ₹50k / ₹1L / any). A reminder 2 days before the EMI; loans count in Net worth.
+- **Cashback & rewards** — every cashback credit this financial year, where it came from, and each card's reward points balance (from the bank's points SMS).
+- **Say a cash spend** — 🎤 in Activity → +, in the cash wallet, on the widget or the tile: “200 for chai”, “spent two hundred and fifty on auto”, “chai 20 and samosa 30”. Uses the phone's own voice typing; Undo right after.
+- **Scan & Pay without opening the app** — long-press the home screen → Widgets → *Money – Scan & Pay · cash*; or pull down the quick settings → ✏️ edit → drag in **Scan & Pay** / **Cash spend**. With app lock on, it asks for the lock first.
 
 ## People, goals and the bigger picture (version 1.8)
 
@@ -147,6 +157,8 @@ D:\money
     │   ├── MainActivity + HomePage / ActivityPage / InsightsPage / PlanPage   the 4 tabs
     │   ├── People / Goals / Challenges / NetWorthActivity / TaxActivity / CardsActivity   Plan screens
     │   ├── Smart.java / Report.java   price changes, fees, savings score, monthly PDF
+    │   ├── Notices.java / Voice.java   failed payments, renewals, EMIs, points from SMS · “200 for chai”
+    │   ├── Refunds / Reminders / Loans / Rewards   their Plan screens · PayWidget / ScanTile / VoiceTile / VoiceActivity
     │   └── SetupActivity / SettingsActivity / TxnSheet / LockActivity / Widget / Updater
     ├── res\    colours, icons, widget layout
     └── AndroidManifest.xml

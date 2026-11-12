@@ -68,7 +68,7 @@ public final class Store {
             S_EACH = "notify_each", S_AUTO_BACKUP = "auto_backup", S_ATM_SPEND = "atm_is_spend", S_AUTO_UPDATE = "auto_update",
             S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
             S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
-            S_FRAUD = "fraud_watch";
+            S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals";
 
     private Store(Context c) {
         ctx = c;

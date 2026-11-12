@@ -103,6 +103,12 @@ final class HomePage {
                 Ui.col(a, R.color.accent_soft), v -> Resolve.start(a)), gap());
         String due = dueSoon(s, all, now);
         if (due != null) body.addView(strip("📅", due, Ui.col(a, R.color.surface), v -> a.startActivity(new Intent(a, BillsActivity.class))), gap());
+        int late = Refunds.overdue(a);
+        if (late > 0) body.addView(strip("↩️", late == 1 ? "A failed payment hasn't come back yet — see what to do" : late + " failed payments haven't come back yet",
+                Ui.col(a, R.color.surface), v -> a.startActivity(new Intent(a, Refunds.class))), gap());
+        java.util.List<org.json.JSONObject> soon = Reminders.upcoming(a, 2);
+        if (!soon.isEmpty()) body.addView(strip(Reminders.emoji(soon.get(0).optString("kind")), soon.get(0).optString("name") + " " + Reminders.when(soon.get(0).optLong("until"))
+                + (soon.size() > 1 ? " · +" + (soon.size() - 1) + " more" : ""), Ui.col(a, R.color.surface), v -> a.startActivity(new Intent(a, Reminders.class))), gap());
         Fmt.hide = false;
         scroll.post(() -> scroll.scrollTo(0, y));
     }

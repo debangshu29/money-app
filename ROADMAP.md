@@ -8,7 +8,7 @@
 | **Activity** | What did I pay? | List ⇄ Calendar, search, filters, + cash spend · tap a payment → Split / lend | — |
 | **Scan & Pay** | Pay someone | round button in the middle | — |
 | **Insights** | Where does my money go? | Ask bar · month view + savings score + 📄 report · categories · day by day · top places · where you spend · prices you pay · charges & fees | — |
-| **Plan** | What should I organise? | Everyday: Budget · Bills & subscriptions · Accounts · Cash wallet — Grow: Goals · Challenges — Together: People · Net worth — Tools: Tax helper · Credit cards | new tiles go into one of these groups |
+| **Plan** | What should I organise? | Everyday: Budget · Bills & subscriptions · Accounts · Cash wallet · Renewals & reminders · Refunds — Grow: Goals · Challenges — Together: People · Net worth — Tools: Tax helper · Credit cards · Loans & EMIs · Cashback & rewards | new tiles go into one of these groups |
 | **Settings** (gear) | How should it behave? | capture, remember payments, alerts (incl. fraud watch), privacy, backups, data, updates | — |
 
 Design rules: one main number per card · details open on tap · a new feature = a new Plan tile or Insights card, never a new Home card · plain words, no finance jargon · every card has an empty state that says what to do.
@@ -26,11 +26,12 @@ Built one version at a time; each version is checked on the phone before the nex
 | **1.5** | Daily helper + makeover | new layout (Home · Activity · Scan & Pay · Insights · Plan); Safe to spend today; cash wallet; spending calendar; “Where you spend” places; Ask moved into Insights; Accounts and Bills & subscriptions screens; category limits inside Budget | ✅ built (13 Nov 2026) |
 | **1.6** | People & goals | 👥 People: split / lend / borrow from any payment, settles itself when the money comes back, WhatsApp reminder with your UPI ID · 🏆 Goals with “on track?” from what you usually save · 🔥 Challenges (no-spend, no delivery, no shopping, daily limit) with streaks · 🗑️ subscription cleaner (yearly cost, price rises, “still using it?”) | ✅ built (13 Nov 2026, released as 1.8) |
 | **1.7** | Smart insights | savings score · monthly report PDF (Documents/Money/Reports) · prices you pay (same place, 3 months vs 3 before) · charges & fees for the financial year · 🛡️ fraud watch (night, foreign, big first payment) with a Settings switch | ✅ built (13 Nov 2026, released as 1.8) |
-| **1.8** | Bigger picture + final polish | 💎 net worth (fills itself + gold / FD / loans you add, month by month) · 🧾 tax helper (80C, 80D, NPS, rent, 80G; leave out / add; CSV) · 💳 credit cards (limit used, bill, statement day, best card today) · Plan grouped into Everyday / Grow / Together / Tools | ✅ built (13 Nov 2026) — waiting for your check |
+| **1.8** | Bigger picture + final polish | 💎 net worth (fills itself + gold / FD / loans you add, month by month) · 🧾 tax helper (80C, 80D, NPS, rent, 80G; leave out / add; CSV) · 💳 credit cards (limit used, bill, statement day, best card today) · Plan grouped into Everyday / Grow / Together / Tools | ✅ built (13 Nov 2026) |
+
+| **1.9** | Takes care of the boring stuff | ↩️ failed payment & refund tracker (kept out of spending, auto-linked refund, day-5 / day-10 reminder with the RBI T+1 / T+5 rule) · 🔔 renewals from SMS (mobile plan, insurance, PUC, FASTag low) + your own · ⏰ return & warranty dates (asked after a bill photo) · 🏦 loans & EMIs (months left, interest left, prepay savings, EMI-due reminder, in net worth) · ⭐ cashback & card points · 🎤 say a cash spend · Scan & Pay widget + quick-settings tiles | ✅ built (13 Nov 2026) — waiting for your check |
 
 ## Ideas for later (not started)
 - Bank statement PDF import (fills names + Unrecorded from the statement's UPI lines)
-- Failed-payment refund tracker
 - Read bank statement PDFs / emailed statements to fill old gaps
 - Investment values (mutual funds, stocks) from statement SMS / emails
 - Trips (group a holiday's spending)

@@ -65,6 +65,11 @@ public final class Cash {
         return t;
     }
 
+    /** Put money back in the wallet (an undone spend). */
+    public static void refund(Context c, long paise) {
+        if (on(c)) p(c).edit().putLong(BAL, balance(c) + paise).apply();
+    }
+
     /** "I have ₹X now": whatever is missing since the last count was spent. */
     public static void setLeft(Context c, long left) {
         long bal = balance(c);
@@ -104,6 +109,9 @@ public final class Cash {
             box.addView(r);
             count.setOnClickListener(v -> askLeft(a));
             spent.setOnClickListener(v -> TxnSheet.addManual(a));
+            TextView say = Ui.chip(a, "🎤  Say a cash spend", false);
+            say.setOnClickListener(v -> VoiceActivity.start(a));
+            box.addView(say, Ui.margins(Ui.lp(-2, -2), a, 0, 6, 0, 0));
             List<Txn> recent = new ArrayList<>();
             for (Txn t : Store.get(a).visible()) if (ACCOUNT.equals(t.account) || (Cats.CASH.equals(t.category) && t.raw.toLowerCase().contains("atm"))) recent.add(t);
             if (!recent.isEmpty()) {

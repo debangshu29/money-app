@@ -57,6 +57,17 @@ public final class Alerts {
         Intent open = new Intent(c, MainActivity.class);
         open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (txnId != null) open.putExtra("txn", txnId);
+        show(c, channel, id, title, text, open);
+    }
+
+    /** Same, but tapping opens one of the app's screens (Refunds, Reminders, Loans…). */
+    static void postTo(Context c, String channel, int id, String title, String text, Class<?> screen) {
+        if (!canNotify(c)) return;
+        channels(c);
+        show(c, channel, id, title, text, new Intent(c, screen).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
+    private static void show(Context c, String channel, int id, String title, String text, Intent open) {
         PendingIntent pi = PendingIntent.getActivity(c, id, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, channel) : new Notification.Builder(c);

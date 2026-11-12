@@ -98,6 +98,12 @@
         <activity android:name=".NetWorthActivity" android:exported="false" />
         <activity android:name=".TaxActivity" android:exported="false" />
         <activity android:name=".CardsActivity" android:exported="false" />
+        <activity android:name=".Refunds" android:exported="false" />
+        <activity android:name=".Reminders" android:exported="false" />
+        <activity android:name=".Loans" android:exported="false" />
+        <activity android:name=".Rewards" android:exported="false" />
+        <activity android:name=".VoiceActivity" android:exported="false" android:theme="@style/Translucent"
+            android:excludeFromRecents="true" android:taskAffinity=".voice" android:launchMode="singleTask" />
         <activity android:name=".AskActivity" android:exported="false" android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".LockActivity"
@@ -160,5 +166,21 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
         </receiver>
+        <receiver android:name=".PayWidget" android:exported="true" android:label="@string/widget_pay_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_pay_info" />
+        </receiver>
+
+        <!-- quick-settings tiles -->
+        <service android:name=".ScanTile" android:exported="true" android:label="@string/tile_scan"
+            android:icon="@drawable/ic_qr_scan" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
+        <service android:name=".VoiceTile" android:exported="true" android:label="@string/tile_voice"
+            android:icon="@drawable/ic_mic" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
     </application>
 </manifest>

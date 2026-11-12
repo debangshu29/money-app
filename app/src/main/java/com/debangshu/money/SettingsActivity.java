@@ -92,6 +92,7 @@ public class SettingsActivity extends Activity {
         sw(al, "Evening summary", "What you spent today, at " + hourName(hour), Store.S_DAILY, on -> Alerts.schedule(this));
         row(al, "Summary time", hourName(hour), v -> pickHour());
         sw(al, "Unusual payments & double charges", "Much bigger than normal, or the same amount twice in minutes", Store.S_UNUSUAL, null);
+        sw(al, "Refunds, renewals & EMIs", "Failed payments not back yet, plan / insurance / PUC expiry, FASTag low, return & warranty dates, EMI due", Store.S_REMIND, null);
         sw(al, "Fraud watch", "Late-night, foreign, or a big first payment to someone new — asks “Was this you?”", Store.S_FRAUD, null);
         sw(al, "Budget warnings", "At 80% and 100% of a budget", Store.S_BUDGET, null);
         sw(al, "Bills due & renewals", "Card bills 3 days before, subscriptions 2 days before", Store.S_BILLS, null);

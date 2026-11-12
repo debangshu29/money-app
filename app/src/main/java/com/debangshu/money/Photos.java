@@ -84,7 +84,11 @@ public final class Photos {
                 try (FileOutputStream out = new FileOutputStream(file(a, t))) { b.compress(Bitmap.CompressFormat.JPEG, 80, out); }
                 s.update(t);
                 if (req == REQ_CAMERA) try { a.getContentResolver().delete(src, null, null); } catch (Exception ignored) { }
-                a.runOnUiThread(() -> { Ui.toast(a, "Bill photo saved"); TxnSheet.show(a, t); });
+                a.runOnUiThread(() -> {
+                    Ui.toast(a, "Bill photo saved");
+                    if (Reminders.worthAsking(a, t)) Reminders.askReturn(a, t, () -> TxnSheet.show(a, t));
+                    else TxnSheet.show(a, t);
+                });
             } catch (Exception e) {
                 a.runOnUiThread(() -> Ui.toast(a, "Couldn't save the photo"));
             }

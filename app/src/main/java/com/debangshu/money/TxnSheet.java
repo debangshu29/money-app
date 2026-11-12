@@ -133,6 +133,44 @@ public final class TxnSheet {
             box.addView(spr, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 0));
         }
 
+        // ---- failed payment? · return / warranty
+        if ((t.sources & Txn.SRC_GAP) == 0 && !t.credit && (t.kind == Txn.NORMAL || t.kind == Txn.TRANSFER) && a instanceof MainActivity) {
+            LinearLayout xr = Ui.hbox(a);
+            boolean watched = false;
+            for (org.json.JSONObject w : Refunds.all(a)) if (t.id.equals(w.optString("txn"))) watched = true;
+            if (watched) {
+                TextView rf = Ui.chip(a, "↩️  Refund tracking", false);
+                rf.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+                rf.setOnClickListener(v -> { if (dlg[0] != null) dlg[0].dismiss(); a.startActivity(new android.content.Intent(a, Refunds.class)); });
+                xr.addView(rf, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
+            } else if (t.kind == Txn.NORMAL && System.currentTimeMillis() - t.time < 60L * 86400000) {
+                TextView rf = Ui.chip(a, "❌  Payment failed?", false);
+                rf.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+                rf.setOnClickListener(v -> new Ui.Popup(a).setTitle("Payment failed but money left?")
+                        .setMessage("Money will keep " + Fmt.plain(t.amount) + " out of your spending, watch for it to come back, and remind you if it doesn't.")
+                        .setPositiveButton("Track the refund", (d, w) -> {
+                            Refunds.watch(a, t, !Cats.PEOPLE.equals(t.category), t.ref, true);   // to a person: next day · shop / card: 5 days
+                            if (dlg[0] != null) dlg[0].dismiss();
+                            Ui.toast(a, "Watching for " + Fmt.plain(t.amount) + " to come back");
+                        }).setNegativeButton("Cancel", null).show());
+                xr.addView(rf, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
+            }
+            if (t.kind == Txn.NORMAL) {
+                org.json.JSONObject rem = Reminders.items(a);
+                boolean has = rem.has(Notices.RETURN + ":" + t.id) || rem.has(Notices.WARRANTY + ":" + t.id);
+                TextView rw = Ui.chip(a, has ? "⏰  Return / warranty ✓" : "⏰  Return / warranty", false);
+                rw.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+                rw.setOnClickListener(v -> { if (dlg[0] != null) dlg[0].dismiss(); Reminders.askReturn(a, t, null); });
+                xr.addView(rw);
+            }
+            if (xr.getChildCount() > 0) {
+                android.widget.HorizontalScrollView hs = new android.widget.HorizontalScrollView(a);
+                hs.setHorizontalScrollBarEnabled(false);
+                hs.addView(xr);
+                box.addView(hs, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 0));
+            }
+        }
+
         // ---- bill photo
         if (!t.photo.isEmpty() && Photos.file(a, t).exists()) {
             android.widget.ImageView th = Photos.thumb(a, t);
@@ -300,14 +338,20 @@ public final class TxnSheet {
         box.addView(info);
         box.addView(amt);
         box.addView(what);
-        new Ui.Popup(a).setTitle("Cash spent").setView(box)
+        TextView mic = Ui.chip(a, "🎤  Say it instead — “200 for chai”", true);
+        box.addView(mic, 1, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 0, 6));
+        android.app.AlertDialog[] cd = new android.app.AlertDialog[1];
+        mic.setOnClickListener(v -> { if (cd[0] != null) cd[0].dismiss(); VoiceActivity.start(a); });
+        Ui.Popup pop = new Ui.Popup(a);
+        pop.setTitle("Cash spent").setView(box)
                 .setPositiveButton("Add", (d, w) -> {
                     long paise = SmsParser.paise(amt.getText().toString());
                     if (paise <= 0) { Ui.toast(a, "Enter an amount"); return; }
                     Txn t = Cash.spend(a, paise, what.getText().toString().trim(), null);
                     if (Cats.OTHER.equals(t.category)) pickCategory(a, t, null);
                 })
-                .setNegativeButton("Cancel", null).show();
+                .setNegativeButton("Cancel", null);
+        cd[0] = pop.show();
     }
 
     static List<Txn> sortedNewest(List<Txn> l) {

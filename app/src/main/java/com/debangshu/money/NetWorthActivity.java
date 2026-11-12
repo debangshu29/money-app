@@ -62,6 +62,9 @@ public class NetWorthActivity extends Screen {
         for (Store.Bill b : latest.values()) if (!b.paid && b.due > 0) { cards += b.due; nc++; }
         if (cards > 0) { o += cards; if (owe != null) owe.add(new Line("💳", "Card bills due", nc + (nc == 1 ? " card" : " cards"), cards, null)); }
 
+        long loans = Loans.totalLeft(c);
+        if (loans > 0) { o += loans; if (owe != null) owe.add(new Line("🏦", "Loans (from EMIs)", "Plan → Loans & EMIs", loans, null)); }
+
         JSONArray a = s.list(KEY);
         for (int i = 0; i < a.length(); i++) {
             JSONObject x = a.optJSONObject(i);

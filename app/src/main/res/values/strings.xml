@@ -3,4 +3,7 @@
     <string name="app_name">Money</string>
     <string name="listener_label">Money – payment capture</string>
     <string name="widget_label">Money – today &amp; month</string>
+    <string name="widget_pay_label">Money – Scan &amp; Pay · cash</string>
+    <string name="tile_scan">Scan &amp; Pay</string>
+    <string name="tile_voice">Cash spend</string>
 </resources>

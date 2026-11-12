@@ -26,6 +26,9 @@ public final class Engine {
         SmsParser.Result r = SmsParser.parse(sender, body);
         Store s = Store.get(ctx);
         if (r == null) {
+            notices(ctx, sender, body, time, null);
+            Txn f = failed(ctx, sender, body, time);
+            if (f != null) return f;
             if (from != FROM_SMS_NOTIF && SmsParser.looksLikeBankTxn(sender, body)) s.addUnread(time, SmsParser.cleanSender(sender), body.trim());
             return null;
         }
@@ -70,13 +73,58 @@ public final class Engine {
         } else {
             fill(ctx, t, r);
         }
-        return save(ctx, t, r.card, r.wallet);
+        Txn saved = save(ctx, t, r.card, r.wallet);
+        notices(ctx, sender, body, time, saved);
+        return saved;
+    }
+
+    /** Renewals, FASTag, EMIs, reward points, failed payments & refunds — the messages around the payments. */
+    private static void notices(Context ctx, String sender, String body, long time, Txn saved) {
+        try {
+            Store s = Store.get(ctx);
+            boolean live = !s.inBatch() && System.currentTimeMillis() - time < 6 * 3600000L;
+            Notices.Renewal rn = Notices.renewal(sender, body);
+            if (rn != null) Reminders.onNotice(ctx, rn, time, live);
+            Notices.Emi e = Notices.emi(sender, body);
+            if (e != null) Loans.onEmi(ctx, e, saved, time);
+            Notices.Points p = Notices.points(sender, body);
+            if (p != null) Rewards.onPoints(ctx, p, time);
+            if (saved != null && saved.kind != Txn.SNAPSHOT) Refunds.onTxn(ctx, saved, sender, body);
+        } catch (Exception ignored) { }
+    }
+
+    /** "Rs 500 debited … failed": if no debit message came for it, record the debit (kept out of spending) and watch for the refund. */
+    private static Txn failed(Context ctx, String sender, String body, long time) {
+        Notices.Failed f = Notices.failed(sender, body);
+        if (f == null) return null;
+        if (Refunds.onFailedNotice(ctx, f, time) || !f.debited) return null;
+        Txn t = new Txn();
+        t.time = time;
+        t.raw = body.trim();
+        t.sender = SmsParser.cleanSender(sender);
+        t.srcKey = "sms:" + Integer.toHexString((t.sender + "|" + t.raw).hashCode());
+        t.sources = Txn.SRC_SMS;
+        t.account = f.account;
+        t.amount = f.amount;
+        t.merchant = f.merchant;
+        t.ref = f.ref;
+        t.kind = Txn.TRANSFER;
+        Txn saved = save(ctx, t, false, false);
+        Refunds.watch(ctx, saved, f.merchantPay, f.ref, false);
+        return saved;
     }
 
     /** A notification from Google Pay / PhonePe / Paytm / a bank app. */
     public static Txn app(Context ctx, String pkg, String title, String text, long time) {
         SmsParser.Result r = NotifParser.parseApp(pkg, title, text);
-        if (r == null) return null;
+        if (r == null) {
+            // "Payment failed" from a UPI app: only counts if a debit for it already came
+            try {
+                Notices.Failed f = Notices.failed(pkg, (title == null ? "" : title + ". ") + (text == null ? "" : text));
+                if (f != null) Refunds.onFailedNotice(ctx, f, time);
+            } catch (Exception ignored) { }
+            return null;
+        }
         Txn t = new Txn();
         t.time = time;
         t.raw = ((title == null ? "" : title.trim() + "\n") + (text == null ? "" : text.trim())).trim();
