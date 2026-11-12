@@ -96,6 +96,28 @@ final class InsightsPage {
             r.setPadding(0, Ui.dp(a, 8), 0, 0);
             sc.addView(r);
         }
+        // savings score + monthly report
+        Plan pl = s.plan();
+        boolean within = pl != null && pl.start < end && pl.end > month && pl.spent(all) <= pl.amount;
+        int score = Smart.score(income, spent, within);
+        LinearLayout sr = Ui.hbox(a);
+        sr.setGravity(Gravity.CENTER_VERTICAL);
+        sr.setPadding(0, Ui.dp(a, 12), 0, 0);
+        int scol = score >= 60 ? Ui.col(a, R.color.accent) : score >= 40 ? 0xFFF59E0B : Ui.col(a, R.color.danger);
+        TextView sp = Ui.text(a, "  " + score + "  ", 13, 0xFFFFFFFF, Ui.EXTRABOLD);
+        sp.setBackground(Ui.round(scol, Ui.dp(a, 10)));
+        sp.setPadding(Ui.dp(a, 4), Ui.dp(a, 3), Ui.dp(a, 4), Ui.dp(a, 3));
+        sr.addView(sp);
+        TextView sw = Ui.text(a, "  Savings score · " + Smart.scoreWord(score), 13, Ui.col(a, R.color.text2), Ui.SEMIBOLD);
+        sr.addView(Ui.oneLine(sw), Ui.weight1());
+        TextView rep = Ui.chip(a, "📄 Report", false);
+        rep.setOnClickListener(v -> Report.make(a, month));
+        sr.addView(rep);
+        sw.setOnClickListener(v -> new Ui.Popup(a).setTitle("Savings score " + score + "/100")
+                .setMessage("How much of the money that came in this month you kept, plus a bonus for staying within your budget.\n\n"
+                        + "80+ excellent · 60+ good · 40+ okay.\n\nTap “Report” for a PDF of the whole month — summary, categories, places and every payment.")
+                .setPositiveButton("OK", null).show());
+        sc.addView(sr);
         body.addView(sc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
 
         // ---- where it went
@@ -174,6 +196,61 @@ final class InsightsPage {
         // ---- where you spend (places, from saved locations)
         View places = places(all, month, end);
         if (places != null) body.addView(places, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+
+        // ---- prices you pay (personal inflation)
+        List<Smart.PriceChange> pc = Smart.inflation(all, now);
+        if (!pc.isEmpty()) {
+            LinearLayout ic = Ui.card(a);
+            ic.addView(Ui.sectionTitle(a, "Prices you pay"));
+            TextView hint = Ui.sub(a, "Your usual payment at the same place — last 3 months vs the 3 before.");
+            hint.setPadding(0, 0, 0, Ui.dp(a, 6));
+            ic.addView(hint);
+            for (int i = 0; i < Math.min(5, pc.size()); i++) {
+                Smart.PriceChange c = pc.get(i);
+                boolean up = c.pct > 0;
+                LinearLayout r = Ui.hbox(a);
+                r.setGravity(Gravity.CENTER_VERTICAL);
+                r.setPadding(0, Ui.dp(a, 8), 0, Ui.dp(a, 8));
+                r.addView(Ui.badge(a, Cats.emoji(c.category), Cats.color(c.category), 34));
+                LinearLayout mid = Ui.vbox(a);
+                mid.setPadding(Ui.dp(a, 12), 0, Ui.dp(a, 8), 0);
+                mid.addView(Ui.oneLine(Ui.text(a, c.name, 14.5f, Ui.SEMIBOLD)));
+                mid.addView(Ui.oneLine(Ui.sub(a, Fmt.rs(c.before) + " → " + Fmt.rs(c.now) + " a time")));
+                r.addView(mid, Ui.weight1());
+                r.addView(Ui.text(a, (up ? "▲ " : "▼ ") + Math.abs(c.pct) + "%", 14, up ? Ui.col(a, R.color.danger) : Ui.col(a, R.color.success), Ui.EXTRABOLD));
+                ic.addView(r);
+            }
+            body.addView(ic, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+        }
+
+        // ---- charges & fees
+        long fy = Smart.fyStart(now);
+        List<Txn> fees = Smart.charges(all, fy);
+        LinearLayout fc = Ui.card(a);
+        fc.addView(Ui.sectionTitle(a, "Charges & fees"));
+        if (fees.isEmpty()) {
+            fc.addView(Ui.sub(a, "No bank charges, card fees or penalties spotted in " + Smart.fyName(fy) + " ✓"));
+        } else {
+            long tot = 0;
+            for (Txn t : fees) tot += t.amount;
+            fc.addView(Ui.text(a, Fmt.rs(tot), 22, Ui.col(a, R.color.danger), Ui.EXTRABOLD));
+            fc.addView(Ui.sub(a, fees.size() + (fees.size() == 1 ? " charge" : " charges") + " in " + Smart.fyName(fy)
+                    + " — SMS alerts, annual fees, late fees, penalties. Most can be avoided or waived on request."));
+            for (int i = 0; i < Math.min(3, fees.size()); i++) fc.addView(Rows.txn(a, fees.get(i), true));
+            if (fees.size() > 3) {
+                TextView more = Ui.chip(a, "See all " + fees.size(), false);
+                more.setOnClickListener(v -> {
+                    LinearLayout b = Ui.vbox(a);
+                    for (Txn t : fees) b.addView(Rows.txn(a, t, true));
+                    android.widget.ScrollView sv = new android.widget.ScrollView(a);
+                    sv.addView(b);
+                    new Ui.Popup(a).sheet().setTitle("Charges & fees · " + Smart.fyName(fy)).setView(Ui.capHeight(sv, 0.6f))
+                            .setNegativeButton("Close", null).show();
+                });
+                fc.addView(more, Ui.margins(Ui.lp(-2, -2), a, 0, 8, 0, 0));
+            }
+        }
+        body.addView(fc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
     }
 
     /** Groups this month's payments by the area they were made in (needs “Save where you paid”). */

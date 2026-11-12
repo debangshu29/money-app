@@ -110,6 +110,7 @@ public final class Engine {
             if (!saved.account.isEmpty()) s.setGaps(saved.account, Ledger.gaps(s.txns(), saved.account));
         }
         if (!s.inBatch() && saved.kind != Txn.SNAPSHOT) ScanPay.match(ctx, saved);   // started from Scan & Pay? → name + category
+        if (isNew[0] && !s.inBatch() && saved.kind == Txn.NORMAL) People.autoMatch(ctx, saved);   // someone paying you back?
         if (isNew[0] && !saved.credit && Cats.CASH.equals(saved.category) && saved.raw.toLowerCase(java.util.Locale.ROOT).contains("atm")) Cash.atm(ctx, saved);
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);
         if (!s.inBatch() && !saved.account.isEmpty()) {

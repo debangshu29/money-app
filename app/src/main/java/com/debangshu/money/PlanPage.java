@@ -39,7 +39,7 @@ final class PlanPage {
         body.setPadding(Ui.dp(a, 16), 0, Ui.dp(a, 16), 0);
         box.addView(body);
         TextView intro = Ui.sub(a, "Set things up once — Money keeps them up to date by itself.");
-        intro.setPadding(Ui.dp(a, 4), 0, 0, Ui.dp(a, 12));
+        intro.setPadding(Ui.dp(a, 6), 0, 0, Ui.dp(a, 4));
         body.addView(intro);
 
         Store s = Store.get(a);
@@ -80,8 +80,39 @@ final class PlanPage {
         View cash = tile("💵", 0xFF65A30D, "Cash wallet", Cash.on(a) ? Fmt.rs(Cash.balance(a)) + " in your wallet" : "Track cash without typing every spend",
                 -1, v -> Cash.sheet(a));
 
+        // Goals · Challenges · Net worth
+        float gp = Goals.progress(a);
+        View goals = tile("🏆", 0xFFF59E0B, "Goals", Goals.summary(a), gp >= 0 ? Math.min(1f, gp) : -1, v -> a.startActivity(new Intent(a, Goals.class)), false);
+        View chal = tile("🔥", 0xFFEF4444, "Challenges", Challenges.summary(a), -1, v -> a.startActivity(new Intent(a, Challenges.class)));
+        View nw = tile("💎", 0xFF0EA5E9, "Net worth", NetWorthActivity.summary(a), -1, v -> a.startActivity(new Intent(a, NetWorthActivity.class)));
+
+        // People
+        long[] pp = People.totals(a);
+        String pl = pp[0] == 0 && pp[1] == 0 ? "Split bills, lend & borrow — settled automatically"
+                : (pp[0] > 0 ? "You'll get " + Fmt.rs(pp[0]) : "") + (pp[0] > 0 && pp[1] > 0 ? " · " : "") + (pp[1] > 0 ? "you owe " + Fmt.rs(pp[1]) : "");
+        View people = tile("👥", 0xFFA855F7, "People", pl, -1, v -> a.startActivity(new Intent(a, People.class)));
+
+        // Tools
+        View tax = tile("🧾", 0xFF6366F1, "Tax helper", TaxActivity.summary(a), -1, v -> a.startActivity(new Intent(a, TaxActivity.class)));
+        float cu = CardsActivity.usedFrac(a);
+        View cards = tile("💳", 0xFF6D28D9, "Credit cards", CardsActivity.summary(a), cu, v -> a.startActivity(new Intent(a, CardsActivity.class)));
+
+        body.addView(label("Everyday"));
         body.addView(row(budget, bills));
         body.addView(row(accounts, cash));
+        body.addView(label("Grow"));
+        body.addView(row(goals, chal));
+        body.addView(label("Together"));
+        body.addView(row(people, nw));
+        body.addView(label("Tools"));
+        body.addView(row(tax, cards));
+    }
+
+    private TextView label(String s) {
+        TextView t = Ui.text(a, s.toUpperCase(java.util.Locale.ROOT), 11.5f, Ui.col(a, R.color.text2), Ui.BOLD);
+        t.setLetterSpacing(0.12f);
+        t.setPadding(Ui.dp(a, 6), Ui.dp(a, 8), 0, Ui.dp(a, 10));
+        return t;
     }
 
     private View row(View l, View r) {
@@ -94,6 +125,10 @@ final class PlanPage {
     }
 
     private View tile(String emoji, int color, String title, String line, float frac, View.OnClickListener l) {
+        return tile(emoji, color, title, line, frac, l, true);
+    }
+
+    private View tile(String emoji, int color, String title, String line, float frac, View.OnClickListener l, boolean budgetBar) {
         LinearLayout t = Ui.card(a);
         t.setMinimumHeight(Ui.dp(a, 132));
         t.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 22));
@@ -106,7 +141,8 @@ final class PlanPage {
         t.addView(ln);
         if (frac >= 0) {
             Charts.Progress pr = new Charts.Progress(a);
-            pr.budget(frac, 6);
+            if (budgetBar) pr.budget(frac, 6);
+            else pr.set(frac, color);
             t.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 8, 0, 0));
         }
         t.setOnClickListener(l);

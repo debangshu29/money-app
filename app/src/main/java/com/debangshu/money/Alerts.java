@@ -99,6 +99,7 @@ public final class Alerts {
                     post(c, CH_ALERTS, id(t), "Unusual payment: " + Fmt.plain(t.amount) + who, why + ". Tap if it wasn't you.", t.id);
                 }
             }
+            if (s.flag(Store.S_FRAUD) && !t.review) fraud(c, s, all, t, who);
             if (s.flag(Store.S_BUDGET)) budget(c, t);
         }
         if (s.flag(Store.S_EACH) && t.kind != Txn.SNAPSHOT) {
@@ -107,6 +108,38 @@ public final class Alerts {
                     + " · tap to change";
             post(c, CH_EACH, id(t), title, text, t.id);
         }
+    }
+
+    private static final java.util.regex.Pattern FOREIGN = java.util.regex.Pattern.compile(
+            "international|\\bintl\\b|foreign|cross[- ]border|forex|\\b(?:usd|eur|gbp|aed|sgd|aud|cad|jpy|chf)\\b|\\$ ?\\d",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+
+    /** Fraud watch: late-night, foreign, or a big first payment to someone new — one combined alert. */
+    static String fraudWhy(List<Txn> all, Txn t) {
+        List<String> why = new java.util.ArrayList<>();
+        int h = Fmt.cal(t.time).get(java.util.Calendar.HOUR_OF_DAY);
+        if (h < 5 && t.amount >= 50000) why.add("made at " + Fmt.time(t.time) + " at night");
+        if (FOREIGN.matcher(t.raw).find()) why.add("looks international / foreign currency");
+        if (t.amount >= 500000 && !t.merchant.isEmpty()) {
+            String k = Cats.key(t);
+            boolean seen = false;
+            for (Txn o : all) if (o != t && !o.id.equals(t.id) && !o.credit && k.equals(Cats.key(o))) { seen = true; break; }
+            if (!seen) why.add("first ever payment to " + t.merchant);
+        }
+        if (why.isEmpty()) return null;
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < why.size(); i++) b.append(i == 0 ? "" : i == why.size() - 1 ? " and " : ", ").append(why.get(i));
+        String r = b.toString();
+        return Character.toUpperCase(r.charAt(0)) + r.substring(1);
+    }
+
+    private static void fraud(Context c, Store s, List<Txn> all, Txn t, String who) {
+        String why = fraudWhy(all, t);
+        if (why == null) return;
+        t.review = true;
+        s.update(t);
+        post(c, CH_ALERTS, id(t), "🛡️ Was this you? " + Fmt.plain(t.amount) + who,
+                why + ". If not, call your bank now to block the card / UPI. Tap to check.", t.id);
     }
 
     private static int id(Txn t) { return 1000 + (t.id.hashCode() & 0xFFFFF); }

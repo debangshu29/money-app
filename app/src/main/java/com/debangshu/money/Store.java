@@ -54,6 +54,7 @@ public final class Store {
     private Plan plan;                                                // the budget running now (or null)
     private final Map<String, String> aliases = new HashMap<>();      // debit card key → its bank account key
     private final java.util.Set<String> deletedAccounts = new java.util.TreeSet<>();   // accounts you deleted (don't come back)
+    private JSONObject extra = new JSONObject();   // people, goals, challenges, assets… (each feature keeps its own list)
     private final List<String[]> unread = new ArrayList<>();          // bank messages that couldn't be read: time, sender, body
     private final List<Plan> pastPlans = new ArrayList<>();
     private int batch = 0;
@@ -66,7 +67,8 @@ public final class Store {
             S_DAILY = "daily_summary", S_UNUSUAL = "alert_unusual", S_BUDGET = "alert_budget", S_BILLS = "alert_bills",
             S_EACH = "notify_each", S_AUTO_BACKUP = "auto_backup", S_ATM_SPEND = "atm_is_spend", S_AUTO_UPDATE = "auto_update",
             S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
-            S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name";
+            S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
+            S_FRAUD = "fraud_watch";
 
     private Store(Context c) {
         ctx = c;
@@ -280,6 +282,29 @@ public final class Store {
     public synchronized void setAccountHidden(Account a, boolean h) { a.hidden = h; changed(); }
 
     public synchronized boolean isDeleted(String key) { return deletedAccounts.contains(key); }
+
+    // ------------------------------------------------------------------ lists for People, Goals, Challenges, Net worth…
+
+    /** A copy of a feature's list (empty if none). */
+    public synchronized JSONArray list(String key) {
+        JSONArray a = extra.optJSONArray(key);
+        try { return a == null ? new JSONArray() : new JSONArray(a.toString()); } catch (Exception e) { return new JSONArray(); }
+    }
+
+    public synchronized void putList(String key, JSONArray a) {
+        try { extra.put(key, a); } catch (Exception ignored) { }
+        changed();
+    }
+
+    public synchronized JSONObject obj(String key) {
+        JSONObject o = extra.optJSONObject(key);
+        try { return o == null ? new JSONObject() : new JSONObject(o.toString()); } catch (Exception e) { return new JSONObject(); }
+    }
+
+    public synchronized void putObj(String key, JSONObject o) {
+        try { extra.put(key, o); } catch (Exception ignored) { }
+        changed();
+    }
 
     public synchronized List<String> deletedAccounts() { return new ArrayList<>(deletedAccounts); }
 
@@ -523,6 +548,7 @@ public final class Store {
         JSONArray del = new JSONArray();
         for (String d : deletedAccounts) del.put(d);
         o.put("deletedAccounts", del);
+        o.put("extra", extra);
         JSONArray un = new JSONArray();
         for (String[] u : unread) un.put(new JSONArray().put(u[0]).put(u[1]).put(u[2]));
         o.put("unread", un);
@@ -533,6 +559,7 @@ public final class Store {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
         plan = null; pastPlans.clear(); aliases.clear(); unread.clear(); deletedAccounts.clear();
         readMap(o.optJSONObject("aliases"), aliases);
+        extra = o.optJSONObject("extra") == null ? new JSONObject() : o.optJSONObject("extra");
         JSONArray del = o.optJSONArray("deletedAccounts");
         if (del != null) for (int i = 0; i < del.length(); i++) deletedAccounts.add(del.optString(i));
         JSONArray un = o.optJSONArray("unread");
@@ -588,6 +615,7 @@ public final class Store {
     public synchronized void wipe() {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
         plan = null; pastPlans.clear(); aliases.clear(); unread.clear(); deletedAccounts.clear();
+        extra = new JSONObject();
         changed();
     }
 

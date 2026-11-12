@@ -123,6 +123,16 @@ public final class TxnSheet {
             }
         }
 
+        // ---- split / lend / borrow
+        if ((t.sources & Txn.SRC_GAP) == 0 && (t.kind == Txn.NORMAL || t.kind == Txn.TRANSFER) && a instanceof MainActivity) {
+            TextView sp = Ui.chip(a, t.credit ? "🤝  Borrowed / paid back" : "👥  Split / lend", false);
+            sp.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+            sp.setOnClickListener(v -> { if (dlg[0] != null) dlg[0].dismiss(); People.fromPayment(a, t); });
+            LinearLayout spr = Ui.hbox(a);
+            spr.addView(sp);
+            box.addView(spr, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 0));
+        }
+
         // ---- bill photo
         if (!t.photo.isEmpty() && Photos.file(a, t).exists()) {
             android.widget.ImageView th = Photos.thumb(a, t);

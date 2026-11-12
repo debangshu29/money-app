@@ -1,24 +1,37 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.5 — a calmer layout, Safe to spend today, cash wallet, spending calendar.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.8 — People, Goals, Challenges, monthly report, fraud watch, net worth, tax helper, credit cards.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
 
-## Finding your way (version 1.5)
+## Finding your way (version 1.8)
 
 | Tab | What's there |
 |---|---|
 | 🏠 **Home** | **Safe to spend today** (with a budget) or *Spent this month* · Today ⇄ Month: Money out / Money in (tap for where it went) · Balances · Latest 5 · strips for “needs a look” and bills due soon |
 | 📄 **Activity** | **List ⇄ Calendar** — the calendar colours each day by spending (green within your daily budget share, red over); tap a day for its payments · search · filters · **+** for a cash spend |
 | ⭕ **Scan & Pay** | the round button |
-| 📊 **Insights** | **Ask** bar · any month: spent / in / saved · categories · day by day · top places · **Where you spend** (areas, tap for the map) |
-| 🧩 **Plan** | **Budget** (with category limits) · **Bills & subscriptions** · **Accounts** (tap one to rename, correct, merge, delete) · **Cash wallet** |
+| 📊 **Insights** | **Ask** bar · any month: spent / in / saved + **savings score** + **📄 Report** (PDF) · categories · day by day · top places · **Where you spend** · **Prices you pay** · **Charges & fees** |
+| 🧩 **Plan** | *Everyday:* Budget · Bills & subscriptions · Accounts · Cash wallet — *Grow:* Goals · Challenges — *Together:* People · Net worth — *Tools:* Tax helper · Credit cards |
 
 **Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
+
+## People, goals and the bigger picture (version 1.8)
+
+- **Split / lend** — open any payment → *👥 Split / lend* (or *🤝 Borrowed / paid back* on money in). Pick the people; when one of them later sends you that amount, Money marks it settled and doesn't count it as income. Plan → People shows who owes what, with a WhatsApp reminder that includes your UPI ID.
+- **Goals** — something to save for, with a date. Money compares what it needs each month with what you usually save (money in − money out, last 3 months).
+- **Challenges** — no-spend days, no food delivery, no shopping, or a daily limit; streaks and the last 14 days as dots.
+- **Subscription cleaner** — in Bills & subscriptions: what each costs a year, price rises, mark “cancel this” or “still using it”.
+- **Savings score & monthly report** — Insights: a 0–100 score and a 📄 PDF of the month saved to `Documents/Money/Reports`.
+- **Prices you pay** — the same shop / app costing more than 3 months ago. **Charges & fees** — SMS charges, annual / late fees, penalties this financial year.
+- **Fraud watch** — a “Was this you?” alert for payments late at night, abroad / in foreign currency, or big first-time payments (Settings → Alerts).
+- **Net worth** — bank + cash + investments + money owed to you − card bills − loans; add gold, FDs or loans once.
+- **Tax helper** — April–March: 80C, 80D, NPS, rent, donations found in your payments, with limits; leave out / add; save as CSV. Only for the old regime, and not tax advice.
+- **Credit cards** — % of limit used (under 30% is good), latest bill, statement day and the **best card to use today** (longest interest-free time).
 
 ## Fixing a wrong account (version 1.4.1)
 
@@ -131,7 +144,9 @@ D:\money
     │   ├── Backup*.java       encrypted backups to Documents/Money/Backups, CSV export
     │   ├── Alerts.java        notifications, evening summary, reminders
     │   ├── SmsReceiver / PayListener / BgJob / DailyReceiver   background parts
-    │   ├── MainActivity + HomePage / ActivityPage / InsightsPage / AskPage   the 4 tabs
+    │   ├── MainActivity + HomePage / ActivityPage / InsightsPage / PlanPage   the 4 tabs
+    │   ├── People / Goals / Challenges / NetWorthActivity / TaxActivity / CardsActivity   Plan screens
+    │   ├── Smart.java / Report.java   price changes, fees, savings score, monthly PDF
     │   └── SetupActivity / SettingsActivity / TxnSheet / LockActivity / Widget / Updater
     ├── res\    colours, icons, widget layout
     └── AndroidManifest.xml
