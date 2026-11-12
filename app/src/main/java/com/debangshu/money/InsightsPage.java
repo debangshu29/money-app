@@ -126,8 +126,7 @@ final class InsightsPage {
         dd.addView(Ui.sectionTitle(a, "Day by day"));
         TextView picked = Ui.sub(a, "Tap a bar to see that day");
         Charts.Bars bars = new Charts.Bars(a);
-        Long monthBudget = budgets(s).get("");
-        long perDay = monthBudget == null ? 0 : monthBudget / Fmt.daysInMonth(month);
+        long perDay = 0;
         int todayIdx = thisMonth ? Fmt.cal(now).get(java.util.Calendar.DAY_OF_MONTH) - 1 : -1;
         bars.set(days, todayIdx, perDay, (day, v) -> picked.setText((day + 1) + " " + Fmt.monthShort(month) + ": " + Fmt.rs(v)
                 + (perDay > 0 ? (v > perDay ? " · over the daily budget" : " · within the daily budget") : "")));
@@ -180,12 +179,21 @@ final class InsightsPage {
         }
         body.addView(rcard, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
 
-        // ---- budgets
+        // ---- your budget + category limits
         LinearLayout bc = Ui.card(a);
-        bc.addView(Ui.sectionTitle(a, "Budgets"));
+        bc.addView(Ui.sectionTitle(a, "Budget"));
+        Plan plan = s.plan();
+        View pr = Rows.amountRow(a, "🎯", Ui.col(a, R.color.accent), plan == null ? "Start a budget" : "Your budget · " + plan.range(),
+                plan == null ? "Pick an amount and a start date — Money counts every payment against it" : plan.status(all, now),
+                plan == null ? 0 : plan.spent(all), plan == null ? -1 : plan.spent(all) / (float) Math.max(1, plan.amount));
+        pr.setOnClickListener(v -> a.startActivity(new android.content.Intent(a, BudgetActivity.class)));
+        bc.addView(pr);
+        TextView lt = Ui.text(a, "Category limits (per month)", 14, Ui.col(a, R.color.text2), Ui.BOLD);
+        lt.setPadding(Ui.dp(a, 4), Ui.dp(a, 14), 0, Ui.dp(a, 2));
+        bc.addView(lt);
         Map<String, Long> budgets = s.budgets();
         if (budgets.isEmpty()) {
-            bc.addView(Ui.sub(a, "Set limits and get a warning at 80% and 100%. Money can suggest them from your last 3 months."));
+            bc.addView(Ui.sub(a, "Optional: limits for single categories (e.g. Food ₹6,000), with a warning at 80% and 100%."));
         } else {
             for (Map.Entry<String, Long> e : budgets.entrySet()) {
                 String c = e.getKey();
@@ -197,7 +205,7 @@ final class InsightsPage {
                         label, Fmt.rs(used) + " of " + Fmt.rs(e.getValue()) + (f >= 1 ? " · over" : " · " + Fmt.rs(e.getValue() - used) + " left"), used, f));
             }
         }
-        TextView setB = Ui.button(a, budgets.isEmpty() ? "Suggest budgets" : "Edit budgets", budgets.isEmpty());
+        TextView setB = Ui.button(a, budgets.isEmpty() ? "Set category limits" : "Edit limits", false);
         setB.setOnClickListener(v -> editBudgets());
         LinearLayout br = Ui.hbox(a);
         br.setPadding(0, Ui.dp(a, 10), 0, 0);
@@ -205,8 +213,6 @@ final class InsightsPage {
         bc.addView(br);
         body.addView(bc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
     }
-
-    private static Map<String, Long> budgets(Store s) { return s.budgets(); }
 
     private View stat(String label, String value, int color) {
         LinearLayout c = Ui.vbox(a);
@@ -246,14 +252,13 @@ final class InsightsPage {
         Map<String, Long> cur = s.budgets();
         LinkedHashMap<String, Long> avg = Ledger.byCategory(all, from, ms);
         List<String> cats = new ArrayList<>();
-        cats.add("");
         for (String c : avg.keySet()) if (!cats.contains(c) && !Cats.CASH.equals(c) && !Cats.UNRECORDED.equals(c)) cats.add(c);
         for (String c : cur.keySet()) if (!cats.contains(c)) cats.add(c);
         int months = 3;
         LinearLayout b = Ui.vbox(a);
         int p = Ui.dp(a, 20);
         b.setPadding(p, 0, p, 0);
-        TextView info = Ui.sub(a, "Filled in from your average over the last 3 months. Clear a box for no budget.");
+        TextView info = Ui.sub(a, "Filled in from your average over the last 3 months. Clear a box for no limit.");
         info.setPadding(0, 0, 0, Ui.dp(a, 8));
         b.addView(info);
         List<EditText> fields = new ArrayList<>();
@@ -278,7 +283,7 @@ final class InsightsPage {
         }
         android.widget.ScrollView sv = new android.widget.ScrollView(a);
         sv.addView(b);
-        new Ui.Popup(a).setTitle("Monthly budgets (₹)").setView(Ui.capHeight(sv, 0.55f))
+        new Ui.Popup(a).setTitle("Category limits per month (₹)").setView(Ui.capHeight(sv, 0.55f))
                 .setPositiveButton("Save", (d, w) -> {
                     for (int i = 0; i < cats.size(); i++) {
                         String txt = fields.get(i).getText().toString().trim();

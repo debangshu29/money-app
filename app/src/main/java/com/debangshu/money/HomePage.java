@@ -9,7 +9,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Home: this month at a glance, what needs a look, what's coming, balances, latest payments. */
 final class HomePage {
@@ -60,42 +62,11 @@ final class HomePage {
             body.addView(w, Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 12));
         }
 
-        // ---- hero: this month
+        // ---- hero: your budget (when one is running), otherwise this month
         long ms = Fmt.startOfMonth(now);
-        long spent = Ledger.spent(all, ms, now + 1);
-        long lastSame = Ledger.spent(all, Fmt.addMonths(ms, -1), Fmt.addMonths(now, -1) + 1);
-        long forecast = Ledger.forecast(all, now);
-        Long budget = s.budgets().get("");
-        LinearLayout hero = Ui.vbox(a);
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[]{Ui.col(a, R.color.hero1), Ui.col(a, R.color.hero2)});
-        g.setCornerRadius(Ui.dp(a, 26));
-        hero.setBackground(g);
-        hero.setPadding(Ui.dp(a, 20), Ui.dp(a, 18), Ui.dp(a, 20), Ui.dp(a, 20));
-        hero.addView(Ui.text(a, "Spent in " + Fmt.MONTH[Fmt.cal(now).get(java.util.Calendar.MONTH)], 14, 0xD9FFFFFF, Ui.SEMIBOLD));
-        hero.addView(Ui.text(a, Fmt.rs(spent), 38, 0xFFFFFFFF, Ui.EXTRABOLD));
-        String cmp;
-        if (lastSame == 0) cmp = "Tracking automatically from your messages";
-        else {
-            long diff = spent - lastSame;
-            int pct = (int) Math.round(Math.abs(diff) * 100.0 / lastSame);
-            cmp = (diff <= 0 ? "▼ " + Fmt.rs(-diff) + " (" + pct + "%) less" : "▲ " + Fmt.rs(diff) + " (" + pct + "%) more")
-                    + " than this time last month";
-        }
-        hero.addView(Ui.text(a, cmp, 13, 0xE6FFFFFF, Ui.REGULAR));
-        if (spent > 0) hero.addView(Ui.text(a, "Heading for about " + Fmt.rs(forecast) + " by the end of the month", 13, 0xE6FFFFFF, Ui.REGULAR));
-        if (budget != null && budget > 0) {
-            Charts.Progress pr = new Charts.Progress(a);
-            float f = spent / (float) budget;
-            pr.set(f, f >= 1 ? 0xFFFFB4B4 : 0xFFFFFFFF);
-            hero.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 14, 0, 6));
-            int daysLeft = Fmt.daysInMonth(now) - Fmt.cal(now).get(java.util.Calendar.DAY_OF_MONTH) + 1;
-            long left = budget - spent;
-            hero.addView(Ui.text(a, left >= 0 ? Fmt.rs(left) + " left of " + Fmt.rs(budget) + " · " + Fmt.rs(left / Math.max(1, daysLeft)) + " a day"
-                    : "Over budget by " + Fmt.rs(-left), 13, 0xFFFFFFFF, Ui.SEMIBOLD));
-        }
-        hero.setOnClickListener(v -> a.show(MainActivity.INSIGHTS));
-        body.addView(hero, Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 12));
+        Plan plan = s.plan();
+        if (plan != null) body.addView(budgetHero(plan, all, now), Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 12));
+        else body.addView(monthHero(all, now, ms), Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 12));
 
         // ---- today / money in
         long today = Fmt.startOfDay(now);
@@ -107,6 +78,25 @@ final class HomePage {
         two.addView(mini("Money in", Fmt.rs(Ledger.income(all, ms, now + 1)), "this month"),
                 Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, 6, 0, 0, 0));
         body.addView(two, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+
+        if (plan != null && plan.started(now)) {
+            LinkedHashMap<String, Long> cats = plan.byCategory(all);
+            if (!cats.isEmpty()) {
+                LinearLayout c = Ui.card(a);
+                c.addView(Ui.sectionTitle(a, "Where your budget is going"));
+                int i = 0;
+                for (Map.Entry<String, Long> e : cats.entrySet()) {
+                    if (i++ >= 5) break;
+                    int pct = (int) Math.round(e.getValue() * 100.0 / Math.max(1, plan.amount));
+                    View row = Rows.amountRow(a, Cats.emoji(e.getKey()), Cats.color(e.getKey()), e.getKey(), pct + "% of budget",
+                            e.getValue(), e.getValue() / (float) Math.max(1, plan.amount));
+                    row.setOnClickListener(v -> openBudget());
+                    c.addView(row);
+                }
+                c.addView(link("Open budget", v -> openBudget()));
+                body.addView(c, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+            }
+        }
 
         List<Txn> vis = s.visible();
         if (vis.isEmpty()) {
@@ -191,6 +181,72 @@ final class HomePage {
         for (int i = 0; i < Math.min(7, vis.size()); i++) rc.addView(Rows.txn(a, vis.get(i), true));
         rc.addView(link("See all activity", v -> a.show(MainActivity.ACTIVITY)));
         body.addView(rc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+    }
+
+    private void openBudget() { a.startActivity(new Intent(a, BudgetActivity.class)); }
+
+    private View budgetHero(Plan p, List<Txn> all, long now) {
+        long spent = p.spent(all);
+        long left = p.amount - spent;
+        float f = p.amount <= 0 ? 0 : spent / (float) p.amount;
+        LinearLayout hero = Ui.vbox(a);
+        int c1 = f >= 1 ? 0xFFD14343 : f >= 0.8f ? 0xFFE08A00 : Ui.col(a, R.color.hero1);
+        int c2 = f >= 1 ? 0xFF9F2A4B : f >= 0.8f ? 0xFFB4561A : Ui.col(a, R.color.hero2);
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{c1, c2});
+        g.setCornerRadius(Ui.dp(a, 26));
+        hero.setBackground(g);
+        hero.setPadding(Ui.dp(a, 20), Ui.dp(a, 18), Ui.dp(a, 20), Ui.dp(a, 20));
+        hero.addView(Ui.text(a, "Budget · " + p.range(), 14, 0xD9FFFFFF, Ui.SEMIBOLD));
+        if (!p.started(now)) {
+            hero.addView(Ui.text(a, Fmt.rs(p.amount), 38, 0xFFFFFFFF, Ui.EXTRABOLD));
+            hero.addView(Ui.text(a, p.status(all, now), 13.5f, 0xFFFFFFFF, Ui.SEMIBOLD));
+        } else {
+            hero.addView(Ui.text(a, left >= 0 ? Fmt.rs(left) + " left" : Fmt.rs(-left) + " over", 36, 0xFFFFFFFF, Ui.EXTRABOLD));
+            hero.addView(Ui.text(a, Fmt.rs(spent) + " spent of " + Fmt.rs(p.amount), 14, 0xF2FFFFFF, Ui.SEMIBOLD));
+            Charts.Progress pr = new Charts.Progress(a);
+            pr.set(f, 0xFFFFFFFF);
+            hero.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 14, 0, 8));
+            hero.addView(Ui.text(a, p.status(all, now), 13.5f, 0xFFFFFFFF, Ui.SEMIBOLD));
+            if (spent > 0 && !p.finished(now)) {
+                long proj = p.projected(all, now);
+                if (proj > p.amount) hero.addView(Ui.text(a, "At this pace: about " + Fmt.rs(proj) + " by the end", 13, 0xE6FFFFFF, Ui.REGULAR));
+            }
+        }
+        hero.setOnClickListener(v -> openBudget());
+        return hero;
+    }
+
+    private View monthHero(List<Txn> all, long now, long ms) {
+        long spent = Ledger.spent(all, ms, now + 1);
+        long lastSame = Ledger.spent(all, Fmt.addMonths(ms, -1), Fmt.addMonths(now, -1) + 1);
+        long forecast = Ledger.forecast(all, now);
+        LinearLayout hero = Ui.vbox(a);
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
+                new int[]{Ui.col(a, R.color.hero1), Ui.col(a, R.color.hero2)});
+        g.setCornerRadius(Ui.dp(a, 26));
+        hero.setBackground(g);
+        hero.setPadding(Ui.dp(a, 20), Ui.dp(a, 18), Ui.dp(a, 20), Ui.dp(a, 20));
+        hero.addView(Ui.text(a, "Spent in " + Fmt.MONTH[Fmt.cal(now).get(java.util.Calendar.MONTH)], 14, 0xD9FFFFFF, Ui.SEMIBOLD));
+        hero.addView(Ui.text(a, Fmt.rs(spent), 38, 0xFFFFFFFF, Ui.EXTRABOLD));
+        String cmp;
+        if (lastSame == 0) cmp = "Tracking automatically from your messages";
+        else {
+            long diff = spent - lastSame;
+            int pct = (int) Math.round(Math.abs(diff) * 100.0 / lastSame);
+            cmp = (diff <= 0 ? "▼ " + Fmt.rs(-diff) + " (" + pct + "%) less" : "▲ " + Fmt.rs(diff) + " (" + pct + "%) more")
+                    + " than this time last month";
+        }
+        hero.addView(Ui.text(a, cmp, 13, 0xE6FFFFFF, Ui.REGULAR));
+        if (spent > 0) hero.addView(Ui.text(a, "Heading for about " + Fmt.rs(forecast) + " by the end of the month", 13, 0xE6FFFFFF, Ui.REGULAR));
+        TextView set = Ui.text(a, "＋  Set a budget", 14, 0xFFFFFFFF, Ui.BOLD);
+        set.setPadding(Ui.dp(a, 16), Ui.dp(a, 8), Ui.dp(a, 16), Ui.dp(a, 8));
+        set.setBackground(Ui.rippleRound(a, 0x33FFFFFF, 20));
+        set.setOnClickListener(v -> openBudget());
+        LinearLayout r = Ui.hbox(a);
+        r.addView(set);
+        hero.addView(r, Ui.margins(Ui.matchWrap(), a, 0, 14, 0, 0));
+        hero.setOnClickListener(v -> a.show(MainActivity.INSIGHTS));
+        return hero;
     }
 
     private View mini(String label, String value, String sub) {

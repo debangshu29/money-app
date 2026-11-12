@@ -85,6 +85,7 @@ final class AskPage {
         if (im != null) im.hideSoftInputFromWindow(input.getWindowToken(), 0);
         chat.addView(bubble(q, true));
         Store s = Store.get(a);
+        Ask.plan = s.plan();
         Ask.Answer ans = Ask.answer(q, s.txns(), s.accounts(), System.currentTimeMillis());
         LinearLayout card = Ui.card(a);
         card.addView(Ui.text(a, ans.text, 15, Ui.SEMIBOLD));

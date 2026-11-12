@@ -1,5 +1,7 @@
-First version of Money 🎉
-• Reads bank SMS + Google Pay / PhonePe / Paytm notifications — no typing amounts
-• Same payment from SMS and app is counted once
-• Spots missed SMS from the balance (“Unrecorded”)
-• Insights, repeating payments, budgets, Ask, widget, app lock, private backups
+Budget 🎯
+• Enter an amount, pick the start date on a calendar, tap Start
+• Runs 1 month, 2 weeks, 1 week or until a date you choose — and can repeat
+• Home shows what's left, a daily amount, and where the budget is going
+• Leave out Rent / EMI / Investments if you like
+• Alerts at 50%, 80% and 100%, a summary at the end, and past budgets to compare
+• Help popup now explains Play Protect “App blocked”

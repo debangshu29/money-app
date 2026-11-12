@@ -51,6 +51,8 @@ public final class Store {
     private final Map<String, String> nameRules = new HashMap<>();    // merchant key → your name for it
     private final Map<String, Long> budgets = new LinkedHashMap<>();  // category ("" = whole month) → paise
     private final List<Bill> bills = new ArrayList<>();
+    private Plan plan;                                                // the budget running now (or null)
+    private final List<Plan> pastPlans = new ArrayList<>();
     private int batch = 0;
     private boolean dirty = false;
     private final List<Runnable> listeners = new ArrayList<>();
@@ -264,6 +266,35 @@ public final class Store {
         changed();
     }
 
+    // ------------------------------------------------------------------ the budget you started
+
+    public synchronized Plan plan() { return plan; }
+
+    public synchronized List<Plan> pastPlans() {
+        List<Plan> l = new ArrayList<>(pastPlans);
+        Collections.sort(l, (a, b) -> Long.compare(b.start, a.start));
+        return l;
+    }
+
+    public synchronized void setPlan(Plan p) {
+        if (p != null && (p.id == null || p.id.isEmpty())) p.id = UUID.randomUUID().toString();
+        plan = p;
+        changed();
+    }
+
+    /** Ends the running budget (keeps it in the history). */
+    public synchronized void closePlan(long when) {
+        if (plan == null) return;
+        plan.closedAt = when;
+        if (when < plan.end) plan.end = Math.max(plan.start + 86400000L, Fmt.addDays(Fmt.startOfDay(when), 1));
+        pastPlans.add(plan);
+        while (pastPlans.size() > 36) pastPlans.remove(0);
+        plan = null;
+        changed();
+    }
+
+    public synchronized void deletePastPlan(Plan p) { pastPlans.remove(p); changed(); }
+
     // ------------------------------------------------------------------ saving
 
     /** Many changes at once (importing old messages): saves once at the end. */
@@ -335,11 +366,20 @@ public final class Store {
                     .put("seen", b.seen).put("paid", b.paid).put("raw", b.raw));
         }
         o.put("bills", bl);
+        if (plan != null) o.put("plan", planJson(plan));
+        JSONArray pp = new JSONArray();
+        for (Plan p : pastPlans) pp.put(planJson(p));
+        o.put("pastPlans", pp);
         return o;
     }
 
     public synchronized void fromJson(JSONObject o) throws Exception {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
+        plan = null; pastPlans.clear();
+        JSONObject pj = o.optJSONObject("plan");
+        if (pj != null) plan = planFrom(pj);
+        JSONArray pp = o.optJSONArray("pastPlans");
+        if (pp != null) for (int i = 0; i < pp.length(); i++) pastPlans.add(planFrom(pp.getJSONObject(i)));
         JSONArray ta = o.optJSONArray("txns");
         if (ta != null) for (int i = 0; i < ta.length(); i++) txns.add(txnFrom(ta.getJSONObject(i)));
         JSONArray aa = o.optJSONArray("accounts");
@@ -363,6 +403,16 @@ public final class Store {
             b.dueDate = j.optLong("date", -1); b.seen = j.optLong("seen"); b.paid = j.optBoolean("paid"); b.raw = j.optString("raw");
             bills.add(b);
         }
+        // 1.0 kept a "whole month" budget among the category limits: turn it into a running budget
+        Long old = budgets.remove("");
+        if (old != null && old > 0 && plan == null) {
+            Plan p = new Plan();
+            p.id = UUID.randomUUID().toString();
+            p.amount = old;
+            p.start = Fmt.startOfMonth(System.currentTimeMillis());
+            p.end = Plan.endFor(p.start, Plan.MONTH, 0);
+            plan = p;
+        }
     }
 
     /** Restore: replaces everything with a backup. */
@@ -373,12 +423,34 @@ public final class Store {
 
     public synchronized void wipe() {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
+        plan = null; pastPlans.clear();
         changed();
     }
 
     private static void readMap(JSONObject j, Map<String, String> m) {
         if (j == null) return;
         for (Iterator<String> it = j.keys(); it.hasNext(); ) { String k = it.next(); m.put(k, j.optString(k)); }
+    }
+
+    static JSONObject planJson(Plan p) throws Exception {
+        JSONArray sk = new JSONArray();
+        for (String c : p.skip) sk.put(c);
+        return new JSONObject().put("id", p.id).put("amt", p.amount).put("start", p.start).put("end", p.end)
+                .put("len", p.length).put("repeat", p.repeat).put("skip", sk).put("closed", p.closedAt);
+    }
+
+    static Plan planFrom(JSONObject j) {
+        Plan p = new Plan();
+        p.id = j.optString("id");
+        p.amount = j.optLong("amt");
+        p.start = j.optLong("start");
+        p.end = j.optLong("end");
+        p.length = j.optInt("len");
+        p.repeat = j.optBoolean("repeat", true);
+        p.closedAt = j.optLong("closed");
+        JSONArray sk = j.optJSONArray("skip");
+        if (sk != null) for (int i = 0; i < sk.length(); i++) p.skip.add(sk.optString(i));
+        return p;
     }
 
     static JSONObject txnJson(Txn t) throws Exception {

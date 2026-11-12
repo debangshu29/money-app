@@ -28,7 +28,7 @@ public final class Ask {
     public static final String[] EXAMPLES = {
             "How much did I spend this month?", "Food this month", "Biggest expenses last month", "Swiggy this year",
             "Income this month", "Top shops this month", "How many times Uber?", "Average per day",
-            "Compare with last month", "Subscriptions", "Balance", "Spent today"};
+            "Compare with last month", "Subscriptions", "Budget left", "Balance", "Spent today"};
 
     private static final String[][] CAT_WORDS = {
             {Cats.FOOD, "food|eat|eating|restaurant|restaurants|dining|zomato|swiggy|lunch|dinner|breakfast|snacks"},
@@ -54,6 +54,9 @@ public final class Ask {
             {Cats.FEES, "charges|fees and charges|bank charges|penalty"},
     };
 
+    /** Set by the screen before asking (the budget that's running, if any). */
+    public static Plan plan;
+
     public static Answer answer(String question, List<Txn> all, List<Account> accounts, long now) {
         Answer a = answer0(question, all, accounts, now);
         a.text = a.text.replaceAll("\\s+", " ").replace(" .", ".").replace(" :", ":").trim();
@@ -70,6 +73,14 @@ public final class Ask {
         String q = " " + question.toLowerCase(Locale.ROOT).replaceAll("[?!.,]", " ").replaceAll("\\s+", " ").trim() + " ";
         // "compare with last month" = this month against last month
         q = q.replaceAll("\\b(with|to|than|vs|versus|and) (last|previous) (month|week|year)\\b", "$1 this $3");
+
+        // ---- budget
+        if (q.matches(".*\\bbudget\\b.*") && plan != null) {
+            long spent = plan.spent(all);
+            a.text = "Budget " + plan.range() + ": " + Fmt.rs(spent) + " spent of " + Fmt.rs(plan.amount) + ". " + plan.status(all, now) + ".";
+            a.table = plan.byCategory(all);
+            return a;
+        }
 
         // ---- balance
         if (q.matches(".*\\b(balance|balances|how much (money )?(do|have) i (have|got)|money left in)\\b.*") && !q.contains("spent")) {

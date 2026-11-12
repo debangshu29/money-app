@@ -76,6 +76,11 @@ public class MainActivity extends Activity {
             if (t != null) TxnSheet.show(this, t);
         }
         if (i.getBooleanExtra("showUpdate", false)) Updater.maybePrompt(this, true);
+        if (i.hasExtra("filterLabel")) {
+            showFiltered(i.getStringExtra("filterCat"), i.getLongExtra("filterFrom", 0), i.getLongExtra("filterTo", 0),
+                    i.getStringExtra("filterLabel"));
+            i.removeExtra("filterLabel");
+        }
     }
 
     @Override
@@ -83,6 +88,7 @@ public class MainActivity extends Activity {
         super.onResume();
         if (Lock.needed(this)) { startActivity(new Intent(this, LockActivity.class)); }
         Ui.bars(this);
+        Alerts.rollPlan(this);
         refresh();
         // a quick catch-up in case an SMS slipped past while the app was asleep
         new Thread(() -> { try { Engine.catchUp(getApplicationContext()); } catch (Exception ignored) { } }).start();

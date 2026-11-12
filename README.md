@@ -1,8 +1,19 @@
 # Money — automatic spending tracker for Android
 
+**Latest: version 1.1 — Budget.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Budget (version 1.1)
+
+1. **Home → ＋ Set a budget** (or Insights → Budget).
+2. Enter the amount (e.g. ₹30,000), pick the **start date** (today, the 1st, or any date from the calendar), and how long it runs (1 month, 2 weeks, 1 week, or until a date).
+3. Optional: **Don't count** some categories (e.g. Rent, EMI, Investments) and **repeat** it automatically.
+4. Tap **Start budget**. From that date every payment counts against it, automatically.
+
+While it runs, Home shows **₹ left · ₹ a day · days left**, a bar that turns orange at 80% and red when over, and *Where your budget is going* by category. The Budget screen adds day-by-day bars, every payment since the start, *Where the extra went* when you're over, and **Past budgets**. Alerts at 50%, 80%, 100%, and a summary when it ends. Category limits (e.g. Food ₹6,000 a month) are still there under Insights → Budget.
 
 ## What it does (version 1.0)
 
@@ -29,6 +40,7 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 
 1. On your phone open **https://github.com/debangshu29/money-app/releases/latest** and download **Money.apk**.
 2. Tap it → allow *Install unknown apps* if asked → Install.
+   - **Play Protect says “App blocked”?** In India Google blocks apps from outside the Play Store that read SMS or notifications. Play Store → profile picture → Play Protect → ⚙ → turn off *Scan apps with Play Protect* → install → **turn it back on**. Never do this because someone on a call asks you to.
 3. Open Money and follow the checklist:
    - **Read bank SMS** → Allow
    - **Read payment notifications** → find *Money* → switch on

@@ -107,31 +107,67 @@ public final class Alerts {
 
     private static int id(Txn t) { return 1000 + (t.id.hashCode() & 0xFFFFF); }
 
-    /** 80% and 100% of a budget, once each per month. */
+    /** Your budget at 50%, 80% and 100% (once each), and category limits at 80% / 100% per month. */
     static void budget(Context c, Txn t) {
         Store s = Store.get(c);
-        Map<String, Long> budgets = s.budgets();
-        long now = System.currentTimeMillis();
-        long ms = Fmt.startOfMonth(now);
+        SharedPreferences p = s.prefs();
         List<Txn> all = s.txns();
+        long now = System.currentTimeMillis();
+        Plan plan = s.plan();
+        if (plan != null && plan.counts(t) && plan.amount > 0) {
+            long spent = plan.spent(all);
+            int pct = (int) (spent * 100 / plan.amount);
+            int level = pct >= 100 ? 100 : pct >= 80 ? 80 : pct >= 50 ? 50 : 0;
+            String key = "plan:" + plan.id + ":" + level;
+            if (level > 0 && !p.getBoolean(key, false)) {
+                p.edit().putBoolean(key, true).apply();
+                String title = level >= 100 ? "Over budget by " + Fmt.plain(spent - plan.amount)
+                        : pct + "% of your budget used";
+                String text = Fmt.plain(spent) + " of " + Fmt.plain(plan.amount) + " spent (" + plan.range() + ")"
+                        + (level >= 100 ? ". " + plan.overReasons(all) : " · " + plan.status(all, now));
+                post(c, CH_ALERTS, 490, title, text, null);
+            }
+        }
+        Map<String, Long> budgets = s.budgets();
+        long ms = Fmt.startOfMonth(now);
         String month = Fmt.month(now);
-        for (String cat : new String[]{"", t.category}) {
-            Long b = budgets.get(cat);
-            if (b == null || b <= 0) continue;
-            long spent = 0;
-            for (Txn x : all) if (x.isSpend() && x.time >= ms && (cat.isEmpty() || cat.equals(x.category))) spent += x.amount;
-            int pct = (int) (spent * 100 / b);
-            int level = pct >= 100 ? 100 : pct >= 80 ? 80 : 0;
-            if (level == 0) continue;
-            String key = "budget:" + month + ":" + cat + ":" + level;
-            SharedPreferences p = s.prefs();
-            if (p.getBoolean(key, false)) continue;
-            p.edit().putBoolean(key, true).apply();
-            String name = cat.isEmpty() ? "monthly budget" : cat + " budget";
-            post(c, CH_ALERTS, 500 + Math.abs(cat.hashCode() % 400),
-                    level >= 100 ? "Over your " + name : pct + "% of your " + name + " used",
-                    Fmt.plain(spent) + " of " + Fmt.plain(b) + " spent in " + Fmt.MONTH[Fmt.cal(now).get(Calendar.MONTH)]
-                            + (level >= 100 ? "." : " — " + Fmt.plain(Math.max(0, b - spent)) + " left."), null);
+        Long b = budgets.get(t.category);
+        if (b == null || b <= 0 || t.category.isEmpty()) return;
+        long spent = 0;
+        for (Txn x : all) if (x.isSpend() && x.time >= ms && t.category.equals(x.category)) spent += x.amount;
+        int pct = (int) (spent * 100 / b);
+        int level = pct >= 100 ? 100 : pct >= 80 ? 80 : 0;
+        if (level == 0) return;
+        String key = "budget:" + month + ":" + t.category + ":" + level;
+        if (p.getBoolean(key, false)) return;
+        p.edit().putBoolean(key, true).apply();
+        post(c, CH_ALERTS, 500 + Math.abs(t.category.hashCode() % 400),
+                level >= 100 ? "Over your " + t.category + " limit" : pct + "% of your " + t.category + " limit used",
+                Fmt.plain(spent) + " of " + Fmt.plain(b) + " spent in " + Fmt.MONTH[Fmt.cal(now).get(Calendar.MONTH)]
+                        + (level >= 100 ? "." : " — " + Fmt.plain(Math.max(0, b - spent)) + " left."), null);
+    }
+
+    /** When the budget's last day is over: a summary, and the next one starts if you chose "repeat". */
+    public static void rollPlan(Context c) {
+        Store s = Store.get(c);
+        long now = System.currentTimeMillis();
+        for (int guard = 0; guard < 24; guard++) {
+            Plan p = s.plan();
+            if (p == null || !p.finished(now)) return;
+            List<Txn> all = s.txns();
+            long spent = p.spent(all);
+            long diff = p.amount - spent;
+            String key = "planDone:" + p.id;
+            if (!s.prefs().getBoolean(key, false) && now - p.end < 3L * 86400000) {
+                s.prefs().edit().putBoolean(key, true).apply();
+                String reasons = diff < 0 ? p.overReasons(all) : "";
+                post(c, CH_ALERTS, 491, diff >= 0 ? "Budget done: " + Fmt.plain(diff) + " under 🎉" : "Budget done: " + Fmt.plain(-diff) + " over",
+                        Fmt.plain(spent) + " spent of " + Fmt.plain(p.amount) + " (" + p.range() + ")"
+                                + (reasons.isEmpty() ? "" : ". " + reasons) + (p.repeat ? ". Your next budget has started." : ""), null);
+            }
+            Plan next = p.repeat ? p.next() : null;
+            s.closePlan(p.end);
+            if (next != null) s.setPlan(next);
         }
     }
 
@@ -149,10 +185,18 @@ public final class Alerts {
         int n = 0;
         for (Txn t : all) if (t.isSpend() && t.time >= today) n++;
         long month = Ledger.spent(all, Fmt.startOfMonth(now), now + 1);
-        Long budget = s.budgets().get("");
+        rollPlan(c);
+        Plan plan = s.plan();
         String title = n == 0 ? "No spending today 🎉" : "Today: " + Fmt.plain(spent) + " in " + n + (n == 1 ? " payment" : " payments");
-        String text = "This month: " + Fmt.plain(month) + (budget != null ? " of " + Fmt.plain(budget) : "")
-                + " · heading for " + Fmt.plain(Ledger.forecast(all, now));
+        String text;
+        if (plan != null && plan.started(now)) {
+            long ps = plan.spent(all);
+            text = "Budget: " + Fmt.plain(ps) + " of " + Fmt.plain(plan.amount) + " spent · "
+                    + (ps > plan.amount ? Fmt.plain(ps - plan.amount) + " over" : Fmt.plain(plan.amount - ps) + " left, "
+                    + Fmt.plain((plan.amount - ps) / Math.max(1, plan.daysLeft(now))) + "/day");
+        } else {
+            text = "This month: " + Fmt.plain(month) + " · heading for " + Fmt.plain(Ledger.forecast(all, now));
+        }
         if (s.flag(Store.S_HIDE)) { title = n + (n == 1 ? " payment today" : " payments today"); text = "Open Money to see today's summary"; }
         post(c, CH_DAILY, 77, title, text, null);
     }
