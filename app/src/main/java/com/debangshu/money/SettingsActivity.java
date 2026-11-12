@@ -73,6 +73,19 @@ public class SettingsActivity extends Activity {
                 unread == 0 ? "None so far 👍" : "Send them to get them fixed — or add one as a payment",
                 unread == 0 ? null : v -> showUnread());
 
+        LinearLayout rm = section("Remember every payment");
+        boolean locOk = Locator.allowed(this), bgOk = Locator.backgroundAllowed(this);
+        sw(rm, "Save where you paid", !s.flag(Store.S_LOCATION) ? "Notes the spot when a payment is caught — see it on a map later"
+                        : !locOk ? "⚠️ Location permission is off — tap here to allow"
+                        : !bgOk ? "⚠️ Choose “Allow all the time” so it works when the app is closed"
+                        : "✓ On — one quick location check per payment",
+                Store.S_LOCATION, on -> { if (on) Locator.ask(this); build(); });
+        if (s.flag(Store.S_LOCATION) && (!locOk || !bgOk)) row(rm, "Allow location", "Needed for “Save where you paid”", v -> Locator.ask(this));
+        sw(rm, "Show area names", "“near Garia Station Road” — asks Google's address lookup. Off = map pin only, nothing sent",
+                Store.S_PLACE_NAMES, null);
+        sw(rm, "Ask “Who was it?”", "When a payment comes without a name, type it right in the notification (with a guess when Money has one)",
+                Store.S_ASK_NAME, null);
+
         LinearLayout al = section("Alerts");
         int hour = s.prefs().getInt(Alerts.P_DAILY_HOUR, 21);
         sw(al, "Evening summary", "What you spent today, at " + hourName(hour), Store.S_DAILY, on -> Alerts.schedule(this));
@@ -282,6 +295,13 @@ public class SettingsActivity extends Activity {
         } catch (Exception e) {
             Ui.toast(this, "No file picker found");
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        if (req == Locator.REQ_FG && Locator.allowed(this)) Locator.ask(this);
+        build();
     }
 
     @Override

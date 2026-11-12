@@ -1,8 +1,7 @@
-New Home + far fewer “Unrecorded” 🧹
-• Home in your order: Budget → Balances → This month → Today → Latest → Needs a look
-• Budget bar now fades smoothly green → yellow → orange → red → deep red when over
-• Each section has its own 👁 eye — hide just balances, just the budget, etc.
-• This month & Today show Money in / Money out — tap either to see where it came from or went
-• “Unrecorded” is now worked out automatically in most cases: Google Pay/PhonePe payments without an SMS, SMS that arrived in the wrong order, double counts, debit-card spends, bank charges & interest
-• What's left: “Sort them out” shows the bank SMS from that time — tap “This is it” — or answer in one tap (Cash, Rent, Paid someone…)
-• Settings → Bank messages Money couldn't read: share them so the reader learns your bank's wording
+Never forget a payment 📍
+• Saves where you paid (turn on in Settings → Remember every payment) — see it on a map from the payment
+• Area names like “near Garia Station Road” (or map pin only, your choice)
+• “Who was it?” — when a payment has no name, type it right in the notification
+• Name a shop's QR once — every future payment to it gets the name and category
+• “Probably Sharma Kirana?” — guesses from your past payments at the same spot / amount / time
+• Add a bill photo to any payment

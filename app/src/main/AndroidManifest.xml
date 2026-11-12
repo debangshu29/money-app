@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- optional: the spot where you paid (one quick check per payment, only if you turn it on) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <!-- app lock -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <!-- Android 9 and older: needed to save backups to Documents/Money -->
@@ -117,6 +121,9 @@
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>
         </receiver>
+
+        <!-- names typed into the "Who was it?" notification -->
+        <receiver android:name=".NameReceiver" android:exported="false" />
 
         <!-- home-screen widget -->
         <receiver android:name=".Widget" android:exported="true" android:label="@string/widget_label">

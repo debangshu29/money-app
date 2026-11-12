@@ -97,6 +97,10 @@ public class SetupActivity extends Activity {
                     if (!Setup.batteryOn(this)) Setup.askBattery(this);
                     else Setup.openAutostart(this);
                 });
+        boolean locOn = Store.get(this).flag(Store.S_LOCATION) && Locator.allowed(this) && Locator.backgroundAllowed(this);
+        step(n++, "📍", "Remember where you paid (optional)", "Saves the spot of each new payment, so a month later you can see it on a map "
+                        + "and remember “the shop near the station”. One quick check per payment.",
+                locOn, "Turn on", v -> { Store.get(this).setFlag(Store.S_LOCATION, true); Locator.ask(this); });
         long scanned = Store.get(this).prefs().getLong("lastScan", 0);
         int count = Store.get(this).visible().size();
         step(n++, "🗂️", "Bring in your past messages", scanned == 0 ? "Reads the bank SMS already on your phone, so you start with months of history."
@@ -165,6 +169,7 @@ public class SetupActivity extends Activity {
     public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
         super.onRequestPermissionsResult(req, perms, res);
         build();
+        if (req == Locator.REQ_FG && Locator.allowed(this)) { Locator.ask(this); return; }
         if (req == REQ_SMS) {
             if (Setup.smsOn(this)) {
                 if (Store.get(this).prefs().getLong("lastScan", 0) == 0) importPast(this, this::build);

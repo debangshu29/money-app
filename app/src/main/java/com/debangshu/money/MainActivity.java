@@ -112,6 +112,13 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int req, int res, Intent data) {
         super.onActivityResult(req, res, data);
         Updater.onCleanupResult(this, req, res, data);
+        Photos.onResult(this, req, res, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        if (req == Locator.REQ_FG && Locator.allowed(this)) Locator.ask(this);
     }
 
     private void refreshSoon() {

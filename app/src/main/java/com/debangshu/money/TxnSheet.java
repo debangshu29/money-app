@@ -90,6 +90,52 @@ public final class TxnSheet {
         line(a, info, "Seen in", src);
         box.addView(info);
 
+        // ---- where it happened
+        if (t.hasLoc()) {
+            LinearLayout wr = Ui.hbox(a);
+            wr.setPadding(0, Ui.dp(a, 6), 0, Ui.dp(a, 2));
+            TextView wk = Ui.text(a, "Where", 13.5f, Ui.col(a, R.color.text2), Ui.REGULAR);
+            wr.addView(wk, Ui.lp(Ui.dp(a, 110), -2));
+            TextView wv = Ui.text(a, "📍 " + (t.place.isEmpty() ? "Pin saved (±" + Math.round(t.locAcc) + " m)" : t.place), 13.5f, Ui.SEMIBOLD);
+            wr.addView(wv, Ui.weight1());
+            TextView map = Ui.chip(a, "Map", true);
+            map.setOnClickListener(v -> Locator.openMap(a, t));
+            wr.addView(map);
+            box.addView(wr);
+        }
+
+        // ---- "probably …" from your habits
+        if (t.unnamed() && !t.credit) {
+            Habits.Guess g = Habits.guess(s.txns(), t);
+            if (g != null) {
+                LinearLayout gc = Ui.card(a);
+                gc.setBackground(Ui.round(Ui.col(a, R.color.accent_soft), Ui.dp(a, 18)));
+                gc.addView(Ui.text(a, "🤔 Probably " + g.name + "?", 15, Ui.BOLD));
+                TextView gs = Ui.sub(a, "You paid " + g.name + " " + g.times + (g.times == 1 ? " time" : " times") + " before at this spot / amount / time.");
+                gs.setPadding(0, Ui.dp(a, 3), 0, Ui.dp(a, 8));
+                gc.addView(gs);
+                TextView yes = Ui.button(a, "Yes, it was " + g.name, true);
+                yes.setOnClickListener(v -> { Alerts.applyName(a, t, g.name, g.category); if (dlg[0] != null) dlg[0].dismiss(); show(a, t); });
+                LinearLayout yr = Ui.hbox(a);
+                yr.addView(yes);
+                gc.addView(yr);
+                box.addView(gc, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 4));
+            }
+        }
+
+        // ---- bill photo
+        if (!t.photo.isEmpty() && Photos.file(a, t).exists()) {
+            android.widget.ImageView th = Photos.thumb(a, t);
+            box.addView(th, Ui.margins(new LinearLayout.LayoutParams(-1, Ui.dp(a, 150)), a, 0, 10, 0, 0));
+        } else if (a instanceof MainActivity) {
+            TextView ph = Ui.chip(a, "📷  Add bill photo", false);
+            ph.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+            ph.setOnClickListener(v -> { if (dlg[0] != null) dlg[0].dismiss(); Photos.choose(a, t); });
+            LinearLayout pr = Ui.hbox(a);
+            pr.addView(ph);
+            box.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 0));
+        }
+
         // ---- note
         EditText note = new EditText(a);
         note.setHint("Add a note");
@@ -202,7 +248,7 @@ public final class TxnSheet {
         int p = Ui.dp(a, 24);
         box.setPadding(p, 0, p, 0);
         if (!t.vpa.isEmpty()) {
-            TextView v = Ui.sub(a, "UPI ID: " + t.vpa);
+            TextView v = Ui.sub(a, "UPI ID: " + t.vpa + "\n🧠 Every future payment to this UPI ID (this shop's QR) will get this name and category by itself.");
             v.setPadding(0, 0, 0, Ui.dp(a, 6));
             box.addView(v);
         }
@@ -219,7 +265,8 @@ public final class TxnSheet {
                         if (!c.equals(t.category)) { t.category = c; s.update(t); }
                     }
                     if ((t.sources & Txn.SRC_GAP) != 0) { t.review = false; s.update(t); }
-                    if (after != null) after.run();
+                    if (Cats.OTHER.equals(t.category) || Cats.UNRECORDED.equals(t.category)) pickCategory(a, t, after);
+                    else if (after != null) after.run();
                 })
                 .setNegativeButton("Cancel", null).show();
     }

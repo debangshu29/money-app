@@ -21,7 +21,7 @@ public final class Alerts {
 
     private Alerts() {}
 
-    static final String CH_ALERTS = "alerts", CH_BILLS = "bills", CH_DAILY = "daily", CH_EACH = "each";
+    static final String CH_ALERTS = "alerts", CH_BILLS = "bills", CH_DAILY = "daily", CH_EACH = "each", CH_ASK = "ask";
 
     public static void channels(Context c) {
         if (Build.VERSION.SDK_INT < 26) return;
@@ -32,6 +32,8 @@ public final class Alerts {
         nm.createNotificationChannel(ch(CH_BILLS, "Bills & renewals", NotificationManager.IMPORTANCE_DEFAULT,
                 "Card bills due and subscriptions about to renew"));
         nm.createNotificationChannel(ch(CH_DAILY, "Evening summary", NotificationManager.IMPORTANCE_LOW, "What you spent today"));
+        nm.createNotificationChannel(ch(CH_ASK, "Who was it?", NotificationManager.IMPORTANCE_DEFAULT,
+                "Asks for a name when a payment comes without one — type it right in the notification"));
         nm.createNotificationChannel(ch(CH_EACH, "Every payment", NotificationManager.IMPORTANCE_LOW,
                 "A quiet note for each payment the app catches (off by default)"));
     }
@@ -77,6 +79,8 @@ public final class Alerts {
         List<Txn> all = s.txns();
         boolean recent = System.currentTimeMillis() - t.time < 2L * 3600000;
         if (!recent) return;
+        Locator.tag(c, t);
+        askName(c, t, false);
         String who = t.merchant.isEmpty() ? "" : " · " + t.merchant;
 
         if ((t.sources & Txn.SRC_GAP) == 0 && t.isSpend()) {
@@ -106,6 +110,81 @@ public final class Alerts {
     }
 
     private static int id(Txn t) { return 1000 + (t.id.hashCode() & 0xFFFFF); }
+
+    // ------------------------------------------------------------------ "Who was it?"
+
+    /** For a payment without a name: a notification you can type the name into (with a guess when there is one). */
+    static void askName(Context c, Txn t, boolean update) {
+        Store s = Store.get(c);
+        if (!s.flag(Store.S_ASK_NAME) || !t.unnamed() || t.credit || t.kind != Txn.NORMAL) return;
+        if (System.currentTimeMillis() - t.time > 6L * 3600000) return;
+        String key = "asked:" + t.id;
+        if (!update && s.prefs().getBoolean(key, false)) return;
+        if (update && !s.prefs().getBoolean(key, false)) return;
+        if (!canNotify(c)) return;
+        s.prefs().edit().putBoolean(key, true).apply();
+        channels(c);
+        boolean gap = (t.sources & Txn.SRC_GAP) != 0;
+        Habits.Guess g = Habits.guess(s.txns(), t);
+        int nid = 20000 + (t.id.hashCode() & 0xFFFF);
+        String title = Fmt.plain(t.amount) + (gap ? " left your account with no message" : " paid at " + Fmt.time(t.time))
+                + (t.place.isEmpty() ? "" : " " + t.place);
+        String text = g != null ? "Probably " + g.name + "? (" + g.times + (g.times == 1 ? " time" : " times") + " before, same spot / amount)"
+                : "Who was it? Type a name — Money remembers it" + (t.vpa.isEmpty() ? "." : " for this UPI ID.");
+
+        android.content.Intent open = new android.content.Intent(c, MainActivity.class).putExtra("txn", t.id)
+                .setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pOpen = PendingIntent.getActivity(c, nid, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        android.content.Intent nameI = new android.content.Intent(c, NameReceiver.class).setAction(NameReceiver.NAME)
+                .putExtra("txn", t.id).putExtra("nid", nid);
+        // the typed text must be added to this intent, so it has to stay mutable
+        PendingIntent pName = PendingIntent.getBroadcast(c, nid, nameI, PendingIntent.FLAG_UPDATE_CURRENT
+                | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
+        android.app.RemoteInput ri = new android.app.RemoteInput.Builder(NameReceiver.KEY).setLabel("Who was it? e.g. Sharma Kirana").build();
+        Notification.Action aName = new Notification.Action.Builder(
+                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Type name", pName).addRemoteInput(ri).build();
+
+        android.content.Intent skipI = new android.content.Intent(c, NameReceiver.class).setAction(NameReceiver.SKIP)
+                .putExtra("txn", t.id).putExtra("nid", nid);
+        PendingIntent pSkip = PendingIntent.getBroadcast(c, nid + 1, skipI, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        @SuppressWarnings("deprecation")
+        Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, CH_ASK) : new Notification.Builder(c);
+        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(title).setContentText(text)
+                .setStyle(new Notification.BigTextStyle().bigText(text)).setContentIntent(pOpen).setAutoCancel(true)
+                .setOnlyAlertOnce(true).setColor(c.getColor(R.color.accent));
+        if (g != null) {
+            android.content.Intent yesI = new android.content.Intent(c, NameReceiver.class).setAction(NameReceiver.YES)
+                    .putExtra("txn", t.id).putExtra("nid", nid).putExtra("guess", g.name).putExtra("guessCat", g.category);
+            PendingIntent pYes = PendingIntent.getBroadcast(c, nid + 2, yesI, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            String label = g.name.length() > 18 ? g.name.substring(0, 17) + "…" : g.name;
+            b.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify),
+                    "Yes, " + label, pYes).build());
+        }
+        b.addAction(aName);
+        b.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Skip", pSkip).build());
+        if (s.flag(Store.S_LOCK)) b.setVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        if (nm != null) nm.notify(nid, b.build());
+    }
+
+    /** The location arrived after the question was asked: show the place (and maybe a better guess). */
+    static void locationReady(Context c, Txn t) {
+        if (t.unnamed()) askName(c, t, true);
+    }
+
+    /** Saves a name for this payment and every other payment to the same UPI ID / name. */
+    public static void applyName(Context c, Txn t, String name, String category) {
+        Store s = Store.get(c);
+        s.learnName(t, name, true);
+        if (category != null && !category.isEmpty() && !Cats.OTHER.equals(category)) s.learnCategory(t, category, true);
+        else if (!t.userCategory) {
+            String g = s.categoryFor(t);
+            if (!g.equals(t.category)) { t.category = g; s.update(t); }
+        }
+        if ((t.sources & Txn.SRC_GAP) != 0) { t.review = false; s.update(t); }
+    }
 
     /** Your budget at 50%, 80% and 100% (once each), and category limits at 80% / 100% per month. */
     static void budget(Context c, Txn t) {

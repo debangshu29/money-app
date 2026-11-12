@@ -1,10 +1,19 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.2 — new Home, far fewer “Unrecorded”.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.3 — never forget a payment (location, “Who was it?”, bill photos).** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Remember every payment (version 1.3)
+
+Turn on in **Settings → Remember every payment**:
+- **Save where you paid:** when a payment is caught, Money checks the phone's location once and saves it with the payment. Tap the payment → 📍 *near Garia Station Road* → **Map**. Needs location “Allow all the time” (payments are caught in the background).
+- **Show area names:** on = street / area name (uses Google's address lookup); off = map pin only, nothing sent.
+- **Ask “Who was it?”:** a payment without a name gets a notification — type the name right there. If Money has a guess from your past payments (same spot, amount, time) it offers **Yes, Sharma Kirana**.
+- **Name once:** a name you give to a UPI ID / shop QR is used for every future payment to it, with its category.
+- **Bill photo:** open any payment → 📷 Add bill photo (kept inside the app; not included in backups yet).
 
 ## Home (version 1.2)
 

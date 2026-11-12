@@ -83,6 +83,8 @@ public final class Ledger {
         else if (!from.sender.isEmpty() && !into.sender.contains(from.sender)) into.sender = into.sender + " + " + from.sender;
         if (from.kind != Txn.NORMAL && into.kind == Txn.NORMAL) into.kind = from.kind;
         if (from.time < into.time) into.time = from.time;
+        if (!into.hasLoc() && from.hasLoc()) { into.lat = from.lat; into.lng = from.lng; into.locAcc = from.locAcc; into.place = from.place; }
+        if (into.photo.isEmpty()) into.photo = from.photo;
     }
 
     // ------------------------------------------------------------------ missed SMS (balance doesn't add up)

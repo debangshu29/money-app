@@ -107,6 +107,12 @@ public final class Engine {
             if (!saved.account.isEmpty()) s.setGaps(saved.account, Ledger.gaps(s.txns(), saved.account));
         }
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);
+        if (!s.inBatch() && !saved.account.isEmpty()) {
+            for (Txn g : s.txns()) {
+                if ((g.sources & Txn.SRC_GAP) != 0 && g.review && saved.account.equals(g.account)
+                        && System.currentTimeMillis() - g.time < 6L * 3600000) Alerts.askName(ctx, g, false);
+            }
+        }
         return saved;
     }
 

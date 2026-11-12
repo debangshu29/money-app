@@ -64,7 +64,8 @@ public final class Store {
     public static final String S_SETUP = "setup_done", S_LOCK = "lock", S_HIDE = "hide_amounts", S_SECURE = "secure_screen",
             S_DAILY = "daily_summary", S_UNUSUAL = "alert_unusual", S_BUDGET = "alert_budget", S_BILLS = "alert_bills",
             S_EACH = "notify_each", S_AUTO_BACKUP = "auto_backup", S_ATM_SPEND = "atm_is_spend", S_AUTO_UPDATE = "auto_update",
-            S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif";
+            S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
+            S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name";
 
     private Store(Context c) {
         ctx = c;
@@ -76,7 +77,8 @@ public final class Store {
     public SharedPreferences prefs() { return prefs; }
 
     public boolean flag(String key) {
-        boolean def = !(key.equals(S_LOCK) || key.equals(S_SECURE) || key.equals(S_EACH) || key.equals(S_SETUP) || key.equals(S_HIDE));
+        boolean def = !(key.equals(S_LOCK) || key.equals(S_SECURE) || key.equals(S_EACH) || key.equals(S_SETUP) || key.equals(S_HIDE)
+                || key.equals(S_LOCATION));
         return prefs.getBoolean(key, def);
     }
 
@@ -159,6 +161,7 @@ public final class Store {
 
     /** "Always put Swiggy in Food": changes every past one too (except ones you picked by hand). */
     public synchronized int learnCategory(Txn t, String cat, boolean all) {
+        if ((t.sources & Txn.SRC_GAP) != 0) all = false;   // an "Unrecorded" amount says nothing about other payments
         t.category = cat;
         t.userCategory = true;
         int n = 1;
@@ -180,6 +183,7 @@ public final class Store {
     }
 
     public synchronized int learnName(Txn t, String name, boolean all) {
+        if ((t.sources & Txn.SRC_GAP) != 0 || (t.vpa.isEmpty() && t.unnamed())) all = false;
         String old = t.merchant;
         String k = Cats.key(t);
         t.merchant = name;
@@ -507,6 +511,9 @@ public final class Store {
          .put("ref", t.ref).put("raw", t.raw).put("snd", t.sender).put("note", t.note).put("key", t.srcKey)
          .put("rev", t.review).put("uc", t.userCategory).put("um", t.userMerchant);
         if (t.gapFrom > 0) j.put("gf", t.gapFrom);
+        if (t.hasLoc()) j.put("lat", t.lat).put("lng", t.lng).put("acc", (double) t.locAcc);
+        if (!t.place.isEmpty()) j.put("place", t.place);
+        if (!t.photo.isEmpty()) j.put("photo", t.photo);
         return j;
     }
 
@@ -518,6 +525,9 @@ public final class Store {
         t.ref = j.optString("ref"); t.raw = j.optString("raw"); t.sender = j.optString("snd"); t.note = j.optString("note");
         t.srcKey = j.optString("key"); t.review = j.optBoolean("rev"); t.userCategory = j.optBoolean("uc"); t.userMerchant = j.optBoolean("um");
         t.gapFrom = j.optLong("gf");
+        if (j.has("acc")) { t.lat = j.optDouble("lat"); t.lng = j.optDouble("lng"); t.locAcc = (float) j.optDouble("acc", -1); }
+        t.place = j.optString("place");
+        t.photo = j.optString("photo");
         return t;
     }
 }

@@ -33,6 +33,18 @@ public final class Txn {
     public boolean userCategory;   // category picked by you (never changed automatically)
     public boolean userMerchant;   // name changed by you
     public long gapFrom;           // "Unrecorded": the earlier message the gap starts from
+    public double lat, lng;        // where the phone was when the payment was caught
+    public float locAcc = -1;      // accuracy in metres, -1 = no location
+    public String place = "";      // "near Garia Station Road"
+    public String photo = "";      // bill photo file name (app-private)
+
+    public boolean hasLoc() { return locAcc >= 0; }
+
+    /** Name not known yet (shop QR codes, phone numbers, nothing at all). */
+    public boolean unnamed() {
+        return merchant.isEmpty() || merchant.startsWith("Shop (QR)") || merchant.matches("[0-9]{5} [0-9]{5}")
+                || merchant.startsWith("Unrecorded") || merchant.endsWith("(unknown)");
+    }
 
     public boolean isSpend() { return kind == NORMAL && !credit; }
     public boolean isIncome() { return kind == NORMAL && credit; }
@@ -47,6 +59,7 @@ public final class Txn {
         t.vpa = vpa; t.category = category; t.kind = kind; t.sources = sources; t.balance = balance; t.limit = limit;
         t.ref = ref; t.raw = raw; t.sender = sender; t.note = note; t.srcKey = srcKey; t.review = review;
         t.userCategory = userCategory; t.userMerchant = userMerchant; t.gapFrom = gapFrom;
+        t.lat = lat; t.lng = lng; t.locAcc = locAcc; t.place = place; t.photo = photo;
         return t;
     }
 

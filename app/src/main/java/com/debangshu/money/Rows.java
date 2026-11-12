@@ -30,7 +30,9 @@ public final class Rows {
         if (t.kind == Txn.TRANSFER) sb.append(" · not spending");
         if (t.kind == Txn.IGNORED) sb.append(" · hidden");
         sb.append(" · ").append(showDay ? Fmt.day(t.time) + ", " + Fmt.time(t.time) : Fmt.time(t.time));
-        if (!t.account.isEmpty()) sb.append(" · ").append(t.account);
+        if (!t.place.isEmpty()) sb.append(" · 📍").append(t.place.replaceFirst("^near ", ""));
+        else if (!t.account.isEmpty()) sb.append(" · ").append(t.account);
+        if (!t.photo.isEmpty()) sb.append(" · 📷");
         col.addView(Ui.oneLine(Ui.text(c, sb.toString(), 12.5f, Ui.col(c, R.color.text2), Ui.REGULAR)));
         row.addView(col, Ui.weight1());
 
