@@ -49,6 +49,9 @@ public final class Engine {
         t.account = r.account;
         t.balance = r.balance;
         t.limit = r.limit;
+        // accounts you merged ("these two are the same")
+        String merged = t.account.isEmpty() ? null : s.alias(t.account);
+        if (merged != null && !r.viaCard) t.account = merged;
         // a debit-card message: put it on the bank account behind the card (so balances add up)
         if (r.viaCard && !r.card && !t.account.isEmpty()) {
             String acc = s.alias(t.account);

@@ -127,6 +127,7 @@ public final class Ledger {
                 }
                 if (t.kind != Txn.SNAPSHOT) { moved += t.signed(); between.add(t); }
                 if (val < 0) continue;
+                if ((t.sources & Txn.SRC_MANUAL) != 0) { prev = t; moved = 0; between.clear(); continue; }   // you corrected it: start fresh
                 long prevVal = mode == 0 ? prev.balance : prev.limit;
                 long diff = val - (prevVal + moved);
                 if (Math.abs(diff) >= 100 && t.time - prev.time < 120L * 86400000) {

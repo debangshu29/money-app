@@ -122,7 +122,16 @@ public class SettingsActivity extends Activity {
         bk.addView(tip);
 
         LinearLayout dt = section("Your data");
-        row(dt, "Accounts", s.accounts().size() + " found automatically · tap one on Home to rename", null);
+        row(dt, "Accounts", s.accounts().size() + " found automatically · long-press one on Home to rename, correct, merge or delete", null);
+        List<String> del = s.deletedAccounts();
+        if (!del.isEmpty()) row(dt, "Deleted accounts (" + del.size() + ")", "Tap to bring one back", v -> {
+            new Ui.Popup(this).setTitle("Bring back").setItems(del.toArray(new String[0]), (d, w) -> {
+                Store.get(this).restoreAccount(del.get(w));
+                new Thread(() -> Engine.recheckGaps(getApplicationContext())).start();
+                Ui.toast(this, del.get(w) + " is back");
+                build();
+            }).show();
+        });
         row(dt, "Delete all data", "Erase every transaction, account, budget and rule", v -> deleteAll());
 
         LinearLayout up = section("App updates");

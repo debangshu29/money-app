@@ -53,6 +53,7 @@ public final class Store {
     private final List<Bill> bills = new ArrayList<>();
     private Plan plan;                                                // the budget running now (or null)
     private final Map<String, String> aliases = new HashMap<>();      // debit card key → its bank account key
+    private final java.util.Set<String> deletedAccounts = new java.util.TreeSet<>();   // accounts you deleted (don't come back)
     private final List<String[]> unread = new ArrayList<>();          // bank messages that couldn't be read: time, sender, body
     private final List<Plan> pastPlans = new ArrayList<>();
     private int batch = 0;
@@ -227,7 +228,7 @@ public final class Store {
             Txn t = it.next();
             if ((t.sources & Txn.SRC_GAP) != 0 && account.equals(t.account)) { old.put(t.id, t); it.remove(); }
         }
-        if (flag(S_GAPS)) {
+        if (flag(S_GAPS) && !deletedAccounts.contains(account)) {
             for (Txn g : gaps) {
                 Txn o = old.get(g.id);
                 if (o != null && o.amount == g.amount && o.credit == g.credit) { txns.add(o); continue; }
@@ -258,7 +259,7 @@ public final class Store {
     public synchronized Account account(String key) { return accounts.get(key); }
 
     public synchronized void touchAccount(Txn t, boolean card, boolean wallet) {
-        if (t.account == null || t.account.isEmpty()) return;
+        if (t.account == null || t.account.isEmpty() || deletedAccounts.contains(t.account)) return;
         Account a = accounts.get(t.account);
         if (a == null) {
             a = new Account();
@@ -277,6 +278,93 @@ public final class Store {
     public synchronized void renameAccount(Account a, String name) { a.name = name; changed(); }
 
     public synchronized void setAccountHidden(Account a, boolean h) { a.hidden = h; changed(); }
+
+    public synchronized boolean isDeleted(String key) { return deletedAccounts.contains(key); }
+
+    public synchronized List<String> deletedAccounts() { return new ArrayList<>(deletedAccounts); }
+
+    /**
+     * Deletes an account (it won't come back from new messages). With {@code payments}, its payments are
+     * hidden too (kept invisibly, so the same SMS read again doesn't add them back).
+     */
+    public synchronized void deleteAccount(String key, boolean payments) {
+        accounts.remove(key);
+        deletedAccounts.add(key);
+        for (Iterator<Txn> it = txns.iterator(); it.hasNext(); ) {
+            Txn t = it.next();
+            if (!key.equals(t.account)) continue;
+            if ((t.sources & Txn.SRC_GAP) != 0) { it.remove(); continue; }
+            if (payments) { t.kind = Txn.IGNORED; t.review = false; }
+        }
+        changed();
+    }
+
+    /** Brings a deleted account back (and its hidden payments). */
+    public synchronized void restoreAccount(String key) {
+        deletedAccounts.remove(key);
+        for (Txn t : txns) {
+            if (!key.equals(t.account)) continue;
+            if (t.kind == Txn.IGNORED && t.note.isEmpty()) t.kind = Txn.NORMAL;
+        }
+        rebuildAccount(key, false, false);
+        changed();
+    }
+
+    /** "These two are the same account": moves every payment of {@code from} to {@code to}, and future ones too. */
+    public synchronized void mergeAccount(String from, String to) {
+        if (from.equals(to)) return;
+        Account af = accounts.remove(from);
+        Account at = accounts.get(to);
+        boolean card = at != null && at.card;
+        for (Iterator<Txn> it = txns.iterator(); it.hasNext(); ) {
+            Txn t = it.next();
+            if (!from.equals(t.account)) continue;
+            if ((t.sources & Txn.SRC_GAP) != 0) { it.remove(); continue; }
+            t.account = to;
+        }
+        aliases.put(from, to);
+        for (Map.Entry<String, String> e : aliases.entrySet()) if (from.equals(e.getValue())) e.setValue(to);
+        rebuildAccount(to, card, af != null && af.wallet);
+        changed();
+    }
+
+    /** Works an account's balance / limit out again from its payments. */
+    private void rebuildAccount(String key, boolean card, boolean wallet) {
+        Account old = accounts.get(key);
+        Account a = new Account();
+        a.key = key;
+        a.card = card || (old != null && old.card);
+        a.wallet = wallet || (old != null && old.wallet);
+        if (old != null) { a.name = old.name; a.hidden = old.hidden; }
+        boolean any = false;
+        for (Txn t : txns) {
+            if (!key.equals(t.account) || t.kind == Txn.IGNORED || (t.sources & Txn.SRC_GAP) != 0) continue;
+            any = true;
+            a.lastUsed = Math.max(a.lastUsed, t.time);
+            if (t.balance >= 0 && t.time >= a.balanceTime) { a.balance = t.balance; a.balanceTime = t.time; }
+            if (t.limit >= 0 && t.time >= a.limitTime) { a.limit = t.limit; a.limitTime = t.time; }
+        }
+        if (any || old != null) accounts.put(key, a);
+    }
+
+    /** "The balance is wrong": saves the right balance as of now (the missed-SMS check starts again from here). */
+    public synchronized void correctBalance(String key, long paise, boolean limit) {
+        Txn t = new Txn();
+        t.id = UUID.randomUUID().toString();
+        t.time = System.currentTimeMillis();
+        t.kind = Txn.SNAPSHOT;
+        t.sources = Txn.SRC_MANUAL;
+        t.account = key;
+        t.srcKey = "manual:" + t.time;
+        t.raw = "Balance corrected by you";
+        if (limit) t.limit = paise; else t.balance = paise;
+        txns.add(t);
+        Account a = accounts.get(key);
+        if (a != null) {
+            if (limit) { a.limit = paise; a.limitTime = t.time; } else { a.balance = paise; a.balanceTime = t.time; }
+        }
+        changed();
+    }
 
     // ------------------------------------------------------------------ bills, budgets
 
@@ -432,6 +520,9 @@ public final class Store {
         for (Plan p : pastPlans) pp.put(planJson(p));
         o.put("pastPlans", pp);
         o.put("aliases", new JSONObject(aliases));
+        JSONArray del = new JSONArray();
+        for (String d : deletedAccounts) del.put(d);
+        o.put("deletedAccounts", del);
         JSONArray un = new JSONArray();
         for (String[] u : unread) un.put(new JSONArray().put(u[0]).put(u[1]).put(u[2]));
         o.put("unread", un);
@@ -440,8 +531,10 @@ public final class Store {
 
     public synchronized void fromJson(JSONObject o) throws Exception {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
-        plan = null; pastPlans.clear(); aliases.clear(); unread.clear();
+        plan = null; pastPlans.clear(); aliases.clear(); unread.clear(); deletedAccounts.clear();
         readMap(o.optJSONObject("aliases"), aliases);
+        JSONArray del = o.optJSONArray("deletedAccounts");
+        if (del != null) for (int i = 0; i < del.length(); i++) deletedAccounts.add(del.optString(i));
         JSONArray un = o.optJSONArray("unread");
         if (un != null) for (int i = 0; i < un.length(); i++) {
             JSONArray u = un.optJSONArray(i);
@@ -494,7 +587,7 @@ public final class Store {
 
     public synchronized void wipe() {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
-        plan = null; pastPlans.clear(); aliases.clear(); unread.clear();
+        plan = null; pastPlans.clear(); aliases.clear(); unread.clear(); deletedAccounts.clear();
         changed();
     }
 

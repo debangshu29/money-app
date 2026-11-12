@@ -1,10 +1,17 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.4 — Scan & Pay.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.4.1 — Scan & Pay, and fixing wrong accounts.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Fixing a wrong account (version 1.4.1)
+
+Long-press (or tap) an account in **Balances**:
+- **Correct the balance:** type what your bank app shows; Money uses it from now on and the missed-SMS check restarts from there.
+- **Same as another account (merge):** for duplicates (e.g. a debit card shown separately from its bank account) — all its payments move over, and future messages too.
+- **Delete account:** keep its payments in your history, or delete them too (for accounts that aren't really yours). Deleted accounts don't come back from new messages; bring one back in *Settings → Your data → Deleted accounts*.
 
 ## Scan & Pay (version 1.4)
 

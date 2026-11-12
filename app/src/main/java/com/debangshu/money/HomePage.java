@@ -217,9 +217,10 @@ final class HomePage {
             View row = Rows.amountRow(a, ac.card ? "💳" : ac.wallet ? "👛" : "🏦", ac.card ? 0xFF8B5CF6 : 0xFF0E9F6E, ac.display(),
                     (card ? "Card limit left · " : "") + (ac.hidden ? "not in total · " : "") + "updated " + ago(when), v, -1);
             row.setOnClickListener(x -> accountMenu(ac));
+            row.setOnLongClickListener(x -> { accountMenu(ac); return true; });
             c.addView(row);
         }
-        TextView note = Ui.text(a, "From the last bank SMS that showed a balance.", 11.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
+        TextView note = Ui.text(a, "From the last bank SMS that showed a balance. Long-press an account to fix, merge or delete it.", 11.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
         note.setPadding(Ui.dp(a, 4), Ui.dp(a, 4), 0, 0);
         c.addView(note);
         return c;
@@ -369,29 +370,109 @@ final class HomePage {
     }
 
     private void accountMenu(Account ac) {
-        String[] opts = {"Rename", "Don't count in total balance", "Show its payments"};
-        if (ac.hidden) opts[1] = "Count in total balance";
+        String[] opts = {"✏️  Rename", "🔧  Correct the balance", "🔗  Same as another account (merge)",
+                ac.hidden ? "➕  Count in total balance" : "➖  Don't count in total balance", "📄  Show its payments", "🗑️  Delete account"};
         new Ui.Popup(a).setTitle(ac.display()).setItems(opts, (d, w) -> {
-            if (w == 0) {
-                android.widget.EditText e = new android.widget.EditText(a);
-                e.setText(ac.display());
-                e.setTypeface(Ui.face(a, Ui.REGULAR));
-                LinearLayout b = Ui.vbox(a);
-                int p = Ui.dp(a, 24);
-                b.setPadding(p, 0, p, 0);
-                b.addView(e);
-                new Ui.Popup(a).setTitle("Name").setView(b)
-                        .setPositiveButton("Save", (x, y) -> Store.get(a).renameAccount(ac, e.getText().toString().trim()))
-                        .setNegativeButton("Cancel", null).show();
-            } else if (w == 1) {
-                Store.get(a).setAccountHidden(ac, !ac.hidden);
-            } else {
-                a.filterLabel = ac.display();
-                a.filterCategory = "acc:" + ac.key;
-                a.filterFrom = 0;
-                a.filterTo = 0;
-                a.show(MainActivity.ACTIVITY);
+            switch (w) {
+                case 0: rename(ac); break;
+                case 1: correct(ac); break;
+                case 2: merge(ac); break;
+                case 3: Store.get(a).setAccountHidden(ac, !ac.hidden); break;
+                case 4:
+                    a.filterLabel = ac.display();
+                    a.filterCategory = "acc:" + ac.key;
+                    a.filterFrom = 0;
+                    a.filterTo = 0;
+                    a.show(MainActivity.ACTIVITY);
+                    break;
+                default: delete(ac); break;
             }
         }).show();
+    }
+
+    private void rename(Account ac) {
+        android.widget.EditText e = new android.widget.EditText(a);
+        e.setText(ac.display());
+        e.setTypeface(Ui.face(a, Ui.REGULAR));
+        LinearLayout b = Ui.vbox(a);
+        int p = Ui.dp(a, 24);
+        b.setPadding(p, 0, p, 0);
+        b.addView(e);
+        new Ui.Popup(a).setTitle("Name").setView(b)
+                .setPositiveButton("Save", (x, y) -> Store.get(a).renameAccount(ac, e.getText().toString().trim()))
+                .setNegativeButton("Cancel", null).show();
+    }
+
+    /** The balance shown is wrong: type the right one (from your bank app). */
+    private void correct(Account ac) {
+        boolean limit = ac.card && ac.limit >= 0;
+        LinearLayout b = Ui.vbox(a);
+        int p = Ui.dp(a, 24);
+        b.setPadding(p, 0, p, 0);
+        TextView info = Ui.sub(a, (limit ? "Type the card's available limit" : "Type the balance") + " shown in your bank app right now. "
+                + "Money uses it from now on, and the missed-message check starts fresh from here.");
+        info.setPadding(0, 0, 0, Ui.dp(a, 8));
+        b.addView(info);
+        android.widget.EditText e = new android.widget.EditText(a);
+        e.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        e.setHint("₹");
+        e.setTypeface(Ui.face(a, Ui.BOLD));
+        e.setTextSize(22);
+        b.addView(e);
+        new Ui.Popup(a).setTitle("Correct " + ac.display()).setView(b)
+                .setPositiveButton("Save", (x, y) -> {
+                    long v = SmsParser.paise(e.getText().toString().trim());
+                    if (v < 0) { Ui.toast(a, "Enter the amount"); return; }
+                    Store.get(a).correctBalance(ac.key, v, limit);
+                    new Thread(() -> Engine.recheckGaps(a.getApplicationContext())).start();
+                    Ui.toast(a, "Balance corrected");
+                })
+                .setNegativeButton("Cancel", null).show();
+    }
+
+    /** Two entries that are really one account (e.g. a debit card shown separately from its bank account). */
+    private void merge(Account ac) {
+        List<Account> others = new ArrayList<>();
+        for (Account o : Store.get(a).accounts()) if (!o.key.equals(ac.key)) others.add(o);
+        if (others.isEmpty()) { Ui.toast(a, "There's no other account to merge with"); return; }
+        String[] names = new String[others.size()];
+        for (int i = 0; i < names.length; i++) {
+            Account o = others.get(i);
+            names[i] = o.display() + (o.balance >= 0 ? "  ·  " + Fmt.plain(o.balance) : "");
+        }
+        new Ui.Popup(a).setTitle("“" + ac.display() + "” is the same as…").setItems(names, (d, w) -> {
+            Account to = others.get(w);
+            new Ui.Popup(a).setTitle("Merge into " + to.display() + "?")
+                    .setMessage("All payments of " + ac.display() + " move to " + to.display() + ", and new messages for "
+                            + ac.display() + " go there too.")
+                    .setPositiveButton("Merge", (x, y) -> {
+                        Store.get(a).mergeAccount(ac.key, to.key);
+                        new Thread(() -> Engine.recheckGaps(a.getApplicationContext())).start();
+                        Ui.toast(a, "Merged");
+                    })
+                    .setNegativeButton("Cancel", null).show();
+        }).show();
+    }
+
+    private void delete(Account ac) {
+        int n = 0;
+        for (Txn t : Store.get(a).txns()) if (ac.key.equals(t.account) && t.visible() && t.kind != Txn.IGNORED && (t.sources & Txn.SRC_GAP) == 0) n++;
+        final int count = n;
+        new Ui.Popup(a).setTitle("Delete " + ac.display() + "?")
+                .setMessage("The account disappears from Balances and won't come back from new messages "
+                        + "(you can bring it back in Settings → Deleted accounts).\n\n"
+                        + "It has " + count + (count == 1 ? " payment" : " payments") + ". Keep them in your history, or delete them too?")
+                .setPositiveButton("Delete account", (x, y) -> {
+                    Store.get(a).deleteAccount(ac.key, false);
+                    Ui.toast(a, "Account deleted — its payments are kept");
+                })
+                .setNeutralButton("Delete with payments", (x, y) -> new Ui.Popup(a).setTitle("Delete " + count + " payments too?")
+                        .setMessage("They're removed from all totals. Use this when the account itself was wrong (not a real account of yours).")
+                        .setPositiveButton("Delete", (p1, p2) -> {
+                            Store.get(a).deleteAccount(ac.key, true);
+                            Ui.toast(a, "Account and its payments deleted");
+                        })
+                        .setNegativeButton("Cancel", null).show())
+                .setNegativeButton("Cancel", null).show();
     }
 }

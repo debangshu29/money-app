@@ -1,6 +1,4 @@
-Scan & Pay 📷
-• New round Scan & Pay button in the middle of the bottom bar
-• Scan any shop's UPI QR → Money already knows who it is (name + UPI ID)
-• Pick the category, add a note → Google Pay / PhonePe / Paytm opens with everything filled in
-• When the bank's message arrives, the payment gets the name, category and note by itself
-• Long-press the button to pay a UPI ID by typing it
+Fix wrong accounts 🔧
+• Long-press an account in Balances for: Rename · Correct the balance · Same as another account (merge) · Delete account
+• Delete keeps or removes its payments — your choice; deleted accounts don't come back from new messages
+• Bring a deleted account back in Settings → Your data → Deleted accounts
