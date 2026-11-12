@@ -52,7 +52,7 @@ D:\money
 ├── ROADMAP.md           ← what's built, what's next
 ├── whats-new.txt        ← shown in the update popup
 ├── BUILD_APK.bat        ← only for a PC with Android Studio (GitHub builds the APK anyway)
-├── keystore\money.p12   ← the app's signing key, locked with a password kept in GitHub Secrets
+├── keystore\money.p12   ← the app's signing key (made by GitHub, locked with your secret password)
 └── app\src\main\
     ├── java\com\debangshu\money\
     │   ├── SmsParser.java     reads bank SMS (amount, account, who, balance, reference, card bills)
@@ -72,4 +72,4 @@ D:\money
 ```
 
 ## How the APK is built
-Every push to `main` → GitHub Actions builds and signs `Money.apk` → publishes it to **Releases** and the `updates` branch (the app checks there for new versions). The signing key's password is the repo Secret **`MONEY_KEY_PASSWORD`**; without it builds are test-only and not published.
+Every push to `main` → GitHub Actions builds and signs `Money.apk` → publishes it to **Releases** and the `updates` branch (the app checks there for new versions). The signing key is created by GitHub on the first build and locked with your repo Secret **`MONEY_KEY_PASSWORD`** (a password only you know); without it builds are test-only and not published.

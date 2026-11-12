@@ -15,7 +15,8 @@ android {
     }
 
     // One fixed key for this app, so every new APK installs as an update and keeps your data.
-    // The key file is in keystore/ but locked with a long password that only GitHub's encrypted Secrets know.
+    // The key file is made by GitHub on the first build and kept in keystore/, locked with YOUR password
+    // (the repo Secret MONEY_KEY_PASSWORD). Without the password nobody can use it.
     def ksFile = rootProject.file('keystore/money.p12')
     def ksPass = System.getenv('MONEY_KEY_PASSWORD')
     def hasKey = ksPass != null && !ksPass.isEmpty() && ksFile.exists()
