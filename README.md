@@ -1,10 +1,24 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.1 — Budget.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.2 — new Home, far fewer “Unrecorded”.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
 **Private:** everything stays on the phone. No account, no server, no cloud. The internet is used only to download new versions of the app from this repo. Backups go to the phone's own storage (`Documents/Money/Backups`), locked with your password.
+
+## Home (version 1.2)
+
+Top to bottom: **Budget** (smooth green → yellow → orange → red → deep-red bar) · **Balances** · **This month** · **Today** · **Latest** · **Coming up** · **Needs a look**. Each section has its own 👁 to hide just its amounts. *This month* and *Today* show **Money out** and **Money in** — tap either to see where the money went / came from, by category, by place, and every payment.
+
+### “Unrecorded” — why it appears and how it's handled
+When a bank SMS shows a balance that doesn't add up with the messages before it, money moved without a message. Before calling it “Unrecorded”, Money now tries to explain it:
+1. a Google Pay / PhonePe payment that had no SMS → linked to that account
+2. two SMS that arrived in the wrong order → re-ordered
+3. the same payment counted twice → the extra one is hidden
+4. debit-card spends → put on the bank account behind the card
+5. small amounts → labelled *Bank / SMS charges (probably)* or *Interest (probably)* without asking
+
+What's left goes to **Needs a look → Sort them out**: it shows bank SMS from that time Money couldn't read (tap **This is it** to add it) and nearby payments, or you answer in one tap (Cash, Rent, Paid someone, To my other account…). *Settings → Bank messages Money couldn't read* lists messages to share so the reader can learn your bank's wording.
 
 ## Budget (version 1.1)
 

@@ -61,9 +61,12 @@ public final class TxnSheet {
                     + "If it was you, mark it OK.");
             w.setPadding(0, Ui.dp(a, 4), 0, Ui.dp(a, 10));
             warn.addView(w);
-            TextView ok = Ui.button(a, "It's OK", true);
+            TextView sort = Ui.button(a, gap ? "Find out what it was" : "Check it", true);
+            sort.setOnClickListener(v -> { if (dlg[0] != null) dlg[0].dismiss(); Resolve.one(a, t); });
+            TextView ok = Ui.button(a, "It's OK", false);
             ok.setOnClickListener(v -> { t.review = false; s.update(t); if (dlg[0] != null) dlg[0].dismiss(); });
             LinearLayout br = Ui.hbox(a);
+            br.addView(sort, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
             br.addView(ok);
             warn.addView(br);
             box.addView(warn, Ui.margins(Ui.matchWrap(), a, 0, 10, 0, 4));

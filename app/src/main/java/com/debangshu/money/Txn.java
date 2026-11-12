@@ -32,6 +32,7 @@ public final class Txn {
     public boolean review;         // shown under "Needs a look"
     public boolean userCategory;   // category picked by you (never changed automatically)
     public boolean userMerchant;   // name changed by you
+    public long gapFrom;           // "Unrecorded": the earlier message the gap starts from
 
     public boolean isSpend() { return kind == NORMAL && !credit; }
     public boolean isIncome() { return kind == NORMAL && credit; }
@@ -45,7 +46,7 @@ public final class Txn {
         t.id = id; t.time = time; t.amount = amount; t.credit = credit; t.account = account; t.merchant = merchant;
         t.vpa = vpa; t.category = category; t.kind = kind; t.sources = sources; t.balance = balance; t.limit = limit;
         t.ref = ref; t.raw = raw; t.sender = sender; t.note = note; t.srcKey = srcKey; t.review = review;
-        t.userCategory = userCategory; t.userMerchant = userMerchant;
+        t.userCategory = userCategory; t.userMerchant = userMerchant; t.gapFrom = gapFrom;
         return t;
     }
 

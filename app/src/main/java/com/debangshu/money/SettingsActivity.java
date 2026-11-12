@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 /** Settings: capture, alerts, privacy, backups (on this phone only), data, updates. */
 public class SettingsActivity extends Activity {
 
@@ -66,6 +68,10 @@ public class SettingsActivity extends Activity {
         sw(cap, "Count ATM cash as spending", "Turn off if you'd rather add cash spends yourself (Activity → +)", Store.S_ATM_SPEND,
                 on -> atmChanged(on));
         row(cap, "Read older messages again", "Bring in bank SMS already on your phone", v -> SetupActivity.importPast(this, this::build));
+        int unread = s.unread().size();
+        row(cap, "Bank messages Money couldn't read" + (unread > 0 ? " (" + unread + ")" : ""),
+                unread == 0 ? "None so far 👍" : "Send them to get them fixed — or add one as a payment",
+                unread == 0 ? null : v -> showUnread());
 
         LinearLayout al = section("Alerts");
         int hour = s.prefs().getInt(Alerts.P_DAILY_HOUR, 21);
@@ -80,7 +86,8 @@ public class SettingsActivity extends Activity {
         LinearLayout pv = section("Privacy");
         sw(pv, "App lock", Lock.deviceSecure(this) ? "Fingerprint, face or screen lock to open" : "Set a screen lock on your phone first",
                 Store.S_LOCK, on -> { if (on) Lock.done(); Widget.refresh(this); });
-        sw(pv, "Hide amounts when opening", "Shows ₹ •••• until you tap the eye", Store.S_HIDE, on -> { Fmt.hide = on; Widget.refresh(this); });
+        sw(pv, "Hide amounts when opening", "Every Home section starts as ₹ •••• — tap a section's eye to show it", Store.S_HIDE,
+                on -> { if (on) HomePage.hideAll(this); Widget.refresh(this); });
         sw(pv, "Block screenshots", "Also hides the app's content in recent apps", Store.S_SECURE, on -> Ui.bars(this));
         TextView info = Ui.sub(this, "🔒 Everything stays on this phone. Your messages and money data are never uploaded. "
                 + "The internet is used only to check for new versions of the app.");
@@ -198,6 +205,39 @@ public class SettingsActivity extends Activity {
                 s.end();
             }
         }).start();
+    }
+
+    private void showUnread() {
+        List<String[]> list = Store.get(this).unread();
+        LinearLayout b = Ui.vbox(this);
+        b.setPadding(Ui.dp(this, 16), 0, Ui.dp(this, 16), 0);
+        TextView info = Ui.sub(this, "These look like bank payments, but their wording is new to Money. Share them (to Claude, for example) "
+                + "so the reader can learn them — the next version then picks them up by itself. They stay on this phone unless you share.");
+        info.setPadding(0, 0, 0, Ui.dp(this, 8));
+        b.addView(info);
+        StringBuilder all = new StringBuilder();
+        for (String[] u : list) {
+            LinearLayout c = Ui.vbox(this);
+            c.setBackground(Ui.round(Ui.col(this, R.color.surface2), Ui.dp(this, 14)));
+            c.setPadding(Ui.dp(this, 12), Ui.dp(this, 10), Ui.dp(this, 12), Ui.dp(this, 10));
+            c.addView(Ui.text(this, u[1] + " · " + Fmt.dayTime(Long.parseLong(u[0])), 12, Ui.col(this, R.color.text2), Ui.BOLD));
+            TextView body = Ui.text(this, u[2], 13, Ui.REGULAR);
+            body.setTextIsSelectable(true);
+            c.addView(body);
+            b.addView(c, Ui.margins(Ui.matchWrap(), this, 0, 4, 0, 4));
+            all.append(u[1]).append(" | ").append(u[2].replace("\n", " / ")).append("\n");
+        }
+        ScrollView sv = new ScrollView(this);
+        sv.addView(b);
+        new Ui.Popup(this).sheet().setTitle("Couldn't read (" + list.size() + ")").setView(Ui.capHeight(sv, 0.7f))
+                .setPositiveButton("Share all", (d, w) -> {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_TEXT, "Bank SMS that Money couldn't read:\n\n" + all);
+                    startActivity(Intent.createChooser(i, "Share messages"));
+                })
+                .setNeutralButton("Clear list", (d, w) -> { Store.get(this).clearUnread(); build(); })
+                .setNegativeButton("Close", null).show();
     }
 
     // ------------------------------------------------------------------ backups

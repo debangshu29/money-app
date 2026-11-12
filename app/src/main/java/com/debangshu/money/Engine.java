@@ -24,8 +24,11 @@ public final class Engine {
     /** A bank SMS. Returns the saved transaction (or null when it wasn't about money). */
     public static Txn sms(Context ctx, String sender, String body, long time, int from) {
         SmsParser.Result r = SmsParser.parse(sender, body);
-        if (r == null) return null;
         Store s = Store.get(ctx);
+        if (r == null) {
+            if (from != FROM_SMS_NOTIF && SmsParser.looksLikeBankTxn(sender, body)) s.addUnread(time, SmsParser.cleanSender(sender), body.trim());
+            return null;
+        }
         if (r.bill) {
             Store.Bill b = new Store.Bill();
             b.account = r.account;
@@ -46,6 +49,18 @@ public final class Engine {
         t.account = r.account;
         t.balance = r.balance;
         t.limit = r.limit;
+        // a debit-card message: put it on the bank account behind the card (so balances add up)
+        if (r.viaCard && !r.card && !t.account.isEmpty()) {
+            String acc = s.alias(t.account);
+            if (acc == null && r.balance >= 0 && !r.bank.isEmpty() && r.amount > 0) {
+                for (Account a : s.accounts()) {
+                    if (a.card || a.key.equals(t.account) || !a.key.startsWith(r.bank + " ••") || a.balance < 0 || a.balanceTime > time) continue;
+                    long expect = a.balance + (r.credit ? r.amount : -r.amount);
+                    if (Math.abs(expect - r.balance) <= 100) { acc = a.key; s.setAlias(t.account, acc); break; }
+                }
+            }
+            if (acc != null) t.account = acc;
+        }
         if (r.balanceOnly) {
             t.kind = Txn.SNAPSHOT;
             t.amount = 0;

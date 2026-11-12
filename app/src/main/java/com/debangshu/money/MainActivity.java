@@ -77,6 +77,7 @@ public class MainActivity extends Activity {
         }
         if (i.getBooleanExtra("showUpdate", false)) Updater.maybePrompt(this, true);
         if (i.hasExtra("filterLabel")) {
+            activity.setQuick(i.getIntExtra("filterQuick", 0));
             showFiltered(i.getStringExtra("filterCat"), i.getLongExtra("filterFrom", 0), i.getLongExtra("filterTo", 0),
                     i.getStringExtra("filterLabel"));
             i.removeExtra("filterLabel");
@@ -191,15 +192,6 @@ public class MainActivity extends Activity {
         bar.setPadding(Ui.dp(this, 20), Ui.dp(this, 14), Ui.dp(this, 8), Ui.dp(this, 6));
         bar.addView(Ui.text(this, title, 26, Ui.EXTRABOLD), Ui.weight1());
         if (extra != null) bar.addView(extra);
-        ImageView eye = Ui.icon(this, R.drawable.ic_eye, Fmt.hide ? Ui.col(this, R.color.accent) : Ui.col(this, R.color.text2), 22);
-        eye.setContentDescription(Fmt.hide ? "Show amounts" : "Hide amounts");
-        eye.setOnClickListener(v -> {
-            Fmt.hide = !Fmt.hide;
-            Ui.toast(this, Fmt.hide ? "Amounts hidden" : "Amounts shown");
-            refresh();
-            Widget.refresh(this);
-        });
-        bar.addView(eye);
         ImageView set = Ui.icon(this, R.drawable.ic_settings, Ui.col(this, R.color.text2), 22);
         set.setContentDescription("Settings");
         set.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));

@@ -31,6 +31,7 @@ public final class SmsParser {
         public long balance = -1;
         public long limit = -1;
         public boolean atm, refund, cardPayment, selfTransfer;
+        public boolean viaCard;        // a debit card number, not the account number
         // card bill
         public boolean bill;
         public long due = -1, minDue = -1, dueDate = -1;
@@ -249,6 +250,22 @@ public final class SmsParser {
         return r;
     }
 
+    private static final Pattern LOOKS_MONEY = Pattern.compile(
+            "(?:\\brs\\b\\.?|\\binr\\b|₹|\\brs(?=[0-9.:]))\\s*[:.]?\\s*[0-9]", CI);
+    private static final Pattern LOOKS_MOVE = Pattern.compile(
+            "debit|credit|spent|sent|paid|withdr|received|deposit|txn|transaction|transfer|purchase|\\bdr\\b|\\bcr\\b|a/c|acct|account", CI);
+
+    /** A message from a bank that mentions money moving, but which {@link #parse} couldn't read (kept so it can be fixed). */
+    public static boolean looksLikeBankTxn(String sender, String body) {
+        if (body == null || sender == null) return false;
+        String raw = sender.trim();
+        if (raw.replaceAll("[+\\s-]", "").matches("[0-9]{8,}") || raw.toUpperCase(Locale.ROOT).endsWith("-P")) return false;
+        String lo = body.toLowerCase(Locale.ROOT);
+        if (OTP.matcher(lo).find() || REQUEST.matcher(lo).find() || PROMO.matcher(lo).find()) return false;
+        boolean bank = !bankOf(sender, lo).isEmpty() || raw.toUpperCase(Locale.ROOT).matches(".*-[ST]$");
+        return bank && LOOKS_MONEY.matcher(body).find() && LOOKS_MOVE.matcher(lo).find();
+    }
+
     // ------------------------------------------------------------------ amount / balance
 
     /** The amount that moved: the first ₹ amount that isn't a balance / limit / due. */
@@ -341,7 +358,7 @@ public final class SmsParser {
         if (creditCard && !card.isEmpty()) { r.card = true; r.last4 = last4(card); }
         else if (creditCard && !acc.isEmpty()) { r.card = true; r.last4 = last4(acc); }
         else if (!acc.isEmpty()) r.last4 = last4(acc);
-        else if (!card.isEmpty()) r.last4 = last4(card);
+        else if (!card.isEmpty()) { r.last4 = last4(card); r.viaCard = true; }
         if (creditCard) r.card = true;
 
         String bank = r.bank.isEmpty() ? "" : r.bank;

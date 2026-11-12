@@ -1,7 +1,8 @@
-Budget 🎯
-• Enter an amount, pick the start date on a calendar, tap Start
-• Runs 1 month, 2 weeks, 1 week or until a date you choose — and can repeat
-• Home shows what's left, a daily amount, and where the budget is going
-• Leave out Rent / EMI / Investments if you like
-• Alerts at 50%, 80% and 100%, a summary at the end, and past budgets to compare
-• Help popup now explains Play Protect “App blocked”
+New Home + far fewer “Unrecorded” 🧹
+• Home in your order: Budget → Balances → This month → Today → Latest → Needs a look
+• Budget bar now fades smoothly green → yellow → orange → red → deep red when over
+• Each section has its own 👁 eye — hide just balances, just the budget, etc.
+• This month & Today show Money in / Money out — tap either to see where it came from or went
+• “Unrecorded” is now worked out automatically in most cases: Google Pay/PhonePe payments without an SMS, SMS that arrived in the wrong order, double counts, debit-card spends, bank charges & interest
+• What's left: “Sort them out” shows the bank SMS from that time — tap “This is it” — or answer in one tap (Cash, Rent, Paid someone…)
+• Settings → Bank messages Money couldn't read: share them so the reader learns your bank's wording

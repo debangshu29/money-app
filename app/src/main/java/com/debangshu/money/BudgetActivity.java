@@ -3,7 +3,6 @@ package com.debangshu.money;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -103,24 +102,30 @@ public class BudgetActivity extends Activity {
         long left = p.amount - spent;
         float frac = p.amount <= 0 ? 0 : spent / (float) p.amount;
 
-        LinearLayout hero = Ui.vbox(this);
-        int c1 = frac >= 1 ? 0xFFD14343 : frac >= 0.8f ? 0xFFE08A00 : Ui.col(this, R.color.hero1);
-        int c2 = frac >= 1 ? 0xFF9F2A4B : frac >= 0.8f ? 0xFFB4561A : Ui.col(this, R.color.hero2);
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{c1, c2});
-        g.setCornerRadius(Ui.dp(this, 26));
-        hero.setBackground(g);
-        hero.setPadding(Ui.dp(this, 20), Ui.dp(this, 18), Ui.dp(this, 20), Ui.dp(this, 20));
-        hero.addView(Ui.text(this, "Budget · " + p.range(), 14, 0xD9FFFFFF, Ui.SEMIBOLD));
-        hero.addView(Ui.text(this, left >= 0 ? Fmt.rs(left) + " left" : Fmt.rs(-left) + " over", 36, 0xFFFFFFFF, Ui.EXTRABOLD));
-        hero.addView(Ui.text(this, Fmt.rs(spent) + " spent of " + Fmt.rs(p.amount), 14, 0xF2FFFFFF, Ui.SEMIBOLD));
+        LinearLayout hero = Ui.card(this);
+        int col = Ui.budgetColor(frac);
+        hero.addView(Ui.text(this, "Budget · " + p.range(), 14, Ui.col(this, R.color.text2), Ui.SEMIBOLD));
+        LinearLayout big = Ui.hbox(this);
+        big.setGravity(android.view.Gravity.BOTTOM);
+        big.addView(Ui.text(this, Fmt.rs(Math.abs(left)), 36, col, Ui.EXTRABOLD));
+        TextView lw = Ui.text(this, left >= 0 ? "  left" : "  over budget", 16, col, Ui.BOLD);
+        lw.setPadding(0, 0, 0, Ui.dp(this, 7));
+        big.addView(lw);
+        hero.addView(big);
         Charts.Progress pr = new Charts.Progress(this);
-        pr.set(frac, 0xFFFFFFFF);
-        hero.addView(pr, Ui.margins(Ui.matchWrap(), this, 0, 14, 0, 8));
-        hero.addView(Ui.text(this, p.status(all, now), 13.5f, 0xFFFFFFFF, Ui.SEMIBOLD));
+        pr.budget(frac, 16);
+        hero.addView(pr, Ui.margins(Ui.matchWrap(), this, 0, 12, 0, 6));
+        LinearLayout nums = Ui.hbox(this);
+        nums.addView(Ui.text(this, Fmt.rs(spent) + " spent", 14, Ui.SEMIBOLD), Ui.weight1());
+        nums.addView(Ui.text(this, "of " + Fmt.rs(p.amount), 14, Ui.col(this, R.color.text2), Ui.SEMIBOLD));
+        hero.addView(nums);
+        TextView st = Ui.text(this, p.status(all, now), 14, col, Ui.BOLD);
+        st.setPadding(0, Ui.dp(this, 8), 0, 0);
+        hero.addView(st);
         if (p.started(now) && !p.finished(now) && spent > 0) {
             long proj = p.projected(all, now);
-            hero.addView(Ui.text(this, "At this pace: about " + Fmt.rs(proj) + " by " + Fmt.date(Fmt.addDays(p.end, -1))
-                    + (proj > p.amount ? " (" + Fmt.rs(proj - p.amount) + " over)" : ""), 13, 0xE6FFFFFF, Ui.REGULAR));
+            hero.addView(Ui.sub(this, "At this pace: about " + Fmt.rs(proj) + " by " + Fmt.date(Fmt.addDays(p.end, -1))
+                    + (proj > p.amount ? " (" + Fmt.rs(proj - p.amount) + " over)" : "")));
         }
         box.addView(hero, Ui.margins(Ui.matchWrap(), this, 0, 4, 0, 10));
 

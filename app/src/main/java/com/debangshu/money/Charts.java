@@ -154,29 +154,45 @@ public final class Charts {
         }
     }
 
-    /** A thin progress bar (budget used). */
+    /** A progress bar. In budget mode it fills with a smooth green → yellow → orange → red → maroon gradient. */
     public static class Progress extends View {
         private float frac;
         private int color;
+        private boolean budget;
+        private int heightDp = 8;
         private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final RectF r = new RectF();
 
         public Progress(Context c) { super(c); }
 
-        public void set(float f, int col) { frac = f; color = col; invalidate(); }
+        public void set(float f, int col) { frac = f; color = col; budget = false; invalidate(); }
+
+        /** Budget bar: how much of the budget is used (can be over 1). */
+        public void budget(float f, int heightDp) { frac = f; budget = true; this.heightDp = heightDp; requestLayout(); invalidate(); }
 
         @Override
-        protected void onMeasure(int w, int h) { setMeasuredDimension(MeasureSpec.getSize(w), Ui.dp(getContext(), 8)); }
+        protected void onMeasure(int w, int h) { setMeasuredDimension(MeasureSpec.getSize(w), Ui.dp(getContext(), budget ? heightDp : 8)); }
 
         @Override
         protected void onDraw(Canvas c) {
             float rad = getHeight() / 2f;
             r.set(0, 0, getWidth(), getHeight());
-            p.setColor(Ui.col(getContext(), R.color.surface2));
+            p.setShader(null);
+            p.setColor(budget ? (Ui.dark(getContext()) ? 0x33FFFFFF : 0x1F000000) : Ui.col(getContext(), R.color.surface2));
             c.drawRoundRect(r, rad, rad, p);
-            r.set(0, 0, getWidth() * Math.max(0, Math.min(1, frac)), getHeight());
-            p.setColor(color);
-            if (r.width() > 0) c.drawRoundRect(r, rad, rad, p);
+            float f = Math.max(0, Math.min(1, frac));
+            r.set(0, 0, Math.max(getHeight(), getWidth() * f), getHeight());
+            if (frac <= 0) return;
+            if (budget) {
+                int end = Ui.budgetColor(frac);
+                int mid = Ui.budgetColor(frac / 2);
+                p.setShader(new android.graphics.LinearGradient(0, 0, r.right, 0, new int[]{Ui.budgetColor(0), mid, end},
+                        new float[]{0f, 0.5f, 1f}, android.graphics.Shader.TileMode.CLAMP));
+            } else {
+                p.setColor(color);
+            }
+            c.drawRoundRect(r, rad, rad, p);
+            p.setShader(null);
         }
     }
 }

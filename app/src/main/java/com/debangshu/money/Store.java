@@ -52,6 +52,8 @@ public final class Store {
     private final Map<String, Long> budgets = new LinkedHashMap<>();  // category ("" = whole month) → paise
     private final List<Bill> bills = new ArrayList<>();
     private Plan plan;                                                // the budget running now (or null)
+    private final Map<String, String> aliases = new HashMap<>();      // debit card key → its bank account key
+    private final List<String[]> unread = new ArrayList<>();          // bank messages that couldn't be read: time, sender, body
     private final List<Plan> pastPlans = new ArrayList<>();
     private int batch = 0;
     private boolean dirty = false;
@@ -212,6 +214,15 @@ public final class Store {
         changed();
     }
 
+    /** Removes "Unrecorded" entries you haven't touched (they're worked out again right after). */
+    public synchronized void dropUntouchedGaps() {
+        for (Iterator<Txn> it = txns.iterator(); it.hasNext(); ) {
+            Txn t = it.next();
+            if ((t.sources & Txn.SRC_GAP) != 0 && !t.userCategory && !t.userMerchant && t.note.isEmpty() && t.review) it.remove();
+        }
+        changed();
+    }
+
     // ------------------------------------------------------------------ accounts
 
     public synchronized List<Account> accounts() {
@@ -265,6 +276,32 @@ public final class Store {
         if (paise <= 0) budgets.remove(cat); else budgets.put(cat, paise);
         changed();
     }
+
+    // ------------------------------------------------------------------ debit card ↔ account, unread messages
+
+    public synchronized String alias(String key) { return aliases.get(key); }
+
+    public synchronized void setAlias(String cardKey, String accountKey) { aliases.put(cardKey, accountKey); changed(); }
+
+    public synchronized void addUnread(long time, String sender, String body) {
+        for (String[] u : unread) if (u[2].equals(body)) return;
+        unread.add(new String[]{String.valueOf(time), sender, body});
+        while (unread.size() > 200) unread.remove(0);
+        changed();
+    }
+
+    public synchronized List<String[]> unread() {
+        List<String[]> l = new ArrayList<>(unread);
+        Collections.reverse(l);
+        return l;
+    }
+
+    public synchronized void removeUnread(String body) {
+        for (Iterator<String[]> it = unread.iterator(); it.hasNext(); ) if (it.next()[2].equals(body)) it.remove();
+        changed();
+    }
+
+    public synchronized void clearUnread() { unread.clear(); changed(); }
 
     // ------------------------------------------------------------------ the budget you started
 
@@ -370,12 +407,22 @@ public final class Store {
         JSONArray pp = new JSONArray();
         for (Plan p : pastPlans) pp.put(planJson(p));
         o.put("pastPlans", pp);
+        o.put("aliases", new JSONObject(aliases));
+        JSONArray un = new JSONArray();
+        for (String[] u : unread) un.put(new JSONArray().put(u[0]).put(u[1]).put(u[2]));
+        o.put("unread", un);
         return o;
     }
 
     public synchronized void fromJson(JSONObject o) throws Exception {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
-        plan = null; pastPlans.clear();
+        plan = null; pastPlans.clear(); aliases.clear(); unread.clear();
+        readMap(o.optJSONObject("aliases"), aliases);
+        JSONArray un = o.optJSONArray("unread");
+        if (un != null) for (int i = 0; i < un.length(); i++) {
+            JSONArray u = un.optJSONArray(i);
+            if (u != null && u.length() == 3) unread.add(new String[]{u.optString(0), u.optString(1), u.optString(2)});
+        }
         JSONObject pj = o.optJSONObject("plan");
         if (pj != null) plan = planFrom(pj);
         JSONArray pp = o.optJSONArray("pastPlans");
@@ -423,7 +470,7 @@ public final class Store {
 
     public synchronized void wipe() {
         txns.clear(); accounts.clear(); catRules.clear(); nameRules.clear(); budgets.clear(); bills.clear();
-        plan = null; pastPlans.clear();
+        plan = null; pastPlans.clear(); aliases.clear(); unread.clear();
         changed();
     }
 
@@ -459,6 +506,7 @@ public final class Store {
          .put("vpa", t.vpa).put("cat", t.category).put("k", t.kind).put("src", t.sources).put("bal", t.balance).put("lim", t.limit)
          .put("ref", t.ref).put("raw", t.raw).put("snd", t.sender).put("note", t.note).put("key", t.srcKey)
          .put("rev", t.review).put("uc", t.userCategory).put("um", t.userMerchant);
+        if (t.gapFrom > 0) j.put("gf", t.gapFrom);
         return j;
     }
 
@@ -469,6 +517,7 @@ public final class Store {
         t.kind = j.optInt("k"); t.sources = j.optInt("src"); t.balance = j.optLong("bal", -1); t.limit = j.optLong("lim", -1);
         t.ref = j.optString("ref"); t.raw = j.optString("raw"); t.sender = j.optString("snd"); t.note = j.optString("note");
         t.srcKey = j.optString("key"); t.review = j.optBoolean("rev"); t.userCategory = j.optBoolean("uc"); t.userMerchant = j.optBoolean("um");
+        t.gapFrom = j.optLong("gf");
         return t;
     }
 }

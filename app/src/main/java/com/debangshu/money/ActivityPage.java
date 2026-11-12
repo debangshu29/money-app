@@ -32,6 +32,8 @@ final class ActivityPage {
 
     ActivityPage(MainActivity a) { this.a = a; }
 
+    void setQuick(int q) { quick = Math.max(0, Math.min(QUICK.length - 1, q)); }
+
     View view() {
         if (root != null) return root;
         root = Ui.vbox(a);
@@ -64,7 +66,7 @@ final class ActivityPage {
 
         filterBar = Ui.text(a, "", 13, Ui.col(a, R.color.accent), Ui.BOLD);
         filterBar.setPadding(Ui.dp(a, 20), Ui.dp(a, 2), Ui.dp(a, 20), Ui.dp(a, 4));
-        filterBar.setOnClickListener(v -> { a.filterCategory = null; a.filterLabel = null; a.filterFrom = 0; a.filterTo = 0; refresh(); });
+        filterBar.setOnClickListener(v -> { a.filterCategory = null; a.filterLabel = null; a.filterFrom = 0; a.filterTo = 0; quick = 0; refresh(); });
         root.addView(filterBar);
 
         list = new ListView(a);

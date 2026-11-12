@@ -91,9 +91,15 @@ public final class Ledger {
 
     /**
      * Walks one account's transactions in time order. Whenever a message tells the balance (or card limit),
-     * it checks: previous balance ± everything in between = this balance? If not, money moved without a
-     * message, and an "Unrecorded" entry for the difference is returned (it disappears by itself if the
-     * missing message turns up later).
+     * it checks: previous balance ± everything in between = this balance? If it doesn't add up, it first tries
+     * to EXPLAIN the difference before calling it "Unrecorded":
+     *  1. payments seen only in Google Pay / PhonePe notifications (no account on them) in that time
+     *     → they're linked to this account (that was the missing SMS)
+     *  2. two messages that arrived in the wrong order → a +X and −X pair that cancels out
+     *  3. the same payment counted twice → the extra copy is hidden
+     *  4. small round-ups at quarter end (interest) or small debits (bank / SMS charges) → labelled as "probably …"
+     * Only what's left becomes an "Unrecorded" entry, and it disappears by itself if the missing message turns up.
+     * Note: this may update transactions in {@code all} (links app payments to the account, hides double counts).
      */
     public static List<Txn> gaps(List<Txn> all, String account) {
         List<Txn> out = new ArrayList<>();
@@ -104,23 +110,52 @@ public final class Ledger {
             if (account.equals(t.account)) list.add(t);
         }
         Collections.sort(list, (a, b) -> Long.compare(a.time, b.time));
+        fixOrder(list);
+        java.util.Set<Txn> used = new java.util.HashSet<>();
         for (int mode = 0; mode < 2; mode++) {          // 0 = bank balance, 1 = card limit
+            List<Txn> found = new ArrayList<>();
             Txn prev = null;
             long moved = 0;
+            List<Txn> between = new ArrayList<>();
             for (Txn t : list) {
                 long val = mode == 0 ? t.balance : t.limit;
                 if (prev == null) {
-                    if (val >= 0) { prev = t; moved = 0; }
+                    if (val >= 0) { prev = t; moved = 0; between.clear(); }
                     continue;
                 }
-                if (t.kind != Txn.SNAPSHOT) moved += t.signed();
+                if (t.kind != Txn.SNAPSHOT) { moved += t.signed(); between.add(t); }
                 if (val < 0) continue;
                 long prevVal = mode == 0 ? prev.balance : prev.limit;
                 long diff = val - (prevVal + moved);
                 if (Math.abs(diff) >= 100 && t.time - prev.time < 120L * 86400000) {
+                    // 1. app-only payments (no account) in this window explain it?
+                    List<Txn> link = explain(all, diff, prev.time, t.time, used);
+                    if (link != null) {
+                        for (Txn x : link) {
+                            x.account = account;
+                            if (x.time > t.time) x.time = t.time - 1000;
+                            used.add(x);
+                        }
+                        diff = 0;
+                    }
+                    // 3. counted twice? (money "came in" = a duplicate debit inside this window)
+                    if (diff > 0) {
+                        List<Txn> win = new ArrayList<>();
+                        win.add(prev);
+                        win.addAll(between);
+                        Txn dup = duplicateIn(win, diff);
+                        if (dup != null) {
+                            dup.kind = Txn.IGNORED;
+                            dup.note = dup.note.isEmpty() ? "Hidden automatically: the same payment was counted twice (your balance shows it only once)." : dup.note;
+                            diff = 0;
+                        }
+                    }
+                }
+                if (Math.abs(diff) >= 100 && t.time - prev.time < 120L * 86400000) {
                     Txn g = new Txn();
                     g.id = "gap:" + (mode == 0 ? "b:" : "l:") + t.id;
                     g.time = t.time - 1000;
+                    g.gapFrom = prev.time;
                     g.amount = Math.abs(diff);
                     g.credit = diff > 0;
                     g.account = account;
@@ -132,13 +167,108 @@ public final class Ledger {
                             + Fmt.plain(prevVal) + " (" + Fmt.dayTime(prev.time) + ") to " + Fmt.plain(val) + " ("
                             + Fmt.dayTime(t.time) + "), but the messages in between only explain "
                             + Fmt.signed(moved) + ".";
-                    out.add(g);
+                    guessSmall(g, prev.time, t.time);
+                    found.add(g);
                 }
                 prev = t;
                 moved = 0;
+                between.clear();
             }
+            // 2. messages that arrived out of order: +X then −X (or −X then +X) within 3 days cancel out
+            for (int i = 0; i + 1 < found.size(); i++) {
+                Txn a = found.get(i), b = found.get(i + 1);
+                if (a.amount == b.amount && a.credit != b.credit && Math.abs(b.time - a.time) < 3L * 86400000) {
+                    found.remove(i + 1);
+                    found.remove(i);
+                    i = Math.max(-1, i - 2);
+                }
+            }
+            out.addAll(found);
         }
         return out;
+    }
+
+    /**
+     * Bank SMS sometimes arrive in the wrong order (two payments a minute apart). If swapping two neighbours
+     * makes the balances add up, swap them — so a late SMS doesn't look like missing money.
+     */
+    static void fixOrder(List<Txn> list) {
+        for (int pass = 0; pass < 3; pass++) {
+            long bal = -1;
+            for (int i = 0; i + 1 < list.size(); i++) {
+                Txn a = list.get(i), b = list.get(i + 1);
+                if (bal >= 0 && a.balance >= 0 && b.balance >= 0 && b.time - a.time < 6L * 3600000) {
+                    boolean fitsNow = bal + a.signed() == a.balance;
+                    boolean fitsSwapped = bal + b.signed() == b.balance && b.balance + a.signed() == a.balance;
+                    if (!fitsNow && fitsSwapped) { list.set(i, b); list.set(i + 1, a); }
+                }
+                Txn cur = list.get(i);
+                if (cur.balance >= 0) bal = cur.balance;
+                else if (bal >= 0 && cur.kind != Txn.SNAPSHOT) bal += cur.signed();
+            }
+        }
+    }
+
+    /** Payments with no account (from app notifications) between from and to whose total is exactly −diff. */
+    static List<Txn> explain(List<Txn> all, long diff, long from, long to, java.util.Set<Txn> used) {
+        List<Txn> c = new ArrayList<>();
+        for (Txn x : all) {
+            if (!x.account.isEmpty() || used.contains(x) || x.kind == Txn.IGNORED || x.kind == Txn.SNAPSHOT) continue;
+            if ((x.sources & Txn.SRC_APP) == 0) continue;
+            if (x.time <= from - 5L * 60000 || x.time > to + 5L * 60000) continue;
+            c.add(x);
+        }
+        if (c.isEmpty()) return null;
+        if (c.size() > 16) {
+            final long mid = (from + to) / 2;
+            Collections.sort(c, (a, b) -> Long.compare(Math.abs(a.time - mid), Math.abs(b.time - mid)));
+            c = new ArrayList<>(c.subList(0, 16));
+        }
+        long need = diff;   // the balance changed by diff more than explained → these payments' signed total = diff
+        int n = c.size();
+        int best = -1, bestCount = 99;
+        for (int mask = 1; mask < (1 << n); mask++) {
+            long sum = 0;
+            int cnt = 0;
+            for (int i = 0; i < n; i++) if ((mask & (1 << i)) != 0) { sum += c.get(i).signed(); cnt++; }
+            if (sum == need && cnt < bestCount) { best = mask; bestCount = cnt; }
+        }
+        if (best < 0) return null;
+        List<Txn> out = new ArrayList<>();
+        for (int i = 0; i < n; i++) if ((best & (1 << i)) != 0) out.add(c.get(i));
+        return out;
+    }
+
+    /** Two debits of the same amount minutes apart where the balance shows only one → the later one. */
+    static Txn duplicateIn(List<Txn> window, long amount) {
+        for (int i = 0; i < window.size(); i++) {
+            Txn a = window.get(i);
+            if (a.credit || a.amount != amount) continue;
+            for (int j = i + 1; j < window.size(); j++) {
+                Txn b = window.get(j);
+                if (b.credit || b.amount != amount || Math.abs(b.time - a.time) > 30L * 60000) continue;
+                if (!a.ref.isEmpty() && !b.ref.isEmpty() && !a.ref.equals(b.ref)) continue;
+                if (b.userCategory || b.userMerchant || !b.note.isEmpty()) continue;
+                return b;
+            }
+        }
+        return null;
+    }
+
+    /** Small unexplained amounts are almost always bank charges or interest: label them, don't nag. */
+    static void guessSmall(Txn g, long from, long to) {
+        java.util.Calendar k = Fmt.cal(to);
+        int m = k.get(java.util.Calendar.MONTH), d = k.get(java.util.Calendar.DAY_OF_MONTH);
+        boolean quarterEnd = (m == 2 || m == 5 || m == 8 || m == 11) && d >= 20 || (m == 3 || m == 6 || m == 9 || m == 0) && d <= 10;
+        if (!g.credit && g.amount <= 30000) {
+            g.merchant = "Bank / SMS charges (probably)";
+            g.category = Cats.FEES;
+            g.review = false;
+        } else if (g.credit && g.amount <= 300000 && quarterEnd) {
+            g.merchant = "Interest from the bank (probably)";
+            g.category = Cats.INCOME;
+            g.review = false;
+        }
     }
 
     // ------------------------------------------------------------------ repeating payments

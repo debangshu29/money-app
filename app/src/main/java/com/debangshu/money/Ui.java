@@ -59,6 +59,27 @@ public final class Ui {
         return g;
     }
 
+    /**
+     * Budget colour that changes smoothly with how much is used:
+     * green (0%) → yellow (50%) → orange (75%) → red (100%) → deep maroon (125%+, over budget).
+     */
+    public static int budgetColor(float f) {
+        float[] at = {0f, 0.5f, 0.75f, 1f, 1.25f};
+        int[] col = {0xFF22C55E, 0xFFEAB308, 0xFFF97316, 0xFFEF4444, 0xFF7F1D1D};
+        if (f <= 0) return col[0];
+        for (int i = 1; i < at.length; i++) {
+            if (f <= at[i]) return mix(col[i - 1], col[i], (f - at[i - 1]) / (at[i] - at[i - 1]));
+        }
+        return col[col.length - 1];
+    }
+
+    public static int mix(int a, int b, float t) {
+        t = Math.max(0, Math.min(1, t));
+        int ar = (a >> 16) & 0xFF, ag = (a >> 8) & 0xFF, ab = a & 0xFF;
+        int br = (b >> 16) & 0xFF, bg = (b >> 8) & 0xFF, bb = b & 0xFF;
+        return 0xFF000000 | (Math.round(ar + (br - ar) * t) << 16) | (Math.round(ag + (bg - ag) * t) << 8) | Math.round(ab + (bb - ab) * t);
+    }
+
     public static Drawable ripple(Drawable content) {
         return new RippleDrawable(ColorStateList.valueOf(0x297A7F99), content, content == null ? new ColorDrawable(0xFFFFFFFF) : null);
     }
