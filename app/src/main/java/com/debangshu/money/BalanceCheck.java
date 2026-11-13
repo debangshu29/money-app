@@ -56,16 +56,16 @@ public class BalanceCheck extends BroadcastReceiver {
         Intent ri = new Intent(c, BalanceCheck.class).putExtra("acc", acc);
         PendingIntent pr = PendingIntent.getBroadcast(c, NID, ri, PendingIntent.FLAG_UPDATE_CURRENT
                 | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
-        RemoteInput in = new RemoteInput.Builder("bal").setLabel("Balance now, e.g. 12450").build();
+        RemoteInput in = new RemoteInput.Builder("bal").setLabel(Lang.t("Balance now, e.g. 12450")).build();
         Notification.Action act = new Notification.Action.Builder(
-                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Type balance", pr).addRemoteInput(in).build();
+                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), Lang.t("Type balance"), pr).addRemoteInput(in).build();
         Intent open = new Intent(c, MainActivity.class).putExtra("balCheck", acc).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent po = PendingIntent.getActivity(c, NID, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, Alerts.CH_ASK) : new Notification.Builder(c);
-        b.setSmallIcon(R.drawable.ic_notify).setContentTitle("🏦 Weekly check: " + Noted.label(c, acc) + " balance?")
-                .setContentText("Open your bank or UPI app, type the balance here — Money finds any payment that sent no message.")
-                .setStyle(new Notification.BigTextStyle().bigText("Open your bank or UPI app and type the balance here. Any small payment that sent no SMS or notification shows up as “Unrecorded” — while you still remember what it was."))
+        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(Lang.t("🏦 Weekly check: " + Noted.label(c, acc) + " balance?"))
+                .setContentText(Lang.t("Open your bank or UPI app, type the balance here — Money finds any payment that sent no message."))
+                .setStyle(new Notification.BigTextStyle().bigText(Lang.t("Open your bank or UPI app and type the balance here. Any small payment that sent no SMS or notification shows up as “Unrecorded” — while you still remember what it was.")))
                 .setContentIntent(po).setAutoCancel(true).addAction(act).setColor(c.getColor(R.color.accent));
         NotificationManager nm = c.getSystemService(NotificationManager.class);
         if (nm != null) nm.notify(NID, b.build());

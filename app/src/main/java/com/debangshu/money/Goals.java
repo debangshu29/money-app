@@ -30,7 +30,7 @@ final class Goals {
     static final String[][] TEMPLATES = {
             {"emergency", "🛡️", "Emergency fund"}, {"phone", "📱", "New phone"}, {"laptop", "💻", "Laptop"},
             {"trip", "✈️", "Trip"}, {"bike", "🏍️", "Bike"}, {"gift", "🎁", "Gift"}, {"festival", "🪔", "Festival"},
-            {"study", "🎓", "Studies"}, {"wedding", "💍", "Wedding"}, {"home", "🏠", "Home"}, {"other", "🎯", "Something else"},
+            {"study", "🎓", "Studies"}, {"wedding", "💍", "Wedding"}, {"home", "🏠", "A home"}, {"other", "🎯", "Something else"},
     };
 
     static final int[] COLORS = {0xFF0E9F6E, 0xFF6366F1, 0xFFF59E0B, 0xFFEC4899, 0xFF0EA5E9, 0xFF8B5CF6, 0xFFEF4444};

@@ -244,7 +244,7 @@ public class People extends Activity {
 
         LinkedHashMap<String, Long> bal = balances(this);
         LinearLayout c = Ui.card(this);
-        c.addView(Ui.sectionTitle(this, "Open"));
+        c.addView(Ui.sectionTitle(this, "Still to settle"));
         if (bal.isEmpty()) c.addView(Ui.sub(this, "All settled 🎉"));
         for (Map.Entry<String, Long> e : bal.entrySet()) {
             long v = e.getValue();

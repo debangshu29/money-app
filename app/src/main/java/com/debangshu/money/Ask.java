@@ -23,6 +23,20 @@ public final class Ask {
         public String text = "";
         public List<Txn> items = new ArrayList<>();
         public LinkedHashMap<String, Long> table;   // optional: name → amount
+        /** The same answer as a sentence pattern ({0}, {1}…) plus its pieces, so the screen can say it in Hindi or Bengali. */
+        public String tpl;
+        public String[] args = new String[0];
+        void say(String tpl, String... args) { this.tpl = tpl; this.args = args; }
+    }
+
+    /** Pieces for the translated sentence: "ask:at Swiggy", "ask:on Food", "ask:day 12 Nov"… (never shown in English). */
+    static String whatKey(String shop, String cat) {
+        return shop != null ? "ask:at " + shop : cat != null ? "ask:on " + cat : "";
+    }
+
+    static String dayKey(long t) {
+        String d = Fmt.day(t);
+        return d.equals("Today") || d.equals("Yesterday") ? d.toLowerCase(Locale.ROOT) : "ask:day " + d;
     }
 
     public static final String[] EXAMPLES = {
@@ -78,6 +92,7 @@ public final class Ask {
         if (q.matches(".*\\bbudget\\b.*") && plan != null) {
             long spent = plan.spent(all);
             a.text = "Budget " + plan.range() + ": " + Fmt.rs(spent) + " spent of " + Fmt.rs(plan.amount) + ". " + plan.status(all, now) + ".";
+            a.say("Budget {0}: {1} spent of {2}. {3}.", plan.range(), Fmt.rs(spent), Fmt.rs(plan.amount), plan.status(all, now));
             a.table = plan.byCategory(all);
             return a;
         }
@@ -98,6 +113,8 @@ public final class Ask {
             if (n == 0) a.text = "I haven't seen a balance yet. It appears after your bank's next SMS that shows “Avl Bal”.";
             else b.append("You have ").append(Fmt.rs(total)).append(" across ").append(n).append(n == 1 ? " account" : " accounts")
                     .append(" (from the last message of each bank).");
+            if (n > 0) a.say(n == 1 ? "You have {0} across {1} account (from the last message of each bank)."
+                    : "You have {0} across {1} accounts (from the last message of each bank).", Fmt.rs(total), String.valueOf(n));
             if (b.length() > 0) a.text = b.toString();
             return a;
         }
@@ -122,6 +139,8 @@ public final class Ask {
             }
             a.text = rs.isEmpty() ? "No repeating payments found yet. They show up after the second payment to the same place."
                     : rs.size() + (rs.size() == 1 ? " repeating payment" : " repeating payments") + ", about " + Fmt.rs(monthly) + " a month.";
+            if (!rs.isEmpty()) a.say(rs.size() == 1 ? "{0} repeating payment, about {1} a month." : "{0} repeating payments, about {1} a month.",
+                    String.valueOf(rs.size()), Fmt.rs(monthly));
             return a;
         }
 
@@ -141,6 +160,8 @@ public final class Ask {
         for (Txn t : hits) total += t.amount;
         String what = shop != null ? "at " + shop : cat != null ? "on " + cat : "";
         String verb = income ? "received" : "spent";
+        String wk = whatKey(shop, cat);
+        String whenK = when.startsWith("in ") && !when.startsWith("in the last ") ? "ask:in " + when.substring(3) : when;
 
         // ---- biggest
         if (q.matches(".*\\b(biggest|largest|highest|most expensive|max|maximum|top expense|top expenses|costliest)\\b.*")) {
@@ -150,6 +171,9 @@ public final class Ask {
             a.text = big.isEmpty() ? "Nothing " + verb + " " + what + " " + when + "."
                     : "Biggest " + (income ? "money in" : "payment") + " " + when + ": " + Fmt.rs(big.get(0).amount)
                       + (big.get(0).merchant.isEmpty() ? "" : " — " + big.get(0).merchant) + " " + onDay(big.get(0).time) + ".";
+            if (big.isEmpty()) a.say(income ? "Nothing received {0} {1}." : "Nothing spent {0} {1}.", wk, whenK);
+            else a.say(income ? "Biggest money in {0}: {1}{2} {3}." : "Biggest payment {0}: {1}{2} {3}.", whenK, Fmt.rs(big.get(0).amount),
+                    big.get(0).merchant.isEmpty() ? "" : " — " + big.get(0).merchant, dayKey(big.get(0).time));
             return a;
         }
 
@@ -157,6 +181,8 @@ public final class Ask {
         if (q.matches(".*\\b(how many|how often|count|number of|times)\\b.*")) {
             a.items = hits;
             a.text = hits.size() + (hits.size() == 1 ? " payment " : " payments ") + what + " " + when + ", " + Fmt.rs(total) + " in total.";
+            a.say(hits.size() == 1 ? "{0} payment {1} {2}, {3} in total." : "{0} payments {1} {2}, {3} in total.",
+                    String.valueOf(hits.size()), wk, whenK, Fmt.rs(total));
             return a;
         }
 
@@ -166,6 +192,8 @@ public final class Ask {
             a.items = hits;
             a.text = "On average you " + (income ? "received " : "spent ") + Fmt.rs(total / days) + " a day " + what + " " + when
                     + " (" + Fmt.rs(total) + " over " + days + (days == 1 ? " day)." : " days).");
+            a.say(income ? "On average you received {0} a day {1} {2} ({3} over {4} days)." : "On average you spent {0} a day {1} {2} ({3} over {4} days).",
+                    Fmt.rs(total / days), wk, whenK, Fmt.rs(total), String.valueOf(days));
             return a;
         }
 
@@ -176,11 +204,13 @@ public final class Ask {
             Map<String, Long> m = byShop ? Ledger.byMerchant(all, range[0], range[1], cat) : Ledger.byCategory(all, range[0], range[1]);
             int i = 0;
             for (Map.Entry<String, Long> e : m.entrySet()) { if (i++ >= 10) break; a.table.put(e.getKey(), e.getValue()); }
-            if (m.isEmpty()) a.text = "Nothing spent " + when + ".";
+            if (m.isEmpty()) { a.text = "Nothing spent " + when + "."; a.say("Nothing spent {0} {1}.", "", whenK); }
             else {
                 Map.Entry<String, Long> first = m.entrySet().iterator().next();
                 a.text = "Most of your money " + when + " went " + (byShop ? "to " : "on ") + first.getKey() + ": "
                         + Fmt.rs(first.getValue()) + " of " + Fmt.rs(Ledger.spent(all, range[0], range[1])) + ".";
+                a.say(byShop ? "Most of your money {0} went to {1}: {2} of {3}." : "Most of your money {0} went on {1}: {2} of {3}.",
+                        whenK, first.getKey(), Fmt.rs(first.getValue()), Fmt.rs(Ledger.spent(all, range[0], range[1])));
             }
             return a;
         }
@@ -202,10 +232,16 @@ public final class Ask {
             String change = before == 0 ? "" : " (" + Math.round(Math.abs(diff) * 100.0 / before) + "% " + (diff >= 0 ? "more" : "less") + ")";
             a.text = Fmt.title(verb) + " " + what + " " + when + ": " + Fmt.rs(total) + ". The period before: " + Fmt.rs(before)
                     + change + "." + (len > 0 && range[1] > now ? " (Up to today in both.)" : "");
+            a.say(income ? "Received {0} {1}: {2}. The period before: {3}{4}.{5}" : "Spent {0} {1}: {2}. The period before: {3}{4}.{5}",
+                    wk, whenK, Fmt.rs(total), Fmt.rs(before), change, len > 0 && range[1] > now ? " (Up to today in both.)" : "");
             return a;
         }
 
         a.items = hits;
+        if (hits.isEmpty()) a.say(income ? "Nothing received {0} {1}." : "Nothing spent {0} {1}.", wk, whenK);
+        else a.say(income ? (hits.size() == 1 ? "You received {0} {1} {2} ({3} payment)." : "You received {0} {1} {2} ({3} payments).")
+                : (hits.size() == 1 ? "You spent {0} {1} {2} ({3} payment)." : "You spent {0} {1} {2} ({3} payments)."),
+                Fmt.rs(total), wk, whenK, String.valueOf(hits.size()));
         if (hits.isEmpty()) a.text = "Nothing " + verb + " " + what + " " + when + ".";
         else a.text = "You " + verb + " " + Fmt.rs(total) + " " + what + " " + when + " (" + hits.size()
                 + (hits.size() == 1 ? " payment)." : " payments).");

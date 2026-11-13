@@ -201,8 +201,8 @@ public final class Updater {
                 ? new android.app.Notification.Builder(ctx, CHANNEL)
                 : new android.app.Notification.Builder(ctx);
         b.setSmallIcon(R.drawable.ic_notify)
-                .setContentTitle("Money" + (latest == null ? "" : " " + latest.versionName) + " is downloaded")
-                .setContentText("Tap to install the update")
+                .setContentTitle(Lang.t("Money" + (latest == null ? "" : " " + latest.versionName) + " is downloaded"))
+                .setContentText(Lang.t("Tap to install the update"))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setColor(Ui.col(ctx, R.color.accent));
@@ -228,8 +228,8 @@ public final class Updater {
                 ? new android.app.Notification.Builder(ctx, CHANNEL)
                 : new android.app.Notification.Builder(ctx);
         b.setSmallIcon(R.drawable.ic_notify)
-                .setContentTitle("Money " + i.versionName + " is ready")
-                .setContentText("Tap to update — your data stays as it is")
+                .setContentTitle(Lang.t("Money " + i.versionName + " is ready"))
+                .setContentText(Lang.t("Tap to update — your data stays as it is"))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setColor(Ui.col(ctx, R.color.accent));

@@ -451,8 +451,8 @@ public class StatementActivity extends Screen {
         PendingIntent pi = PendingIntent.getActivity(c, 446, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
         android.app.Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new android.app.Notification.Builder(c, Alerts.CH_ASK) : new android.app.Notification.Builder(c);
-        b.setSmallIcon(R.drawable.ic_notify).setContentTitle("📄 Check " + Fmt.month(last) + " with your bank statement")
-                .setContentText("Open it in Money — missed payments get added, names filled in.")
+        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(Lang.t("📄 Check " + Fmt.month(last) + " with your bank statement"))
+                .setContentText(Lang.t("Open it in Money — missed payments get added, names filled in."))
                 .setContentIntent(pi).setAutoCancel(true).setColor(c.getColor(R.color.accent));
         NotificationManager nm = c.getSystemService(NotificationManager.class);
         if (nm != null) nm.notify(446, b.build());

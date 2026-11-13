@@ -43,7 +43,7 @@ Built one version at a time; each version is checked on the phone before the nex
 | **2.4.1** | Explained simply | Rules you tap to learn first (story, your numbers, now vs rule, what changes) · suggested rule · “What is this?” kid-simple boxes on every Grow screen · simpler words | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.5** | Calculators & play tools | 20 tools: SIP / step-up · lump sum · FD · RD · PPF · NPS · gold · compare all · snowball switch · investment race · crash test · time machine · cost of waiting · tax & inflation · fees · card trap · no-cost EMI · prepay or invest · rent vs buy · lock-in timeline · share as picture | ✅ built (14 Nov 2026) — waiting for your check |
 | **2.6** | Three languages | Language picker (welcome page + Settings) · tabs, Home, Grow and all calculators in English / हिंदी / বাংলা · notifications & pop-ups · basic Hindi/Bengali voice | ✅ built (14 Nov 2026) — waiting for your check |
-| **2.6.1** | Languages, part 2 | Activity, Insights, Plan, Settings, sheets and the rest of the screens translated | 🔜 next |
+| **2.6.1** | Languages, part 2 | Every remaining screen, notification and the widget in हिंदी / বাংলা · Ask answers in your language | ✅ built (14 Nov 2026) — waiting for your check |
 | **2.7** | Learn | 60+ one-minute lessons (3 languages) · Try it → calculator · Watch videos in your language · myths · quiz · word explainer · 7-day course · scam alerts | planned |
 | **2.8** | Motivation | Levels & badges · no-spend calendar · Money Wrapped · simple mode | planned |
 

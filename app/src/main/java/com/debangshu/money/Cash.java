@@ -184,15 +184,15 @@ public final class Cash {
         Intent ri = new Intent(c, CashReceiver.class).putExtra("nid", nid);
         PendingIntent pr = PendingIntent.getBroadcast(c, nid, ri, PendingIntent.FLAG_UPDATE_CURRENT
                 | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
-        RemoteInput in = new RemoteInput.Builder("left").setLabel("Cash left now, e.g. 800").build();
+        RemoteInput in = new RemoteInput.Builder("left").setLabel(Lang.t("Cash left now, e.g. 800")).build();
         Notification.Action act = new Notification.Action.Builder(
-                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Type amount", pr).addRemoteInput(in).build();
+                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), Lang.t("Type amount"), pr).addRemoteInput(in).build();
         Intent open = new Intent(c, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent po = PendingIntent.getActivity(c, nid, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, Alerts.CH_ASK) : new Notification.Builder(c);
-        b.setSmallIcon(R.drawable.ic_notify).setContentTitle("💵 " + Fmt.plain(balance(c)) + " cash — how much is left?")
-                .setContentText("Type what's in your wallet; the difference counts as cash spent.")
+        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(Lang.t("💵 " + Fmt.plain(balance(c)) + " cash — how much is left?"))
+                .setContentText(Lang.t("Type what's in your wallet; the difference counts as cash spent."))
                 .setContentIntent(po).setAutoCancel(true).addAction(act).setColor(c.getColor(R.color.accent));
         NotificationManager nm = c.getSystemService(NotificationManager.class);
         if (nm != null) nm.notify(nid, b.build());

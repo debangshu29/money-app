@@ -1,3 +1,10 @@
+Money 2.6.1 — the whole app in हिंदी and বাংলা 🌐
+• Every screen is now translated: Activity, Insights, Plan (budget, accounts, cards, loans, bills, people, reminders, refunds, tax, statements, reports), Settings, the payment sheet, setup, app lock and updates
+• Notifications too: “Paid anyone?”, “Who was it?”, budget warnings, bills, refunds, cash and balance checks, the evening summary — and the home-screen widget
+• Ask your money answers in your language (“इस महीने खाना पर आपने ₹4,520 ख़र्च किए”). Questions you type still work best in English for now
+• Short words that mean different things in different places now have their own wording
+• Please send any word that sounds odd — each fix is quick
+
 Money 2.6 — English · हिंदी · বাংলা 🌐
 • Pick your language on the first welcome page, or any time in Settings → 🌐 Language · भाषा · ভাষা
 • Translated now: the 5 tabs, Home, Grow (goals, 50/30/20, money health, leaks, wait-list, habit price, future you, salary split, challenges) and all 20 calculators with their simple explanations

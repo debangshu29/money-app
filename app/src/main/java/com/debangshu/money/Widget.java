@@ -33,14 +33,14 @@ public class Widget extends AppWidgetProvider {
             RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
             v.setTextViewText(R.id.w_today, hide ? "₹ ••••" : Fmt.plain(today));
             v.setTextViewText(R.id.w_month, hide ? "₹ ••••" : Fmt.plain(month));
-            v.setTextViewText(R.id.w_month_label, "Spent in " + Fmt.monthShort(now));
+            v.setTextViewText(R.id.w_month_label, Lang.t("Spent in " + Fmt.monthShort(now)));
             Plan plan = s.plan();
             if (plan != null && plan.started(now) && !plan.finished(now)) {
                 long safe = plan.safeToday(all, Ledger.recurring(all, now), now);
-                v.setTextViewText(R.id.w_bal_label, safe >= 0 ? "Safe to spend today" : "Over today's share by");
+                v.setTextViewText(R.id.w_bal_label, Lang.t(safe >= 0 ? "Safe to spend today" : "Over today's share by"));
                 v.setTextViewText(R.id.w_bal, hide ? "₹ ••••" : Fmt.plain(Math.abs(safe)));
             } else {
-                v.setTextViewText(R.id.w_bal_label, "Balance (all accounts)");
+                v.setTextViewText(R.id.w_bal_label, Lang.t("Balance (all accounts)"));
                 v.setTextViewText(R.id.w_bal, !any ? "—" : hide ? "₹ ••••" : Fmt.plain(bal));
             }
             Intent open = new Intent(c, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

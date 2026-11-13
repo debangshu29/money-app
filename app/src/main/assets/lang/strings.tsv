@@ -26,7 +26,7 @@ Say it	बोलकर	বলে দিন
 Ask	पूछें	জিজ্ঞেস করুন
 Show amounts	रकम दिखाएँ	টাকার অঙ্ক দেখান
 Hide amounts	रकम छिपाएँ	টাকার অঙ্ক লুকান
-Spent in {}	{} में खर्च	{}-এ খরচ
+Spent in {}	{} में ख़र्च	{}-এ খরচ
 {} left	{} बचे	{} বাকি
 {} over	{} ज़्यादा	{} বেশি
  day	दिन	দিন
@@ -151,7 +151,7 @@ Salary	तनख़्वाह	বেতন
 Self transfer	अपने खाते में ट्रांसफ़र	নিজের অ্যাকাউন্টে ট্রান্সফার
 Card bill payment	कार्ड बिल पेमेंट	কার্ড বিল পেমেন্ট
 Other	अन्य	অন্যান্য
-Unrecorded	दर्ज नहीं हुआ	নথিভুক্ত হয়নি
+Unrecorded	बिना रिकॉर्ड	রেকর্ড নেই
 Shop (QR)	दुकान (QR)	দোকান (QR)
 Your money	आपका पैसा	আপনার টাকা
 Money health	पैसों की सेहत	টাকার স্বাস্থ্য
@@ -1055,4 +1055,1219 @@ Yesterday	कल	গতকাল
 OK	ठीक है	ঠিক আছে
 Yes	हाँ	হ্যাঁ
 No	नहीं	না
+✏️  Rename	✏️  नाम बदलें	✏️  নাম বদলান
+🔧  Correct the balance	🔧  बैलेंस ठीक करें	🔧  ব্যালান্স ঠিক করুন
+🔗  Same as another account (merge)	🔗  दूसरे खाते जैसा ही है (जोड़ दें)	🔗  অন্য অ্যাকাউন্টের মতোই (এক করে দিন)
+➕  Count in total balance	➕  कुल बैलेंस में गिनें	➕  মোট ব্যালান্সে গুনুন
+➖  Don't count in total balance	➖  कुल बैलेंस में न गिनें	➖  মোট ব্যালান্সে গুনবেন না
+📄  Show its payments	📄  इसके पेमेंट दिखाएँ	📄  এর পেমেন্টগুলো দেখান
+🔍  Check balance — find missed payments	🔍  बैलेंस जाँचें — छूटे पेमेंट खोजें	🔍  ব্যালান্স মেলান — বাদ পড়া পেমেন্ট খুঁজুন
+🗑️  Delete account	🗑️  खाता हटाएँ	🗑️  অ্যাকাউন্ট মুছুন
+{} shown in your bank app right now. Money uses it from now on, and the missed-message check starts fresh from here.	अभी आपके बैंक ऐप में {} दिख रहा है। Money अब से यही इस्तेमाल करेगा, और छूटे मैसेज की जाँच यहीं से नए सिरे से शुरू होगी।	এখন আপনার ব্যাংক অ্যাপে {} দেখাচ্ছে। Money এখন থেকে এটাই নেবে, আর বাদ পড়া মেসেজের খোঁজ এখান থেকে নতুন করে শুরু হবে।
+Type the card's available limit	कार्ड की उपलब्ध लिमिट लिखें	কার্ডের বাকি লিমিট লিখুন
+Type the balance	बैलेंस लिखें	ব্যালান্স লিখুন
+Correct {}	{} ठीक करें	{} ঠিক করুন
+Enter the amount	रकम लिखें	টাকার অঙ্ক লিখুন
+Balance corrected	बैलेंस ठीक हो गया	ব্যালান্স ঠিক হয়েছে
+There's no other account to merge with	जोड़ने के लिए कोई दूसरा खाता नहीं है	এক করার মতো অন্য কোনো অ্যাকাউন্ট নেই
+“{}” is the same as…	“{}” इसके जैसा ही है…	“{}” এটার মতোই…
+Merge into {}?	{} में जोड़ दें?	{}-এর সঙ্গে এক করবেন?
+All payments of {} move to {}, and new messages for {} go there too.	{} के सारे पेमेंट {} में चले जाएँगे, और {} के नए मैसेज भी वहीं जाएँगे।	{}-এর সব পেমেন্ট {}-এ চলে যাবে, আর {}-এর নতুন মেসেজও সেখানে যাবে।
+Merge	जोड़ें	এক করুন
+Merged	जुड़ गया	এক হয়ে গেছে
+Delete {}?	{} हटाएँ?	{} মুছবেন?
+The account disappears from Balances and won't come back from new messages (you can bring it back in Settings → Deleted accounts).	यह खाता बैलेंस से हट जाएगा और नए मैसेज से वापस नहीं आएगा (सेटिंग्स → हटाए गए खाते में जाकर वापस ला सकते हैं)।	অ্যাকাউন্টটা ব্যালান্স থেকে সরে যাবে আর নতুন মেসেজে ফিরবে না (সেটিংস → মুছে ফেলা অ্যাকাউন্ট থেকে ফিরিয়ে আনতে পারেন)।
+ payment	 पेमेंट	টি পেমেন্ট
+ payments	 पेमेंट	টি পেমেন্ট
+Delete account	खाता हटाएँ	অ্যাকাউন্ট মুছুন
+Account deleted — its payments are kept	खाता हटा दिया — उसके पेमेंट रखे गए हैं	অ্যাকাউন্ট মোছা হয়েছে — এর পেমেন্টগুলো রাখা আছে
+Delete with payments	पेमेंट के साथ हटाएँ	পেমেন্ট সহ মুছুন
+Delete {} payments too?	{} पेमेंट भी हटाएँ?	{}টি পেমেন্টও মুছবেন?
+They're removed from all totals. Use this when the account itself was wrong (not a real account of yours).	ये सारे जोड़ से हट जाएँगे। तभी करें जब खाता ही ग़लत था (आपका असली खाता नहीं)।	এগুলো সব হিসেব থেকে বাদ যাবে। তখনই করুন যখন অ্যাকাউন্টটাই ভুল ছিল (আপনার আসল অ্যাকাউন্ট নয়)।
+Account and its payments deleted	खाता और उसके पेमेंट हटा दिए	অ্যাকাউন্ট আর এর পেমেন্ট মোছা হয়েছে
+Total balance	कुल बैलेंस	মোট ব্যালান্স
+Bank accounts{}, from the last message that showed a balance	बैंक खाते{}, बैलेंस दिखाने वाले आख़िरी मैसेज से	ব্যাংক অ্যাকাউন্ট{}, ব্যালান্স দেখানো শেষ মেসেজ থেকে
+ + cash	 + कैश	 + ক্যাশ
+No accounts yet — they appear after a bank SMS that shows a balance.	अभी कोई खाता नहीं — बैलेंस दिखाने वाले बैंक SMS के बाद दिखेंगे।	এখনও কোনো অ্যাকাউন্ট নেই — ব্যালান্স দেখানো ব্যাংক SMS এলে দেখা যাবে।
+Card limit left · 	बची कार्ड लिमिट · 	বাকি কার্ড লিমিট ·
+not in total · 	कुल में नहीं · 	মোটে ধরা নেই ·
+no balance seen yet	अभी कोई बैलेंस नहीं दिखा	এখনও কোনো ব্যালান্স দেখা যায়নি
+ · +{} you added	 · +{} आपने जोड़ा	 · +{} আপনি যোগ করেছেন
+tap to count or note a cash spend	कैश ख़र्च गिनने या लिखने के लिए टैप करें	ক্যাশ খরচ গুনতে বা লিখতে ট্যাপ করুন
+📄  Check with a bank statement	📄  बैंक स्टेटमेंट से मिलाएँ	📄  ব্যাংক স্টেটমেন্টের সঙ্গে মেলান
+Tap an account to rename it, correct a wrong balance, merge two that are the same, check the balance or delete it.	किसी खाते पर टैप करें: नाम बदलें, ग़लत बैलेंस ठीक करें, एक जैसे दो खाते जोड़ें, बैलेंस जाँचें या हटाएँ।	কোনো অ্যাকাউন্টে ট্যাপ করুন: নাম বদলান, ভুল ব্যালান্স ঠিক করুন, একই দুটো অ্যাকাউন্ট এক করুন, ব্যালান্স মেলান বা মুছুন।
+Deleted accounts ({})  →	हटाए गए खाते ({})  →	মুছে ফেলা অ্যাকাউন্ট ({})  →
+Bring back	वापस लाएँ	ফিরিয়ে আনুন
+All	सब	সব
+Spent	ख़र्च	খরচ
+Money in	आई रकम	টাকা এসেছে
+Needs a look	देखना बाक़ी	দেখা বাকি
+Not counted	गिना नहीं गया	ধরা হয়নি
+Add cash spend	कैश ख़र्च जोड़ें	ক্যাশ খরচ যোগ করুন
+Search name, amount, note…	नाम, रकम, नोट खोजें…	নাম, টাকা, নোট খুঁজুন…
+☰  List	☰  सूची	☰  তালিকা
+📅  Calendar	📅  कैलेंडर	📅  ক্যালেন্ডার
+{}month total {}	{}महीने का कुल {}	{}মাসের মোট {}
+Green = within your daily budget share ({}), red = over · 	हरा = आपके रोज़ के बजट हिस्से ({}) के अंदर, लाल = ज़्यादा · 	সবুজ = রোজকার বাজেটের ভাগের ({}) মধ্যে, লাল = বেশি ·
+Darker = more spent · 	गहरा = ज़्यादा ख़र्च · 	গাঢ় = বেশি খরচ ·
+No payments this day 🎉	इस दिन कोई पेमेंट नहीं 🎉	এই দিনে কোনো পেমেন্ট নেই 🎉
+Nothing here yet.	अभी यहाँ कुछ नहीं।	এখনও এখানে কিছু নেই।
+Nothing matches “{}”.	“{}” से कुछ नहीं मिला।	“{}”-এর সঙ্গে কিছু মিলল না।
+Unusual payments & budgets	अजीब पेमेंट और बजट	অস্বাভাবিক পেমেন্ট আর বাজেট
+Double charges, payments much bigger than usual, budget warnings, missing messages	दो बार कटे पैसे, आम से बहुत बड़े पेमेंट, बजट चेतावनी, छूटे मैसेज	দুবার কাটা টাকা, সাধারণের চেয়ে অনেক বড় পেমেন্ট, বাজেটের সতর্কতা, বাদ পড়া মেসেজ
+Bills & renewals	बिल और रिन्यूअल	বিল আর রিনিউয়াল
+Card bills due and subscriptions about to renew	कार्ड बिल की तारीख़ और रिन्यू होने वाले सब्सक्रिप्शन	কার্ড বিলের তারিখ আর রিনিউ হতে চলা সাবস্ক্রিপশন
+Evening summary	शाम का सार	সন্ধ্যার সারাংশ
+What you spent today	आज आपने कितना ख़र्च किया	আজ আপনি কত খরচ করলেন
+Who was it?	यह किसे दिया?	কাকে দিলেন?
+Asks for a name when a payment comes without one — type it right in the notification	बिना नाम वाले पेमेंट पर नाम पूछता है — नोटिफ़िकेशन में ही लिख दें	নামহীন পেমেন্টে নাম জিজ্ঞেস করে — নোটিফিকেশনেই লিখে দিন
+Every payment	हर पेमेंट	প্রতিটা পেমেন্ট
+A quiet note for each payment the app catches (off by default)	ऐप जो भी पेमेंट पकड़े उस पर एक शांत नोट (शुरू में बंद)	অ্যাপ যে পেমেন্ট ধরে তার জন্য একটা চুপচাপ নোট (শুরুতে বন্ধ)
+Charged twice?	दो बार कटा?	দুবার কাটল?
+{}{} was paid twice within a few minutes. Check if both were meant.	{}{} कुछ ही मिनट में दो बार दिया गया। देख लें दोनों आपने ही किए थे या नहीं।	{}{} কয়েক মিনিটের মধ্যে দুবার দেওয়া হয়েছে। দেখে নিন দুটোই আপনি করেছিলেন কিনা।
+Unusual payment: {}{}	अजीब पेमेंट: {}{}	অস্বাভাবিক পেমেন্ট: {}{}
+{}. Tap if it wasn't you.	{}। अगर यह आप नहीं थे तो टैप करें।	{}। এটা আপনি না হলে ট্যাপ করুন।
+ from 	 से 	 থেকে
+{} {}{} · tap to change	{} {}{} · बदलने के लिए टैप करें	{} {}{} · বদলাতে ট্যাপ করুন
+made at {} at night	रात {} बजे किया गया	রাত {}-টায় করা
+looks international / foreign currency	विदेशी / दूसरी करेंसी जैसा लगता है	বিদেশি / অন্য মুদ্রার মনে হচ্ছে
+first ever payment to {}	{} को पहली बार पेमेंट	{}-কে প্রথমবার পেমেন্ট
+ and 	 और 	 আর
+🛡️ Was this you? {}{}	🛡️ क्या यह आप थे? {}{}	🛡️ এটা কি আপনি? {}{}
+{}. If not, call your bank now to block the card / UPI. Tap to check.	{}। अगर नहीं, तो अभी बैंक को फ़ोन करके कार्ड / UPI ब्लॉक कराएँ। देखने के लिए टैप करें।	{}। না হলে এখনই ব্যাংকে ফোন করে কার্ড / UPI ব্লক করান। দেখতে ট্যাপ করুন।
+ left your account with no message	 बिना मैसेज के खाते से निकला	 কোনো মেসেজ ছাড়াই অ্যাকাউন্ট থেকে গেছে
+ paid at {}	 {} पर दिया	 {}-এ দেওয়া
+Probably {}? ({}{} before, same spot / amount)	शायद {}? (पहले {}{}, वही जगह / रकम)	সম্ভবত {}? (আগে {}{}, একই জায়গা / অঙ্ক)
+Who was it, and what for? e.g. “Ramesh - test”. Money remembers the name{}	किसे और किसलिए? जैसे “Ramesh - test”। Money नाम याद रखेगा{}	কাকে আর কীসের জন্য? যেমন “Ramesh - test”। Money নামটা মনে রাখবে{}
+ for this UPI ID.	 इस UPI ID के लिए।	 এই UPI ID-র জন্য।
+Who & what for? e.g. Ramesh - test	किसे और किसलिए? जैसे Ramesh - test	কাকে আর কীসের জন্য? যেমন Ramesh - test
+Type name	नाम लिखें	নাম লিখুন
+Yes, {}	हाँ, {}	হ্যাঁ, {}
+Over budget by {}	बजट से {} ज़्यादा	বাজেটের চেয়ে {} বেশি
+{}% of your budget used	बजट का {}% इस्तेमाल हुआ	বাজেটের {}% খরচ হয়েছে
+{} of {} spent ({}){}	{1} में से {0} ख़र्च ({2}){3}	{1}-এর মধ্যে {0} খরচ ({2}){3}
+Over your {} limit	आपकी {} लिमिट पार	আপনার {} লিমিট পেরিয়েছে
+{}% of your {} limit used	आपकी {1} लिमिट का {0}% इस्तेमाल	আপনার {1} লিমিটের {0}% খরচ
+{} of {} spent in {}{}	{2} में {1} में से {0} ख़र्च{3}	{2}-এ {1}-এর মধ্যে {0} খরচ{3}
+ — {} left.	 — {} बचे।	 — {} বাকি।
+Budget done: {} under 🎉	बजट पूरा: {} कम ख़र्च 🎉	বাজেট শেষ: {} কম খরচ 🎉
+Budget done: {} over	बजट पूरा: {} ज़्यादा	বাজেট শেষ: {} বেশি
+{} spent of {} ({}){}{}	{1} में से {0} ख़र्च ({2}){3}{4}	{1}-এর মধ্যে {0} খরচ ({2}){3}{4}
+. Your next budget has started.	। आपका अगला बजट शुरू हो गया है।	। আপনার পরের বাজেট শুরু হয়ে গেছে।
+No spending today 🎉	आज कोई ख़र्च नहीं 🎉	আজ কোনো খরচ নেই 🎉
+{} left, {}/day	{} बचे, {}/दिन	{} বাকি, দিনে {}
+This month: {} · heading for {}	इस महीने: {} · {} की ओर	এই মাসে: {} · {}-এর দিকে
+ payment today	 पेमेंट आज	টি পেমেন্ট আজ
+ payments today	 पेमेंट आज	টি পেমেন্ট আজ
+Open Money to see today's summary	आज का सार देखने के लिए Money खोलें	আজকের সারাংশ দেখতে Money খুলুন
+{} bill due {}	{} बिल {} देना है	{} বিল {} দিতে হবে
+Total due {}{} · pay by {}	कुल देय {}{} · {} तक भरें	মোট বাকি {}{} · {}-এর মধ্যে দিন
+ (minimum {})	 (कम से कम {})	 (কমপক্ষে {})
+{} renews {}	{} {} रिन्यू होगा	{} {} রিনিউ হবে
+Usually {} · {}{}	आमतौर पर {} · {}{}	সাধারণত {} · {}{}
+How much did I spend this month?	इस महीने मैंने कितना ख़र्च किया?	এই মাসে আমি কত খরচ করলাম?
+Food this month	इस महीने खाना	এই মাসে খাবার
+Biggest expenses last month	पिछले महीने के सबसे बड़े ख़र्च	গত মাসের সবচেয়ে বড় খরচ
+Swiggy this year	इस साल Swiggy	এই বছর Swiggy
+Income this month	इस महीने की आमदनी	এই মাসের আয়
+Top shops this month	इस महीने की टॉप दुकानें	এই মাসের সেরা দোকান
+How many times Uber?	Uber कितनी बार?	Uber কতবার?
+Average per day	रोज़ का औसत	দিনে গড়
+Compare with last month	पिछले महीने से तुलना	গত মাসের সঙ্গে তুলনা
+Budget left	बजट कितना बचा	বাজেট কত বাকি
+Balance	बैलेंस	ব্যালান্স
+Spent today	आज का ख़र्च	আজকের খরচ
+I haven't seen a balance yet. It appears after your bank's next SMS that shows “Avl Bal”.	मैंने अभी कोई बैलेंस नहीं देखा। आपके बैंक का अगला SMS जिसमें “Avl Bal” हो, उसके बाद दिखेगा।	আমি এখনও কোনো ব্যালান্স দেখিনি। আপনার ব্যাংকের পরের যে SMS-এ “Avl Bal” থাকবে, তারপর দেখা যাবে।
+No repeating payments found yet. They show up after the second payment to the same place.	अभी कोई दोहराने वाला पेमेंट नहीं मिला। एक ही जगह दूसरे पेमेंट के बाद दिखेंगे।	এখনও কোনো বারবারের পেমেন্ট পাওয়া যায়নি। একই জায়গায় দ্বিতীয় পেমেন্টের পরে দেখা যাবে।
+so far	अब तक	এখন পর্যন্ত
+this week	इस हफ़्ते	এই সপ্তাহে
+last week	पिछले हफ़्ते	গত সপ্তাহে
+this year	इस साल	এই বছর
+last year	पिछले साल	গত বছর
+in the last {} {}	पिछले {} {} में	গত {} {}
+this month	इस महीने	এই মাসে
+last month	पिछले महीने	গত মাসে
+Ask your money	अपने पैसों से पूछें	আপনার টাকাকে জিজ্ঞেস করুন
+Ask anything about your money in plain words — or tap an example below. Everything is worked out on your phone.	अपने पैसों के बारे में कुछ भी आसान शब्दों में पूछें — या नीचे कोई उदाहरण टैप करें। सारा हिसाब आपके फ़ोन पर ही होता है।	আপনার টাকা নিয়ে যা খুশি সহজ কথায় জিজ্ঞেস করুন — বা নিচের একটা উদাহরণে ট্যাপ করুন। সব হিসেব আপনার ফোনেই হয়।
+Ask about your spending…	अपने ख़र्च के बारे में पूछें…	আপনার খরচ নিয়ে জিজ্ঞেস করুন…
++ {} more	+ {} और	+ আরও {}
+Balance now, e.g. 12450	अभी का बैलेंस, जैसे 12450	এখনকার ব্যালান্স, যেমন 12450
+Type balance	बैलेंस लिखें	ব্যালান্স লিখুন
+🏦 Weekly check: {} balance?	🏦 हफ़्ते की जाँच: {} का बैलेंस?	🏦 সাপ্তাহিক মিলিয়ে দেখা: {}-এর ব্যালান্স?
+Open your bank or UPI app, type the balance here — Money finds any payment that sent no message.	अपना बैंक या UPI ऐप खोलें, बैलेंस यहाँ लिखें — Money हर वह पेमेंट खोज लेगा जिसका मैसेज नहीं आया।	আপনার ব্যাংক বা UPI অ্যাপ খুলুন, ব্যালান্স এখানে লিখুন — Money মেসেজ না আসা সব পেমেন্ট খুঁজে নেবে।
+Open your bank or UPI app and type the balance here. Any small payment that sent no SMS or notification shows up as “Unrecorded” — while you still remember what it was.	अपना बैंक या UPI ऐप खोलें और बैलेंस यहाँ लिखें। जिस छोटे पेमेंट का SMS या नोटिफ़िकेशन नहीं आया, वह “बिना रिकॉर्ड” दिखेगा — जब तक आपको याद है कि वह क्या था।	আপনার ব্যাংক বা UPI অ্যাপ খুলে ব্যালান্স এখানে লিখুন। যে ছোট পেমেন্টের SMS বা নোটিফিকেশন আসেনি, সেটা “রেকর্ড নেই” হিসেবে দেখাবে — যতক্ষণ আপনার মনে আছে সেটা কী ছিল।
+Nothing missing since the last check.	पिछली जाँच के बाद कुछ नहीं छूटा।	শেষবার মেলানোর পর কিছু বাদ পড়েনি।
+Tap to name it while you remember.	याद रहते नाम देने के लिए टैप करें।	মনে থাকতে থাকতে নাম দিতে ট্যাপ করুন।
+✓ {} matches — {}	✓ {} मिल गया — {}	✓ {} মিলে গেছে — {}
+{} without a message — see Activity	{} बिना मैसेज के — लेन-देन में देखें	{} কোনো মেসেজ ছাড়া — লেনদেনে দেখুন
+{} went out	{} गए	{} গেছে
+{} came in	{} आए	{} এসেছে
+Balance now ₹ (from your bank / UPI app)	अभी का बैलेंस ₹ (अपने बैंक / UPI ऐप से)	এখনকার ব্যালান্স ₹ (আপনার ব্যাংক / UPI অ্যাপ থেকে)
+Anything your payments don't explain shows as “Unrecorded” — name it while you remember. (Different from “Correct balance”, which starts afresh and hides the difference.)	जो आपके पेमेंट से समझ न आए, वह “बिना रिकॉर्ड” दिखेगा — याद रहते नाम दें। (“बैलेंस ठीक करें” से अलग, जो नए सिरे से शुरू करता है और फ़र्क़ छिपा देता है।)	যা আপনার পেমেন্ট দিয়ে বোঝা যায় না, সেটা “রেকর্ড নেই” দেখাবে — মনে থাকতে নাম দিন। (“ব্যালান্স ঠিক করুন” থেকে আলাদা, যেটা নতুন করে শুরু করে আর তফাতটা লুকিয়ে দেয়।)
+Check {}	{} जाँचें	{} মেলান
+Check	जाँचें	মেলান
+All good	सब ठीक है	সব ঠিক আছে
+Found something	कुछ मिला	কিছু পাওয়া গেছে
+{} {} = {} a year.	{} {} = साल में {}।	{} {} = বছরে {}।
+Yes, keep it	हाँ, रखना है	হ্যাঁ, রাখব
+Remind me to cancel	बंद करने की याद दिलाएँ	বাতিল করার কথা মনে করান
+{} bill	{} बिल	{} বিল
+Due {} · {}{}	देना है {} · {}{}	দিতে হবে {} · {}{}
+ · min {}	 · कम से कम {}	 · কমপক্ষে {}
+Expected {} · {}	उम्मीद {} · {}	আশা করা যায় {} · {}
+Due in the next 30 days	अगले 30 दिनों में देना है	পরের 30 দিনে দিতে হবে
+Nothing expected. Card bills come from your card's statement SMS; the rest from payments that repeat.	कुछ आने वाला नहीं। कार्ड बिल आपके कार्ड के स्टेटमेंट SMS से आते हैं; बाक़ी दोहराने वाले पेमेंट से।	কিছু আসার কথা নেই। কার্ড বিল আসে কার্ডের স্টেটমেন্ট SMS থেকে; বাকিগুলো বারবারের পেমেন্ট থেকে।
+Repeating payments	दोहराने वाले पेमेंट	বারবারের পেমেন্ট
+Subscriptions, EMIs, rent and bills show up here by themselves after they repeat.	सब्सक्रिप्शन, EMI, किराया और बिल दोहराने के बाद यहाँ अपने आप दिखते हैं।	সাবস্ক্রিপশন, EMI, ভাড়া আর বিল বারবার হলে এখানে নিজে থেকেই দেখা যায়।
+{} · next {} · {}/year	{} · अगला {} · {}/साल	{} · পরেরটা {} · বছরে {}
+🧹 Subscription cleaner	🧹 सब्सक्रिप्शन की सफ़ाई	🧹 সাবস্ক্রিপশন সাফাই
+Cancelling what you marked saves about {} a month ({} a year). Cancel inside each app (Play Store → Payments & subscriptions for most). 	जिन पर निशान लगाया उन्हें बंद करने से महीने में लगभग {} ({} साल में) बचेंगे। हर ऐप के अंदर से बंद करें (ज़्यादातर के लिए Play Store → Payments & subscriptions)। 	যেগুলোতে চিহ্ন দিয়েছেন সেগুলো বাতিল করলে মাসে প্রায় {} (বছরে {}) বাঁচবে। প্রতিটা অ্যাপের ভেতর থেকে বাতিল করুন (বেশিরভাগের জন্য Play Store → Payments & subscriptions)।
+{}{} waiting for “still using it?”.	{}{} “अभी भी इस्तेमाल करते हैं?” का इंतज़ार कर रहे हैं।	{}{} “এখনও ব্যবহার করেন?” প্রশ্নের অপেক্ষায়।
+ subscription is	 सब्सक्रिप्शन	টি সাবস্ক্রিপশন
+ subscriptions are	 सब्सक्रिप्शन	টি সাবস্ক্রিপশন
+Budget · {}	बजट · {}	বাজেট · {}
+  left	  बचे	  বাকি
+  over budget	  बजट से ज़्यादा	  বাজেটের বেশি
+{} spent	{} ख़र्च	{} খরচ
+At this pace: about {} by {}{}	इस रफ़्तार से: {1} तक लगभग {0}{2}	এই গতিতে: {1}-এর মধ্যে প্রায় {0}{2}
+ ({} over)	 ({} ज़्यादा)	 ({} বেশি)
+Edit	बदलें	এডিট
+End budget	बजट ख़त्म करें	বাজেট শেষ করুন
+End this budget now?	यह बजट अभी ख़त्म करें?	এই বাজেট এখনই শেষ করবেন?
+It moves to Past budgets with what was spent until today. You can start a new one any time.	आज तक के ख़र्च के साथ यह पुराने बजट में चला जाएगा। आप कभी भी नया शुरू कर सकते हैं।	আজ পর্যন্ত খরচ সহ এটা পুরোনো বাজেটে চলে যাবে। যখন খুশি নতুন শুরু করতে পারেন।
+End it	ख़त्म करें	শেষ করুন
+Where the extra went	ज़्यादा पैसा कहाँ गया	বাড়তি টাকা কোথায় গেল
+{}. Tap a category below to see its payments.	{}। उसके पेमेंट देखने के लिए नीचे कोई श्रेणी टैप करें।	{}। পেমেন্ট দেখতে নিচে একটা ক্যাটেগরিতে ট্যাপ করুন।
+Where it's going	पैसा कहाँ जा रहा है	টাকা কোথায় যাচ্ছে
+No spending since {} yet.	{} से अभी कोई ख़र्च नहीं।	{} থেকে এখনও কোনো খরচ নেই।
+Nothing yet — it starts {}.	अभी कुछ नहीं — यह {} शुरू होगा।	এখনও কিছু নেই — এটা {} শুরু হবে।
+{}% of budget · {}{}	बजट का {}% · {}{}	বাজেটের {}% · {}{}
+Not counted: {}{}	गिना नहीं गया: {}{}	ধরা হয়নি: {}{}
+ ({} spent)	 ({} ख़र्च)	 ({} খরচ)
+Day by day	दिन-ब-दिन	দিন অনুযায়ী
+Tap a bar to see that day · the dotted line is your daily share	उस दिन को देखने के लिए किसी बार पर टैप करें · बिंदुओं वाली लाइन आपका रोज़ का हिस्सा है	সেই দিন দেখতে একটা বারে ট্যাপ করুন · ডট দেওয়া লাইনটা আপনার রোজকার ভাগ
+Payments in this budget	इस बजट के पेमेंट	এই বাজেটের পেমেন্ট
+Payments from {} show up here by themselves.	{} से पेमेंट यहाँ अपने आप दिखेंगे।	{} থেকে পেমেন্ট এখানে নিজে থেকেই দেখা যাবে।
+See all {} payments  →	सभी {} पेमेंट देखें  →	সব {}টি পেমেন্ট দেখুন  →
+Budget {}	बजट {}	বাজেট {}
+Change your budget	अपना बजट बदलें	আপনার বাজেট বদলান
+Start a budget	बजट शुरू करें	বাজেট শুরু করুন
+Enter how much you want to spend and from which day. Every payment from that day counts against it — automatically.	लिखें कितना ख़र्च करना चाहते हैं और किस दिन से। उस दिन से हर पेमेंट इसमें गिना जाएगा — अपने आप।	লিখুন কত খরচ করতে চান আর কোন দিন থেকে। সেই দিন থেকে প্রতিটা পেমেন্ট এতে ধরা হবে — নিজে থেকেই।
+You usually spend about {} a month{} — tap to use it	आप आमतौर पर महीने में लगभग {} ख़र्च करते हैं{} — इस्तेमाल करने के लिए टैप करें	আপনি সাধারণত মাসে প্রায় {} খরচ করেন{} — এটা নিতে ট্যাপ করুন
+ (without the left-out categories)	 (छोड़ी गई श्रेणियों के बिना)	 (বাদ দেওয়া ক্যাটেগরি ছাড়া)
+Starts on	शुरू होगा	শুরু হবে
+1st of this month	इस महीने की 1 तारीख़	এই মাসের 1 তারিখ
+📅 Pick a date	📅 तारीख़ चुनें	📅 তারিখ বাছুন
+Runs for	कितने समय	কতদিন চলবে
+📅 until {}	📅 {} तक	📅 {} পর্যন্ত
+The end date must be after the start	आख़िरी तारीख़ शुरू के बाद होनी चाहिए	শেষ তারিখ শুরুর পরে হতে হবে
+From {} to {} ({} days)	{} से {} ({} दिन)	{} থেকে {} ({} দিন)
+Don't count	न गिनें	ধরবেন না
+Everything counts  ▾	सब गिना जाता है  ▾	সব ধরা হয়  ▾
+e.g. leave out Rent, EMI and Investments to budget only day-to-day spending	जैसे किराया, EMI और निवेश छोड़ दें ताकि बजट सिर्फ़ रोज़ के ख़र्च का रहे	যেমন ভাড়া, EMI আর বিনিয়োগ বাদ দিন যাতে বাজেট শুধু রোজকার খরচের হয়
+Start the next one by itself when this ends	यह ख़त्म होने पर अगला अपने आप शुरू करें	এটা শেষ হলে পরেরটা নিজে থেকে শুরু করুন
+Save changes	बदलाव सेव करें	বদল সেভ করুন
+Start budget	बजट शुरू करें	বাজেট শুরু করুন
+Enter the amount first	पहले रकम लिखें	আগে টাকার অঙ্ক লিখুন
+That budget would already be over — pick a later start or end date	यह बजट तो पहले ही ख़त्म हो चुका होगा — बाद की शुरुआत या आख़िरी तारीख़ चुनें	এই বাজেট তো আগেই শেষ হয়ে যাবে — পরের শুরু বা শেষের তারিখ বাছুন
+Budget updated	बजट अपडेट हुआ	বাজেট আপডেট হয়েছে
+Budget started — payments from {} count	बजट शुरू — {} से पेमेंट गिने जाएँगे	বাজেট শুরু — {} থেকে পেমেন্ট ধরা হবে
+Don't count these	इन्हें न गिनें	এগুলো ধরবেন না
+Rent, EMI, Investments	किराया, EMI, निवेश	ভাড়া, EMI, বিনিয়োগ
+Past budgets	पिछले बजट	আগের বাজেট
+{} under ✓	{} कम ✓	{} কম ✓
+{} spent of {}	{1} में से {0} ख़र्च	{1}-এর মধ্যে {0} খরচ
+{}% of budget	बजट का {}%	বাজেটের {}%
+See payments	पेमेंट देखें	পেমেন্ট দেখুন
+Shared	शेयर किया	শেয়ার করা
+Appears when a card is used	कार्ड इस्तेमाल होने पर दिखेगा	কার্ড ব্যবহার হলে দেখা যাবে
+{}% of limit used	लिमिट का {}% इस्तेमाल	লিমিটের {}% ব্যবহার
+ card	 कार्ड	টি কার্ড
+ cards	 कार्ड	টি কার্ড
+Credit cards	क्रेडिट कार्ड	ক্রেডিট কার্ড
+No credit cards yet	अभी कोई क्रेडिट कार्ड नहीं	এখনও কোনো ক্রেডিট কার্ড নেই
+Cards appear here by themselves after the first card payment or bill message.	पहले कार्ड पेमेंट या बिल मैसेज के बाद कार्ड यहाँ अपने आप दिखेंगे।	প্রথম কার্ড পেমেন্ট বা বিলের মেসেজের পরে কার্ড এখানে নিজে থেকেই দেখা যাবে।
+Best card to use today	आज इस्तेमाल करने के लिए सबसे अच्छा कार्ड	আজ ব্যবহারের জন্য সেরা কার্ড
+About {} days before you pay interest on what you buy today{}	आज की ख़रीद पर ब्याज लगने से पहले लगभग {} दिन{}	আজকের কেনাকাটায় সুদ লাগার আগে প্রায় {} দিন{}
+ — the longest of your cards.	 — आपके कार्डों में सबसे ज़्यादा।	 — আপনার কার্ডগুলোর মধ্যে সবচেয়ে বেশি।
+Using {}% of {}	{1} का {0}% इस्तेमाल	{1}-এর {0}% ব্যবহার
+Under 30% — good for your credit score ✓	30% से कम — आपके क्रेडिट स्कोर के लिए अच्छा ✓	30%-এর কম — আপনার ক্রেডিট স্কোরের জন্য ভালো ✓
+Try to stay under 30% of the total limit — it helps your credit score.	कुल लिमिट के 30% से कम रखने की कोशिश करें — इससे क्रेडिट स्कोर अच्छा रहता है।	মোট লিমিটের 30%-এর কম রাখার চেষ্টা করুন — এতে ক্রেডিট স্কোর ভালো থাকে।
+Tap a card to set its total limit (once). Statement day comes from your bill messages.	कार्ड की कुल लिमिट डालने के लिए उस पर टैप करें (एक बार)। स्टेटमेंट की तारीख़ आपके बिल मैसेज से आती है।	কার্ডের মোট লিমিট দিতে তাতে ট্যাপ করুন (একবার)। স্টেটমেন্টের তারিখ আসে আপনার বিলের মেসেজ থেকে।
+{} used of {}	{1} में से {0} इस्तेमाल	{1}-এর মধ্যে {0} ব্যবহার
+Spent since last bill {} · tap to add limit	पिछले बिल के बाद ख़र्च {} · लिमिट डालने के लिए टैप करें	গত বিলের পরে খরচ {} · লিমিট দিতে ট্যাপ করুন
+Last bill {}	पिछला बिल {}	গত বিল {}
+ · due {}	 · देना है {}	 · দিতে হবে {}
+ · paid ✓	 · भर दिया ✓	 · দেওয়া হয়েছে ✓
+ · overdue!	 · तारीख़ निकल गई!	 · তারিখ পেরিয়ে গেছে!
+Bill made around the {}{}	बिल लगभग {}{} को बनता है	বিল তৈরি হয় প্রায় {}{} তারিখে
+ · {} days to pay	 · भरने के लिए {} दिन	 · দেওয়ার জন্য {} দিন
+Buy today → ~{} interest-free days	आज ख़रीदें → ~{} दिन बिना ब्याज	আজ কিনুন → ~{} দিন সুদ ছাড়া
+Available limit (last message): {}	उपलब्ध लिमिट (पिछला मैसेज): {}	বাকি লিমিট (শেষ মেসেজ): {}
+Total credit limit ₹	कुल क्रेडिट लिमिट ₹	মোট ক্রেডিট লিমিট ₹
+Find it in your card app or statement. It's stored only on this phone.	अपने कार्ड ऐप या स्टेटमेंट में देखें। यह सिर्फ़ इसी फ़ोन पर रहता है।	আপনার কার্ড অ্যাপ বা স্টেটমেন্টে দেখুন। এটা শুধু এই ফোনেই থাকে।
+Cash spent	कैश ख़र्च	ক্যাশ খরচ
+Worked out from your cash count ({} → {})	आपकी कैश गिनती से निकाला ({} → {})	আপনার ক্যাশ গোনা থেকে হিসেব ({} → {})
+In your wallet	आपके बटुए में	আপনার মানিব্যাগে
+Last counted {}	पिछली गिनती {}	শেষ গোনা {}
+I have ₹… now	अभी मेरे पास ₹… है	এখন আমার কাছে ₹… আছে
+Spent cash	कैश ख़र्च किया	ক্যাশ খরচ করেছি
+🎤  Say a cash spend	🎤  कैश ख़र्च बोलें	🎤  ক্যাশ খরচ বলুন
+💵  Track your cash	💵  अपना कैश ट्रैक करें	💵  আপনার ক্যাশের হিসেব রাখুন
+Cash taken out at an ATM goes into your wallet here instead of counting as spending straight away. Every few days Money asks “how much cash is left?” — the difference is counted as cash spent. No typing every chai or vegetable.	ATM से निकाला कैश सीधे ख़र्च में गिने जाने के बजाय यहाँ आपके बटुए में जाता है। हर कुछ दिन में Money पूछता है “कितना कैश बचा है?” — फ़र्क़ कैश ख़र्च में गिना जाता है। हर चाय या सब्ज़ी लिखने की ज़रूरत नहीं।	ATM থেকে তোলা ক্যাশ সোজা খরচে না ধরে এখানে আপনার মানিব্যাগে যায়। কয়েক দিন পরপর Money জিজ্ঞেস করে “কত ক্যাশ বাকি?” — তফাতটা ক্যাশ খরচ হিসেবে ধরা হয়। প্রতিটা চা বা সবজি লিখতে হয় না।
+Track cash in a wallet	बटुए में कैश ट्रैक करें	মানিব্যাগে ক্যাশের হিসেব রাখুন
+Count the cash in your wallet (roughly is fine).	अपने बटुए का कैश गिनें (अंदाज़े से भी चलेगा)।	মানিব্যাগের ক্যাশ গুনুন (আন্দাজে হলেও চলবে)।
+How much cash do you have?	आपके पास कितना कैश है?	আপনার কাছে কত ক্যাশ আছে?
+{} counted as cash spent	{} कैश ख़र्च में गिना गया	{} ক্যাশ খরচ হিসেবে ধরা হল
+Wallet set to {}	बटुआ {} पर सेट हुआ	মানিব্যাগ {}-এ ঠিক হল
+Cash left now, e.g. 800	अभी बचा कैश, जैसे 800	এখন বাকি ক্যাশ, যেমন 800
+Type amount	रकम लिखें	অঙ্ক লিখুন
+💵 {} cash — how much is left?	💵 {} कैश — कितना बचा है?	💵 {} ক্যাশ — কত বাকি আছে?
+Type what's in your wallet; the difference counts as cash spent.	बटुए में जितना है लिखें; फ़र्क़ कैश ख़र्च में गिना जाएगा।	মানিব্যাগে যা আছে লিখুন; তফাতটা ক্যাশ খরচ হিসেবে ধরা হবে।
+Saved ✓ {} in your wallet	सेव ✓ {} आपके बटुए में	সেভ ✓ {} আপনার মানিব্যাগে
+Wallet updated	बटुआ अपडेट हुआ	মানিব্যাগ আপডেট হয়েছে
+ payment 	 पेमेंट 	টি পেমেন্ট
+ payments 	 पेमेंट 	টি পেমেন্ট
+Where it came from	कहाँ से आया	কোথা থেকে এল
+Where it went	पैसा कहाँ गया	টাকা কোথায় গেল
+Unknown sender	अनजान भेजने वाला	অজানা প্রেরক
+Unknown	अनजान	অজানা
+From	किससे	কার থেকে
+Top places	टॉप जगहें	সেরা জায়গা
+Payments	पेमेंट	পেমেন্ট
++ {} more — tap “See all”	+ {} और — “सब देखें” टैप करें	+ আরও {} — “সব দেখুন” ট্যাপ করুন
+Not counted: {} moved between your own accounts / card bills.	गिना नहीं गया: {} आपके अपने खातों / कार्ड बिल के बीच गया।	ধরা হয়নি: {} আপনার নিজের অ্যাকাউন্ট / কার্ড বিলের মধ্যে সরেছে।
+Money in · 	आई रकम · 	টাকা এসেছে ·
+Money out · 	गई रकम · 	টাকা গেছে ·
+Ask: “food this month”, “biggest expenses”…	पूछें: “इस महीने खाना”, “सबसे बड़े ख़र्च”…	জিজ্ঞেস করুন: “এই মাসে খাবার”, “সবচেয়ে বড় খরচ”…
+Overspent	ज़्यादा ख़र्च	বেশি খরচ
+Refunds & cashback: {}	रिफ़ंड और कैशबैक: {}	রিফান্ড আর ক্যাশব্যাক: {}
+  Savings score · {}	  बचत स्कोर · {}	  সঞ্চয় স্কোর · {}
+Savings score {}/100	बचत स्कोर {}/100	সঞ্চয় স্কোর {}/100
+How much of the money that came in this month you kept, plus a bonus for staying within your budget.	इस महीने आए पैसों में से आपने कितना रखा, और बजट के अंदर रहने पर बोनस।	এই মাসে আসা টাকার কতটা রাখলেন, আর বাজেটের মধ্যে থাকলে বোনাস।
+Nothing spent this month yet.	इस महीने अभी कोई ख़र्च नहीं।	এই মাসে এখনও কোনো খরচ নেই।
+ category	 श्रेणी	টি ক্যাটেগরি
+ categories	 श्रेणियाँ	টি ক্যাটেগরি
+{}% of spending{}	ख़र्च का {}%{}	খরচের {}%{}
+ · budget {}	 · बजट {}	 · বাজেট {}
+Tap a bar to see that day	उस दिन को देखने के लिए किसी बार पर टैप करें	সেই দিন দেখতে একটা বারে ট্যাপ করুন
+ · over the daily budget	 · रोज़ के बजट से ज़्यादा	 · রোজকার বাজেটের বেশি
+ · within the daily budget	 · रोज़ के बजट के अंदर	 · রোজকার বাজেটের মধ্যে
+Average {} a day{}	औसत {} रोज़{}	গড়ে দিনে {}{}
+ · heading for {}	 · {} की ओर	 · {}-এর দিকে
+{} and {} more	{} और {} और	{} আর আরও {}
+Where you spend	आप कहाँ ख़र्च करते हैं	আপনি কোথায় খরচ করেন
+Areas on a map	नक़्शे पर इलाक़े	ম্যাপে এলাকা
+Prices you pay	आप जो दाम देते हैं	আপনি যে দাম দেন
+Your usual payment at the same place — last 3 months vs the 3 before.	एक ही जगह पर आपका आम पेमेंट — पिछले 3 महीने बनाम उससे पहले के 3।	একই জায়গায় আপনার সাধারণ পেমেন্ট — গত 3 মাস বনাম তার আগের 3 মাস।
+{} → {} a time	हर बार {} → {}	প্রতিবার {} → {}
+ place costs more or less	 जगह का दाम बदला	টি জায়গার দাম বদলেছে
+ places cost more or less	 जगहों के दाम बदले	টি জায়গার দাম বদলেছে
+Charges & fees	चार्ज और फ़ीस	চার্জ আর ফি
+No bank charges, card fees or penalties spotted in {} ✓	{} में कोई बैंक चार्ज, कार्ड फ़ीस या जुर्माना नहीं दिखा ✓	{}-এ কোনো ব্যাংক চার্জ, কার্ড ফি বা জরিমানা দেখা যায়নি ✓
+{}{} in {} — SMS alerts, annual fees, late fees, penalties. Most can be avoided or waived on request.	{2} में {0}{1} — SMS अलर्ट, सालाना फ़ीस, देर की फ़ीस, जुर्माने। ज़्यादातर माँगने पर बचाए या माफ़ कराए जा सकते हैं।	{2}-এ {0}{1} — SMS অ্যালার্ট, বার্ষিক ফি, দেরির ফি, জরিমানা। বেশিরভাগ এড়ানো যায় বা চাইলে মাফ করানো যায়।
+ charge	 चार्ज	টি চার্জ
+ charges	 चार्ज	টি চার্জ
+See all {}	सभी {} देखें	সব {} দেখুন
+Charges & fees · {}	चार्ज और फ़ीस · {}	চার্জ আর ফি · {}
+None this year ✓	इस साल कोई नहीं ✓	এই বছর কিছু নেই ✓
+{} this year	इस साल {}	এই বছর {}
+More insights	और जानकारी	আরও বিশ্লেষণ
+Monthly report (PDF)	महीने की रिपोर्ट (PDF)	মাসিক রিপোর্ট (PDF)
+Save or share {}	{} सेव या शेयर करें	{} সেভ বা শেয়ার করুন
+Places appear here as you pay (only payments made after turning on “Save where you paid”).	आप जैसे-जैसे पेमेंट करेंगे, जगहें यहाँ दिखेंगी (सिर्फ़ “जहाँ पेमेंट किया वह सेव करें” चालू करने के बाद वाले पेमेंट)।	পেমেন্ট করতে থাকলে জায়গাগুলো এখানে দেখা যাবে (শুধু “যেখানে পেমেন্ট করলেন সেটা সেভ করুন” চালু করার পরের পেমেন্ট)।
+Turn on Settings → Remember every payment → Save where you paid, to see the areas where your money goes.	यह देखने के लिए कि पैसा किन इलाक़ों में जाता है, सेटिंग्स → हर पेमेंट याद रखें → जहाँ पेमेंट किया वह सेव करें चालू करें।	টাকা কোন এলাকায় যায় দেখতে, সেটিংস → প্রতিটা পেমেন্ট মনে রাখুন → যেখানে পেমেন্ট করলেন সেটা সেভ করুন চালু করুন।
+{}{} · tap for map	{}{} · नक़्शे के लिए टैप करें	{}{} · ম্যাপের জন্য ট্যাপ করুন
+{} of {} payments have a place	{1} में से {0} पेमेंट में जगह है	{1}টি পেমেন্টের মধ্যে {0}টিতে জায়গা আছে
+Loan	लोन	লোন
+🏦 EMI {} {}	🏦 EMI {} {}	🏦 EMI {} {}
+{}{} · keep enough in the account — a bounced EMI brings charges and hurts your credit score.	{}{} · खाते में काफ़ी पैसा रखें — EMI बाउंस होने पर चार्ज लगता है और क्रेडिट स्कोर ख़राब होता है।	{}{} · অ্যাকাউন্টে যথেষ্ট টাকা রাখুন — EMI বাউন্স হলে চার্জ লাগে আর ক্রেডিট স্কোর খারাপ হয়।
+ (usually around the {})	 (आमतौर पर {} के आसपास)	 (সাধারণত {}-এর কাছাকাছি)
+Found by themselves from EMI messages	EMI मैसेज से अपने आप मिले	EMI মেসেজ থেকে নিজে থেকেই পাওয়া
+{}/month · {}{}	{}/महीना · {}{}	মাসে {} · {}{}
+ loan	 लोन	টি লোন
+ loans	 लोन	টি লোন
+Loans & EMIs	लोन और EMI	লোন আর EMI
+EMIs every month	हर महीने की EMI	প্রতি মাসের EMI
+No loans found. EMI payments and lender messages show up here by themselves.	कोई लोन नहीं मिला। EMI पेमेंट और लोन देने वालों के मैसेज यहाँ अपने आप दिखेंगे।	কোনো লোন পাওয়া যায়নি। EMI পেমেন্ট আর ঋণদাতার মেসেজ এখানে নিজে থেকেই দেখা যাবে।
+{} still to pay (loans with details added)	{} अभी चुकाना है (जिन लोन की जानकारी डाली गई)	{} এখনও শোধ করতে হবে (যে লোনের তথ্য দেওয়া হয়েছে)
+Tap a loan and add what's left to see months left and interest.	बचे महीने और ब्याज देखने के लिए किसी लोन पर टैप करें और बाक़ी रकम डालें।	বাকি মাস আর সুদ দেখতে একটা লোনে ট্যাপ করে বাকি টাকা দিন।
+＋  Add a loan	＋  लोन जोड़ें	＋  লোন যোগ করুন
+{} a month{}	महीने में {}{}	মাসে {}{}
+ · {} paid since {} {}	 · {2} {1} से {0} चुकाए	 · {2} {1} থেকে {0} শোধ
+Left to pay	बाक़ी चुकाना	বাকি শোধ
+Ends	ख़त्म होगा	শেষ হবে
+Interest left	बाक़ी ब्याज	বাকি সুদ
+EMI too low?	EMI बहुत कम?	EMI খুব কম?
+{} left (add the interest rate for months left & interest)	{} बाक़ी (बचे महीने और ब्याज के लिए ब्याज दर डालें)	{} বাকি (বাকি মাস আর সুদের জন্য সুদের হার দিন)
+Add what's left + interest rate → months left, interest, prepay savings	बाक़ी रकम + ब्याज दर डालें → बचे महीने, ब्याज, जल्दी चुकाने की बचत	বাকি টাকা + সুদের হার দিন → বাকি মাস, সুদ, আগে শোধের সাশ্রয়
+Next EMI due {}	अगली EMI {}	পরের EMI {}
+Pay extra once — how much would you save?	एक बार ज़्यादा भरें — कितना बचेगा?	একবার বেশি দিন — কত বাঁচবে?
+Extra payment ₹	अतिरिक्त भुगतान ₹	বাড়তি পেমেন্ট ₹
+Prepay	जल्दी चुकाएँ	আগে শোধ
+Work it out	हिसाब लगाएँ	হিসেব করুন
+That pays it off completely 🎉 — you'd save {} in interest.	इससे पूरा चुक जाएगा 🎉 — ब्याज में {} बचेंगे।	এতে পুরোটা শোধ হয়ে যাবে 🎉 — সুদে {} বাঁচবে।
+Pay {} extra now → finish {}{} sooner and save {} in interest.	अभी {0} ज़्यादा भरें → {1}{2} पहले ख़त्म और ब्याज में {3} बचत।	এখন {0} বেশি দিন → {1}{2} আগে শেষ আর সুদে {3} সাশ্রয়।
+Name (e.g. Home loan, Bike loan)	नाम (जैसे होम लोन, बाइक लोन)	নাম (যেমন হোম লোন, বাইক লোন)
+EMI ₹	EMI ₹	EMI ₹
+Amount still to pay ₹ (from your loan app / statement)	अभी चुकानी रकम ₹ (अपने लोन ऐप / स्टेटमेंट से)	এখনও শোধ বাকি ₹ (আপনার লোন অ্যাপ / স্টেটমেন্ট থেকে)
+…or months left	…या बचे महीने	…বা বাকি মাস
+Interest rate % a year	ब्याज दर % सालाना	সুদের হার % বছরে
+Stored only on this phone. Months left = worked out from what's left, the EMI and the rate.	सिर्फ़ इसी फ़ोन पर रहता है। बचे महीने = बाक़ी रकम, EMI और दर से निकाले जाते हैं।	শুধু এই ফোনেই থাকে। বাকি মাস = বাকি টাকা, EMI আর হার থেকে হিসেব করা।
+Add a loan	लोन जोड़ें	লোন যোগ করুন
+Loan details	लोन की जानकारी	লোনের তথ্য
+Not a loan	यह लोन नहीं है	এটা লোন নয়
+Money is locked	Money लॉक है	Money লক করা আছে
+Use your fingerprint, face or screen lock	फ़िंगरप्रिंट, चेहरा या स्क्रीन लॉक इस्तेमाल करें	ফিঙ্গারপ্রিন্ট, মুখ বা স্ক্রিন লক ব্যবহার করুন
+Unlock	खोलें	খুলুন
+Unlock Money	Money खोलें	Money খুলুন
+Fingerprint, face or screen lock	फ़िंगरप्रिंट, चेहरा या स्क्रीन लॉक	ফিঙ্গারপ্রিন্ট, মুখ বা স্ক্রিন লক
+Use your screen lock	अपना स्क्रीन लॉक इस्तेमाल करें	আপনার স্ক্রিন লক ব্যবহার করুন
+Saved ✓ {}	सेव ✓ {}	সেভ ✓ {}
+{} · {} {}{} · tap to change	{} · {} {}{} · बदलने के लिए टैप करें	{} · {} {}{} · বদলাতে ট্যাপ করুন
+ · future payments to this UPI ID get this name too	 · इस UPI ID पर आगे के पेमेंट को भी यही नाम मिलेगा	 · এই UPI ID-তে পরের পেমেন্টগুলোও এই নাম পাবে
+your bank account	आपका बैंक खाता	আপনার ব্যাংক অ্যাকাউন্ট
+💵  Cash	💵  कैश	💵  ক্যাশ
+{} in wallet	बटुए में {}	মানিব্যাগে {}
+Cash spending	कैश ख़र्च	ক্যাশ খরচ
+Bank account	बैंक खाता	ব্যাংক অ্যাকাউন্ট
+Bank accounts appear here after the first bank SMS	बैंक खाते पहले बैंक SMS के बाद यहाँ दिखेंगे	প্রথম ব্যাংক SMS-এর পরে ব্যাংক অ্যাকাউন্ট এখানে দেখা যাবে
+No bank account yet — it appears after the first bank SMS	अभी कोई बैंक खाता नहीं — पहले बैंक SMS के बाद दिखेगा	এখনও কোনো ব্যাংক অ্যাকাউন্ট নেই — প্রথম ব্যাংক SMS-এর পরে দেখা যাবে
+Paid from	किस खाते से दिया	কোন অ্যাকাউন্ট থেকে দিলেন
+Pay in your app as usual. When you're back, Money asks who and what for — so you still know in a month.	अपने ऐप में हमेशा की तरह भुगतान करें। लौटने पर Money पूछेगा किसे और किसलिए — ताकि महीने भर बाद भी याद रहे।	আপনার অ্যাপে আগের মতোই পেমেন্ট করুন। ফিরে এলে Money জিজ্ঞেস করবে কাকে আর কীসের জন্য — যাতে এক মাস পরেও মনে থাকে।
+No UPI app found on this phone.	इस फ़ोन पर कोई UPI ऐप नहीं मिला।	এই ফোনে কোনো UPI অ্যাপ পাওয়া যায়নি।
+✏️  Add without paying	✏️  बिना भुगतान के जोड़ें	✏️  পেমেন্ট ছাড়াই যোগ করুন
+🎤  Say it	🎤  बोलकर बताएँ	🎤  বলে দিন
+Couldn't open {}	{} नहीं खुल सका	{} খোলা গেল না
+Saved ✓ {} · {} · {}	सेव ✓ {} · {} · {}	সেভ ✓ {} · {} · {}
+Already caught from {} · {}	पहले ही {} से पकड़ा गया · {}	আগেই {} থেকে ধরা হয়েছে · {}
+To whom (e.g. Sharma Kirana, Ramesh)	किसे (जैसे Sharma Kirana, Ramesh)	কাকে (যেমন Sharma Kirana, Ramesh)
+What for?	किसलिए?	কীসের জন্য?
+Or type: e.g. test, Puja chanda, Rahul's birthday	या लिखें: जैसे test, पूजा चंदा, Rahul का जन्मदिन	বা লিখুন: যেমন test, পুজোর চাঁদা, Rahul-এর জন্মদিন
+What was it for?	यह किसलिए था?	এটা কীসের জন্য ছিল?
+Paid{}?	भुगतान किया{}?	পেমেন্ট করলেন{}?
+ with {}	 {} से	 {} দিয়ে
+Didn't pay	भुगतान नहीं किया	পেমেন্ট করিনি
+Saved ✓	सेव ✓	সেভ ✓
+How much?	कितना?	কত?
+Pick the account it was paid from	जिस खाते से दिया वह चुनें	যে অ্যাকাউন্ট থেকে দিয়েছেন সেটা বাছুন
+Saved ✓ {}{}{}	सेव ✓ {}{}{}	সেভ ✓ {}{}{}
+ · from {}	 · {} से	 · {} থেকে
+Paid back by {}	{} ने वापस किया	{} ফেরত দিয়েছে
+You paid {} back	आपने {} को वापस किया	আপনি {}-কে ফেরত দিয়েছেন
+{} paid you back ✓	{} ने आपको वापस कर दिया ✓	{} আপনাকে ফেরত দিয়েছে ✓
+You paid {} back ✓	आपने {} को वापस कर दिया ✓	আপনি {}-কে ফেরত দিয়েছেন ✓
+{} · ticked off in People{}	{} · People में टिक हो गया{}	{} · People-এ টিক হয়ে গেছে{}
+ ({} extra)	 ({} ज़्यादा)	 ({} বেশি)
+Money from {}	{} से पैसे	{}-এর থেকে টাকা
+🤝  They lent it to me (I owe them)	🤝  उन्होंने उधार दिया (मुझे लौटाना है)	🤝  উনি ধার দিয়েছেন (আমাকে ফেরত দিতে হবে)
+↩️  They paid me back	↩️  उन्होंने मुझे वापस किया	↩️  উনি আমাকে ফেরত দিয়েছেন
+Someone	कोई	কেউ একজন
+Borrowed	उधार लिया	ধার নিয়েছি
+Added to People: you owe {}	People में जोड़ा: आपको {} को देना है	People-এ যোগ হল: আপনাকে {}-কে দিতে হবে
+No open amount from {} in People	People में {} का कोई बाक़ी नहीं	People-এ {}-এর কোনো বাকি নেই
+Who shares this {}? Separate names with commas.	यह {} किसके साथ बाँटा? नाम कॉमा से अलग करें।	এই {} কার সঙ্গে ভাগ? নামগুলো কমা দিয়ে আলাদা করুন।
+e.g. Rahul, Amit, Priya	जैसे Rahul, Amit, Priya	যেমন Rahul, Amit, Priya
+Include me (split equally)	मुझे भी गिनें (बराबर बाँटें)	আমাকেও ধরুন (সমান ভাগ)
+What for? e.g. dinner	किसलिए? जैसे डिनर	কীসের জন্য? যেমন ডিনার
+Split or lend	बाँटें या उधार दें	ভাগ করুন বা ধার দিন
+Add at least one name	कम से कम एक नाम डालें	অন্তত একটা নাম দিন
+Shared payment	बाँटा हुआ पेमेंट	ভাগ করা পেমেন্ট
+Split with 	इनके साथ बाँटा: 	এদের সঙ্গে ভাগ:
+Lent to 	इन्हें उधार: 	এদের ধার:
+{} owes you {}	{} को आपको {} देने हैं	{} আপনাকে {} দেবে
+Each owes you {}	हर एक को आपको {} देने हैं	প্রত্যেকে আপনাকে {} দেবে
+You'll get	आपको मिलेंगे	আপনি পাবেন
+You owe	आपको देने हैं	আপনাকে দিতে হবে
+Split or lend from any payment (tap it → 👥 Split / lend). When they pay you back by UPI, it's ticked off here by itself.	किसी भी पेमेंट से बाँटें या उधार दें (उस पर टैप करें → 👥 बाँटें / उधार)। जब वे UPI से लौटाएँगे, यहाँ अपने आप टिक हो जाएगा।	যেকোনো পেমেন্ট থেকে ভাগ বা ধার দিন (তাতে ট্যাপ করুন → 👥 ভাগ / ধার)। ওরা UPI-তে ফেরত দিলে এখানে নিজে থেকেই টিক হয়ে যাবে।
+All settled 🎉	सब चुकता 🎉	সব মিটে গেছে 🎉
+owes you	आपको देना है	আপনাকে দেবে
+you owe	आपको देना है	আপনাকে দিতে হবে
+＋  Add	＋  जोड़ें	＋  যোগ করুন
+Settled	चुकता	মিটে গেছে
+Owes you 	आपको देना है: 	আপনাকে দেবে:
+You owe 	आपको देना है: 	আপনাকে দিতে হবে:
+ · {} paid	 · {} दिए	 · {} দেওয়া হয়েছে
+Paid ✓	चुकाया ✓	দেওয়া হয়েছে ✓
+Marked as paid	चुकाया हुआ लिखा	দেওয়া হয়েছে চিহ্ন দিলাম
+Remove this?	इसे हटाएँ?	এটা মুছবেন?
+Remind on WhatsApp	WhatsApp पर याद दिलाएँ	WhatsApp-এ মনে করান
+Optional: your UPI ID, so they can pay you in one tap (saved for next time).	चाहें तो: आपकी UPI ID, ताकि वे एक टैप में भुगतान कर सकें (अगली बार के लिए सेव)।	ইচ্ছে হলে: আপনার UPI ID, যাতে ওরা এক ট্যাপে পেমেন্ট করতে পারে (পরের বারের জন্য সেভ)।
+e.g. debangshu@okaxis	जैसे debangshu@okaxis	যেমন debangshu@okaxis
+Your UPI ID	आपकी UPI ID	আপনার UPI ID
+Continue	आगे बढ़ें	এগিয়ে যান
+Hi {}! Just a gentle reminder about {} 🙂{}	नमस्ते {}! बस {} के बारे में एक छोटी-सी याद 🙂{}	নমস্কার {}! শুধু {}-এর কথা একটু মনে করিয়ে দিচ্ছি 🙂{}
+Send reminder	याद दिलाएँ	মনে করান
+Amount (₹)	रकम (₹)	টাকা (₹)
+What for? (optional)	किसलिए? (चाहें तो)	কীসের জন্য? (ইচ্ছে হলে)
+They owe me	उन्हें मुझे देना है	ওরা আমাকে দেবে
+I owe them	मुझे उन्हें देना है	আমাকে ওদের দিতে হবে
+Bill photo	बिल की फ़ोटो	বিলের ছবি
+📷  Take a photo	📷  फ़ोटो लें	📷  ছবি তুলুন
+🖼️  Choose from gallery	🖼️  गैलरी से चुनें	🖼️  গ্যালারি থেকে বাছুন
+Choose the bill photo	बिल की फ़ोटो चुनें	বিলের ছবি বাছুন
+No gallery app found	कोई गैलरी ऐप नहीं मिला	কোনো গ্যালারি অ্যাপ পাওয়া যায়নি
+Bill photo saved	बिल की फ़ोटो सेव हुई	বিলের ছবি সেভ হয়েছে
+Couldn't save the photo	फ़ोटो सेव नहीं हो सकी	ছবি সেভ করা গেল না
+Photo not found	फ़ोटो नहीं मिली	ছবি পাওয়া যায়নি
+Remove photo	फ़ोटो हटाएँ	ছবি সরান
+{} to {} — what for?	{} {} को — किसलिए?	{} {}-কে — কীসের জন্য?
+{}Tap a reason or type one — so you still know in a month.	{}कोई वजह टैप करें या लिखें — ताकि महीने भर बाद भी याद रहे।	{}একটা কারণে ট্যাপ করুন বা লিখুন — যাতে এক মাস পরেও মনে থাকে।
+That's {}. 	यह {} है। 	এটা {}।
+✏️ Type	✏️ लिखें	✏️ লিখুন
+What for? e.g. test, Puja chanda	किसलिए? जैसे test, पूजा चंदा	কীসের জন্য? যেমন test, পুজোর চাঁদা
+a UPI app	कोई UPI ऐप	একটা UPI অ্যাপ
+Paid anyone on {}?	{} पर किसी को पैसे दिए?	{}-এ কাউকে টাকা দিলেন?
+You had {} open at {} and no payment message came. If you paid, type it — e.g. “50 Ramesh for test”.	{} पर आपका {} खुला था और कोई पेमेंट मैसेज नहीं आया। अगर भुगतान किया, तो लिखें — जैसे “50 Ramesh for test”।	{1}-এ আপনার {0} খোলা ছিল আর কোনো পেমেন্টের মেসেজ আসেনি। পেমেন্ট করে থাকলে লিখুন — যেমন “50 Ramesh for test”।
+No, just checking	नहीं, बस देख रहा था	না, শুধু দেখছিলাম
+✏️ Yes — type it	✏️ हाँ — लिखें	✏️ হ্যাঁ — লিখুন
+₹ who for what — e.g. 50 Ramesh for test	₹ किसे किसलिए — जैसे 50 Ramesh for test	₹ কাকে কীসের জন্য — যেমন 50 Ramesh for test
+Didn't catch the amount	रकम समझ नहीं आई	টাকার অঙ্ক বোঝা গেল না
+Type it like “50 Ramesh for test”.	ऐसे लिखें: “50 Ramesh for test”।	এভাবে লিখুন: “50 Ramesh for test”।
+Saved ✓ {}{} · {}	सेव ✓ {}{} · {}	সেভ ✓ {}{} · {}
+{}the bank's message joins it if one comes	{}बैंक का मैसेज आया तो इसी में जुड़ जाएगा	{}ব্যাংকের মেসেজ এলে এর সঙ্গেই জুড়ে যাবে
+Saved ✓ {} · from {}	सेव ✓ {} · {} से	সেভ ✓ {} · {} থেকে
+Balance updated	बैलेंस अपडेट हुआ	ব্যালান্স আপডেট হয়েছে
+Saved ✓ {}{}	सेव ✓ {}{}	সেভ ✓ {}{}
+Paid from {}. Another account? Tap it below{}	{} से दिया। दूसरा खाता? नीचे टैप करें{}	{} থেকে দেওয়া। অন্য অ্যাকাউন্ট? নিচে ট্যাপ করুন{}
+ (or More… for the rest).	 (बाक़ी के लिए और…)।	 (বাকিগুলোর জন্য আরও…)।
+More…	और…	আরও…
+Failed payment — waiting for the money to come back	भुगतान फ़ेल — पैसे वापस आने का इंतज़ार	পেমেন্ট ফেল — টাকা ফেরতের অপেক্ষা
+↩️ Failed payment: {}{}	↩️ भुगतान फ़ेल: {}{}	↩️ পেমেন্ট ফেল: {}{}
+Not counted as spending. Money is watching for it to come back — the bank should return it {}	ख़र्च में नहीं गिना। Money वापसी पर नज़र रख रहा है — बैंक को यह {} लौटाना चाहिए	খরচে ধরা হয়নি। Money ফেরতের দিকে নজর রাখছে — ব্যাংকের এটা {} ফেরত দেওয়ার কথা
+within 5 days.	5 दिन के अंदर।	5 দিনের মধ্যে।
+by tomorrow.	कल तक।	কালকের মধ্যে।
+Money back for the failed payment of {}	{} के फ़ेल भुगतान के पैसे वापस	{}-এর ফেল হওয়া পেমেন্টের টাকা ফেরত
+Failed payment — the money came back on {} ✓	फ़ेल भुगतान — पैसे {} को वापस आ गए ✓	ফেল পেমেন্ট — টাকা {} তারিখে ফেরত এসেছে ✓
+✓ {} is back	✓ {} वापस आ गए	✓ {} ফেরত এসেছে
+The failed payment of {} came back to {}.	{} का फ़ेल भुगतान {} में वापस आ गया।	{}-এর ফেল পেমেন্ট {}-এ ফেরত এসেছে।
+your account	आपका खाता	আপনার অ্যাকাউন্ট
+↩️ {} still hasn't come back	↩️ {} अभी तक वापस नहीं आए	↩️ {} এখনও ফেরত আসেনি
+Failed on {}. Banks must return it {} and pay ₹100 a day after that (RBI rule). Raise a complaint in your UPI app (Help → Report issue) or call the bank.	{} को फ़ेल हुआ। बैंक को यह {} लौटाना होता है, और उसके बाद हर दिन ₹100 देने होते हैं (RBI नियम)। अपने UPI ऐप में शिकायत करें (Help → Report issue) या बैंक को फ़ोन करें।	{} তারিখে ফেল হয়েছে। ব্যাংককে এটা {} ফেরত দিতে হয়, আর তারপর প্রতিদিন ₹100 দিতে হয় (RBI নিয়ম)। আপনার UPI অ্যাপে অভিযোগ করুন (Help → Report issue) বা ব্যাংকে ফোন করুন।
+within 5 days	5 दिन के अंदर	5 দিনের মধ্যে
+by the next day	अगले दिन तक	পরের দিনের মধ্যে
+{} on the way back{}	{} वापसी के रास्ते में{}	{} ফেরতের পথে{}
+ · {} late	 · {} देर	 · {} দেরি
+{} failed {} came back ✓	{} फ़ेल {} वापस आए ✓	{}টি ফেল {} ফেরত এসেছে ✓
+Failed payments are watched by themselves	फ़ेल भुगतान पर अपने आप नज़र रखी जाती है	ফেল পেমেন্টে নিজে থেকেই নজর রাখা হয়
+On the way back	वापसी के रास्ते में	ফেরতের পথে
+Nothing waiting. When a payment fails but money leaves your account, it shows up here and is kept out of your spending.	कुछ बाक़ी नहीं। जब कोई भुगतान फ़ेल हो पर पैसे खाते से कट जाएँ, वह यहाँ दिखेगा और ख़र्च में नहीं गिना जाएगा।	কিছু বাকি নেই। পেমেন্ট ফেল হলেও টাকা অ্যাকাউন্ট থেকে কাটলে, সেটা এখানে দেখা যাবে আর খরচে ধরা হবে না।
+Failed payments aren't counted as spending. When the money comes back, Money links it by itself.	फ़ेल भुगतान ख़र्च में नहीं गिने जाते। पैसे लौटने पर Money ख़ुद जोड़ देता है।	ফেল পেমেন্ট খরচে ধরা হয় না। টাকা ফিরলে Money নিজেই মিলিয়ে দেয়।
+Waiting	इंतज़ार में	অপেক্ষায়
+ⓘ  The RBI rule	ⓘ  RBI का नियम	ⓘ  RBI-এর নিয়ম
+Failed UPI / IMPS transfer: the bank must return the money by the next day (T+1). Shop, card or ATM: within 5 days (T+5). After that the bank owes you ₹100 for every day of delay.	फ़ेल UPI / IMPS ट्रांसफ़र: बैंक को अगले दिन तक (T+1) पैसे लौटाने होंगे। दुकान, कार्ड या ATM: 5 दिन के अंदर (T+5)। उसके बाद हर दिन की देरी के लिए बैंक आपको ₹100 देगा।	ফেল UPI / IMPS ট্রান্সফার: ব্যাংককে পরের দিনের মধ্যে (T+1) টাকা ফেরত দিতে হবে। দোকান, কার্ড বা ATM: 5 দিনের মধ্যে (T+5)। তারপর প্রতিদিন দেরির জন্য ব্যাংক আপনাকে ₹100 দেবে।
+Failed {}{}	फ़ेल {}{}	ফেল {}{}
+✓ It came back	✓ वापस आ गया	✓ ফেরত এসেছে
+✖ It won't come back — count it as spent	✖ वापस नहीं आएगा — ख़र्च में गिनें	✖ ফেরত আসবে না — খরচে ধরুন
+Open the payment	पेमेंट खोलें	পেমেন্ট খুলুন
+Budget {0}: {1} spent of {2}. {3}.	बजट {0}: {2} में से {1} ख़र्च। {3}।	বাজেট {0}: {2}-এর মধ্যে {1} খরচ। {3}।
+You have {0} across {1} account (from the last message of each bank).	आपके {1} खाते में {0} है (हर बैंक के आख़िरी मैसेज से)।	আপনার {1}টি অ্যাকাউন্টে আছে {0} (প্রতিটা ব্যাংকের শেষ মেসেজ থেকে)।
+You have {0} across {1} accounts (from the last message of each bank).	आपके {1} खातों में कुल {0} है (हर बैंक के आख़िरी मैसेज से)।	আপনার {1}টি অ্যাকাউন্টে মোট আছে {0} (প্রতিটা ব্যাংকের শেষ মেসেজ থেকে)।
+{0} repeating payment, about {1} a month.	{0} दोहराने वाला पेमेंट, महीने में लगभग {1}।	{0}টি বারবারের পেমেন্ট, মাসে প্রায় {1}।
+{0} repeating payments, about {1} a month.	{0} दोहराने वाले पेमेंट, महीने में लगभग {1}।	{0}টি বারবারের পেমেন্ট, মাসে প্রায় {1}।
+Nothing spent {0} {1}.	{1} {0} कुछ ख़र्च नहीं हुआ।	{1} {0} কিছু খরচ হয়নি।
+Nothing received {0} {1}.	{1} {0} कुछ नहीं आया।	{1} {0} কিছু আসেনি।
+Biggest payment {0}: {1}{2} {3}.	{0} सबसे बड़ा पेमेंट: {1}{2}, {3}।	{0} সবচেয়ে বড় পেমেন্ট: {1}{2}, {3}।
+Biggest money in {0}: {1}{2} {3}.	{0} सबसे बड़ी आई रकम: {1}{2}, {3}।	{0} সবচেয়ে বড় টাকা এসেছে: {1}{2}, {3}।
+{0} payment {1} {2}, {3} in total.	{2} {1} {0} पेमेंट, कुल {3}।	{2} {1} {0}টি পেমেন্ট, মোট {3}।
+{0} payments {1} {2}, {3} in total.	{2} {1} {0} पेमेंट, कुल {3}।	{2} {1} {0}টি পেমেন্ট, মোট {3}।
+On average you spent {0} a day {1} {2} ({3} over {4} days).	{2} {1} आपने औसतन रोज़ {0} ख़र्च किए ({4} दिनों में {3})।	{2} {1} আপনি গড়ে দিনে {0} খরচ করেছেন ({4} দিনে {3})।
+On average you received {0} a day {1} {2} ({3} over {4} days).	{2} {1} आपको औसतन रोज़ {0} मिले ({4} दिनों में {3})।	{2} {1} আপনি গড়ে দিনে {0} পেয়েছেন ({4} দিনে {3})।
+Most of your money {0} went to {1}: {2} of {3}.	{0} आपका सबसे ज़्यादा पैसा {1} को गया: {3} में से {2}।	{0} আপনার সবচেয়ে বেশি টাকা গেছে {1}-এ: {3}-এর মধ্যে {2}।
+Most of your money {0} went on {1}: {2} of {3}.	{0} आपका सबसे ज़्यादा पैसा {1} पर गया: {3} में से {2}।	{0} আপনার সবচেয়ে বেশি টাকা গেছে {1}-এ: {3}-এর মধ্যে {2}।
+Spent {0} {1}: {2}. The period before: {3}{4}.{5}	{1} {0} ख़र्च: {2}। उससे पहले: {3}{4}।{5}	{1} {0} খরচ: {2}। তার আগে: {3}{4}।{5}
+Received {0} {1}: {2}. The period before: {3}{4}.{5}	{1} {0} आए: {2}। उससे पहले: {3}{4}।{5}	{1} {0} এসেছে: {2}। তার আগে: {3}{4}।{5}
+You spent {0} {1} {2} ({3} payment).	{2} {1} आपने {0} ख़र्च किए ({3} पेमेंट)।	{2} {1} আপনি {0} খরচ করেছেন ({3}টি পেমেন্ট)।
+You spent {0} {1} {2} ({3} payments).	{2} {1} आपने {0} ख़र्च किए ({3} पेमेंट)।	{2} {1} আপনি {0} খরচ করেছেন ({3}টি পেমেন্ট)।
+You received {0} {1} {2} ({3} payment).	{2} {1} आपको {0} मिले ({3} पेमेंट)।	{2} {1} আপনি {0} পেয়েছেন ({3}টি পেমেন্ট)।
+You received {0} {1} {2} ({3} payments).	{2} {1} आपको {0} मिले ({3} पेमेंट)।	{2} {1} আপনি {0} পেয়েছেন ({3}টি পেমেন্ট)।
+ask:at {}	{} पर	{}-এ
+ask:on {}	{} पर	{}-এ
+ask:day {}	{} को	{} তারিখে
+ask:in {}	{} में	{}-এ
+ ({}% more)	 ({}% ज़्यादा)	 ({}% বেশি)
+ ({}% less)	 ({}% कम)	 ({}% কম)
+ (Up to today in both.)	 (दोनों में आज तक।)	 (দুটোতেই আজ পর্যন্ত।)
+today	आज	আজ
+yesterday	कल	গতকাল
+days	दिन	দিন
+day	दिन	দিন
+weeks	हफ़्ते	সপ্তাহ
+week	हफ़्ता	সপ্তাহ
+months	महीने	মাস
+month	महीना	মাস
+in {} days	{} दिन में	{} দিনে
+{} days ago	{} दिन पहले	{} দিন আগে
+Safe to spend today	आज इतना ख़र्च सुरक्षित	আজ এতটা খরচ নিরাপদ
+Over today's share by	आज के हिस्से से ज़्यादा	আজকের ভাগের চেয়ে বেশি
+Balance (all accounts)	बैलेंस (सभी खाते)	ব্যালান্স (সব অ্যাকাউন্ট)
+Stop tracking	नज़र रखना बंद करें	নজর রাখা বন্ধ করুন
+Failed payment — came back ✓	भुगतान फ़ेल — पैसे वापस आ गए ✓	পেমেন্ট ফেল — টাকা ফেরত এসেছে ✓
+Failed payment that didn't come back	फ़ेल भुगतान जिसके पैसे वापस नहीं आए	ফেল পেমেন্ট যার টাকা ফেরত আসেনি
+Open	खोलें	খুলুন
+🛣️ {} balance is low	🛣️ {} बैलेंस कम है	🛣️ {} ব্যালান্স কম
+{}Recharge before your next trip to avoid paying double toll.	{}अगली यात्रा से पहले रिचार्ज करें, वरना दोगुना टोल लगेगा।	{}পরের যাত্রার আগে রিচার্জ করুন, না হলে দ্বিগুণ টোল লাগবে।
+Only {} left. 	सिर्फ़ {} बचे। 	মাত্র {} বাকি।
+📱 {} ends {}	📱 {} {} ख़त्म होगा	📱 {} {} শেষ হবে
+Recharge before {} to keep calls and data.	कॉल और डेटा चालू रखने के लिए {} से पहले रिचार्ज करें।	কল আর ডেটা চালু রাখতে {}-এর আগে রিচার্জ করুন।
+🛡️ {} renewal {}	🛡️ {} रिन्यूअल {}	🛡️ {} রিনিউয়াল {}
+Renew by {} so the cover doesn't lapse.	{} तक रिन्यू करें ताकि कवर बंद न हो।	{}-এর মধ্যে রিনিউ করুন যাতে কভার বন্ধ না হয়।
+🚗 {} expires {}	🚗 {} {} ख़त्म होगा	🚗 {} {} শেষ হবে
+Get a fresh PUC before {} — there's a fine without it.	{} से पहले नया PUC बनवा लें — इसके बिना जुर्माना लगता है।	{}-এর আগে নতুন PUC করিয়ে নিন — এটা ছাড়া জরিমানা হয়।
+📦 Last day to return {}{}	📦 {} लौटाने का आख़िरी दिन{}	📦 {} ফেরত দেওয়ার শেষ দিন{}
+ is today	 आज है	 আজ
+Return window ends {}. Keep it? Ignore this.	लौटाने की मोहलत {} ख़त्म होगी। रखना है? इसे अनदेखा करें।	ফেরত দেওয়ার সময় {} শেষ হবে। রাখবেন? এটা উপেক্ষা করুন।
+🧰 {} warranty ends {}	🧰 {} की वारंटी {} ख़त्म	🧰 {}-এর ওয়ারেন্টি {} শেষ
+Get anything fixed for free before {}.	{} से पहले कुछ भी मुफ़्त ठीक करा लें।	{}-এর আগে যা দরকার বিনা পয়সায় সারিয়ে নিন।
+Due {}.	देय {}।	দিতে হবে {}।
+FASTag balance is low	FASTag बैलेंस कम है	FASTag ব্যালান্স কম
+Recharge, insurance, PUC, returns, warranty	रिचार्ज, बीमा, PUC, वापसी, वारंटी	রিচার্জ, বিমা, PUC, ফেরত, ওয়ারেন্টি
+{} being watched · nothing soon	{} पर नज़र · जल्द कुछ नहीं	{}-এ নজর · শিগগির কিছু নেই
+What did you buy? (e.g. headphones)	आपने क्या ख़रीदा? (जैसे हेडफ़ोन)	কী কিনলেন? (যেমন হেডফোন)
+Return by	लौटाने की आख़िरी तारीख़	ফেরত দেওয়ার শেষ তারিখ
+10 days	10 दिन	10 দিন
+Pick	चुनें	বাছুন
+Warranty till	वारंटी कब तक	ওয়ারেন্টি কবে পর্যন্ত
+Counted from the payment date ({}). Money reminds you before the last day.	पेमेंट की तारीख़ ({}) से गिना। Money आख़िरी दिन से पहले याद दिलाएगा।	পেমেন্টের তারিখ ({}) থেকে গোনা। Money শেষ দিনের আগে মনে করিয়ে দেবে।
+⏰ Return & warranty	⏰ वापसी और वारंटी	⏰ ফেরত আর ওয়ারেন্টি
+your purchase	आपकी ख़रीद	আপনার কেনা জিনিস
+Saved — Money will remind you	सेव हुआ — Money याद दिलाएगा	সেভ হয়েছে — Money মনে করিয়ে দেবে
+Nothing to remember yet	अभी याद रखने को कुछ नहीं	এখনও মনে রাখার মতো কিছু নেই
+Mobile plan expiry, insurance renewals, PUC and FASTag balance are picked up from your SMS by themselves. For things you buy, open the payment → “⏰ Return / warranty” (or add a bill photo).	मोबाइल प्लान की मियाद, बीमा रिन्यूअल, PUC और FASTag बैलेंस आपके SMS से अपने आप पकड़े जाते हैं। ख़रीदी चीज़ों के लिए पेमेंट खोलें → “⏰ वापसी / वारंटी” (या बिल की फ़ोटो जोड़ें)।	মোবাইল প্ল্যানের মেয়াদ, বিমা রিনিউয়াল, PUC আর FASTag ব্যালান্স আপনার SMS থেকে নিজে থেকেই ধরা হয়। কেনা জিনিসের জন্য পেমেন্ট খুলুন → “⏰ ফেরত / ওয়ারেন্টি” (বা বিলের ছবি যোগ করুন)।
+Next 30 days	अगले 30 दिन	পরের 30 দিন
+Later	बाद में	পরে
+＋  Add a renewal	＋  रिन्यूअल जोड़ें	＋  রিনিউয়াল যোগ করুন
+Past	पहले के	আগের
+As of {}{}	{} तक{}	{} অনুযায়ী{}
+ · low — recharge soon	 · कम — जल्द रिचार्ज करें	 · কম — শিগগির রিচার্জ করুন
+Return {}	वापसी {}	ফেরত {}
+{} warranty	{} वारंटी	{} ওয়ারেন্টি
+Done ✓ · 	हो गया ✓ · 	হয়ে গেছে ✓ ·
+ · every {}	 · हर {}	 · প্রতি {}
+Tomorrow	कल	আগামীকাল
+✓ Renewed — move to the next date	✓ रिन्यू हो गया — अगली तारीख़ पर ले जाएँ	✓ রিনিউ হয়েছে — পরের তারিখে নিয়ে যান
+✓ Done	✓ हो गया	✓ হয়ে গেছে
+Change	बदलें	বদলান
+What (e.g. Car insurance, Netflix, Gas cylinder)	क्या (जैसे कार बीमा, Netflix, गैस सिलेंडर)	কী (যেমন গাড়ির বিমা, Netflix, গ্যাস সিলিন্ডার)
+📅  Pick the date	📅  तारीख़ चुनें	📅  তারিখ বাছুন
+Once	एक बार	একবার
+Every 3 months	हर 3 महीने	প্রতি 3 মাসে
+Repeats	दोहराएँ	বারবার হবে
+Add a renewal	रिन्यूअल जोड़ें	রিনিউয়াল যোগ করুন
+Add a name and a date	नाम और तारीख़ डालें	নাম আর তারিখ দিন
+Making the report…	रिपोर्ट बन रही है…	রিপোর্ট তৈরি হচ্ছে…
+Reports	रिपोर्ट	রিপোর্ট
+Saved to Documents/Money/Reports/{}	Documents/Money/Reports/{} में सेव हुई	Documents/Money/Reports/{}-এ সেভ হয়েছে
+Report ready 📄	रिपोर्ट तैयार 📄	রিপোর্ট তৈরি 📄
+No PDF viewer found	कोई PDF ऐप नहीं मिला	কোনো PDF অ্যাপ পাওয়া যায়নি
+Share report	रिपोर्ट शेयर करें	রিপোর্ট শেয়ার করুন
+Couldn't make the report: {}	रिपोर्ट नहीं बन सकी: {}	রিপোর্ট তৈরি করা গেল না: {}
+no storage	स्टोरेज नहीं	স্টোরেজ নেই
+Money · monthly report	Money · महीने की रिपोर्ट	Money · মাসিক রিপোর্ট
+Made {}	बनाई गई {}	তৈরি {}
+Money out	गई रकम	টাকা গেছে
+Savings score  {}/100 · {}	बचत स्कोर  {}/100 · {}	সঞ্চয় স্কোর  {}/100 · {}
+Budget {}: {} of {}{}	बजट {0}: {2} में से {1}{3}	বাজেট {0}: {2}-এর মধ্যে {1}{3}
+ — within budget ✓	 — बजट के अंदर ✓	 — বাজেটের মধ্যে ✓
+ — over by {}	 — {} ज़्यादा	 — {} বেশি
+Biggest payments	सबसे बड़े पेमेंट	সবচেয়ে বড় পেমেন্ট
+Payment	पेमेंट	পেমেন্ট
+Every payment · {}	हर पेमेंट · {}	প্রতিটা পেমেন্ট · {}
+DATE	तारीख़	তারিখ
+NAME	नाम	নাম
+CATEGORY	श्रेणी	ক্যাটেগরি
+AMOUNT	रकम	টাকা
+Made by Money on this phone · page {}	इस फ़ोन पर Money ने बनाई · पेज {}	এই ফোনে Money-র তৈরি · পাতা {}
+Nothing needs a look 🎉	कुछ देखना बाक़ी नहीं 🎉	দেখার মতো কিছু বাকি নেই 🎉
+All sorted 🎉	सब निपट गया 🎉	সব মিটে গেছে 🎉
+{} still to look at	{} अभी देखने हैं	{}টি এখনও দেখা বাকি
+Came into 	इसमें आया: 	এতে এসেছে:
+Went out of 	इससे गया: 	এখান থেকে গেছে:
+the previous message	पिछला मैसेज	আগের মেসেজ
+This looked unusual (much bigger than normal, or the same amount twice in a few minutes).	यह अजीब लगा (आम से बहुत बड़ा, या कुछ मिनट में दो बार वही रकम)।	এটা অস্বাভাবিক লাগল (সাধারণের চেয়ে অনেক বড়, বা কয়েক মিনিটে একই অঙ্ক দুবার)।
+Bank messages from that time Money couldn't read	उस समय के बैंक मैसेज जो Money पढ़ नहीं सका	সেই সময়ের ব্যাংক মেসেজ যা Money পড়তে পারেনি
+✓ This is it — add it	✓ यही है — जोड़ें	✓ এটাই — যোগ করুন
+Added from the message	मैसेज से जोड़ा	মেসেজ থেকে যোগ হয়েছে
+Couldn't find an amount in it — pick what it was below	इसमें रकम नहीं मिली — नीचे चुनें कि यह क्या था	এতে অঙ্ক পাওয়া যায়নি — নিচে বাছুন এটা কী ছিল
+Other payments around then (for a clue)	उस समय के आसपास के दूसरे पेमेंट (सुराग़ के लिए)	সেই সময়ের আশেপাশের অন্য পেমেন্ট (সূত্রের জন্য)
+What was it?	यह क्या था?	এটা কী ছিল?
+Was it you?	क्या यह आप थे?	এটা কি আপনি?
+Name (optional) — e.g. Rent, Ramesh, Petrol	नाम (चाहें तो) — जैसे किराया, Ramesh, पेट्रोल	নাম (ইচ্ছে হলে) — যেমন ভাড়া, Ramesh, পেট্রোল
+Name (optional)	नाम (चाहें तो)	নাম (ইচ্ছে হলে)
+💼 Salary	💼 तनख़्वाह	💼 বেতন
+👥 From someone	👥 किसी से मिला	👥 কারও থেকে পেয়েছি
+↩️ Refund	↩️ रिफ़ंड	↩️ রিফান্ড
+🔁 From my other account	🔁 मेरे दूसरे खाते से	🔁 আমার অন্য অ্যাকাউন্ট থেকে
+💰 Interest / other	💰 ब्याज / अन्य	💰 সুদ / অন্যান্য
+💵 Cash (ATM)	💵 कैश (ATM)	💵 ক্যাশ (ATM)
+🏠 Rent	🏠 किराया	🏠 ভাড়া
+👥 Paid someone	👥 किसी को दिया	👥 কাউকে দিয়েছি
+🔁 To my other account	🔁 मेरे दूसरे खाते में	🔁 আমার অন্য অ্যাকাউন্টে
+💡 Bills	💡 बिल	💡 বিল
+🛒 Shopping	🛒 शॉपिंग	🛒 কেনাকাটা
+🍔 Food	🍔 खाना	🍔 খাবার
+🧾 Bank charges	🧾 बैंक चार्ज	🧾 ব্যাংক চার্জ
+📈 Investment	📈 निवेश	📈 বিনিয়োগ
+🏦 EMI / loan	🏦 EMI / लोन	🏦 EMI / লোন
+Needs a look · {} of {}	देखना बाक़ी · {1} में से {0}	দেখা বাকি · {1}-এর মধ্যে {0}
+I don't know	मुझे नहीं पता	আমি জানি না
+Yes, it was me	हाँ, मैं ही था	হ্যাঁ, আমিই করেছি
+Money in (unknown)	आई रकम (अनजान)	টাকা এসেছে (অজানা)
+Spent (unknown)	ख़र्च (अनजान)	খরচ (অজানা)
+ · not spending	 · ख़र्च नहीं	 · খরচ নয়
+ · hidden	 · छिपा हुआ	 · লুকোনো
+Payment capture	पेमेंट पकड़ना	পেমেন্ট ধরা
+SMS, payment apps, e-mails	SMS, पेमेंट ऐप, ई-मेल	SMS, পেমেন্ট অ্যাপ, ই-মেল
+Questions & reminders	सवाल और रिमाइंडर	প্রশ্ন আর রিমাইন্ডার
+“What for?”, bills, summaries	“किसलिए?”, बिल, सार	“কীসের জন্য?”, বিল, সারাংশ
+Names & places	नाम और जगहें	নাম আর জায়গা
+Who you paid, and where	किसे दिया, और कहाँ	কাকে দিলেন, আর কোথায়
+Privacy & security	प्राइवेसी और सुरक्षा	প্রাইভেসি আর সুরক্ষা
+App lock, hide amounts	ऐप लॉक, रकम छिपाएँ	অ্যাপ লক, অঙ্ক লুকোন
+Backup & data	बैकअप और डेटा	ব্যাকআপ আর ডেটা
+Backups, export, bank statements	बैकअप, एक्सपोर्ट, बैंक स्टेटमेंट	ব্যাকআপ, এক্সপোর্ট, ব্যাংক স্টেটমেন্ট
+Tutorials	ट्यूटोरियल	টিউটোরিয়াল
+Quick tour and how-tos	झटपट टूर और कैसे करें	ঝটপট ঘুরে দেখা আর কীভাবে করবেন
+Updates & about	अपडेट और जानकारी	আপডেট আর পরিচিতি
+Version, share with family	वर्ज़न, परिवार से शेयर करें	ভার্সন, পরিবারের সঙ্গে শেয়ার
+“Paid anyone?” needs Usage access	“किसी को पैसे दिए?” के लिए Usage access चाहिए	“কাউকে টাকা দিলেন?”-এর জন্য Usage access লাগবে
+Location needs “Allow all the time”	लोकेशन को “हर समय अनुमति” चाहिए	লোকেশনে “সবসময় অনুমতি” লাগবে
+No backup password yet	अभी कोई बैकअप पासवर्ड नहीं	এখনও কোনো ব্যাকআপ পাসওয়ার্ড নেই
+All set	सब तैयार	সব ঠিক আছে
+1 thing to fix	1 चीज़ ठीक करनी है	1টা জিনিস ঠিক করতে হবে
+{} things to fix	{} चीज़ें ठीक करनी हैं	{}টা জিনিস ঠিক করতে হবে
+Money is catching your payments by itself	Money आपके पेमेंट अपने आप पकड़ रहा है	Money আপনার পেমেন্ট নিজে থেকেই ধরছে
+Everything stays on this phone. Nothing is uploaded — the internet is used only to check for app updates.	सब कुछ इसी फ़ोन पर रहता है। कुछ भी अपलोड नहीं होता — इंटरनेट सिर्फ़ ऐप अपडेट देखने के लिए इस्तेमाल होता है।	সবকিছু এই ফোনেই থাকে। কিছুই আপলোড হয় না — ইন্টারনেট শুধু অ্যাপ আপডেট দেখার জন্য ব্যবহার হয়।
+Money {}	Money {}	Money {}
+Permissions	अनुमतियाँ	অনুমতি
+✓ SMS and notifications on	✓ SMS और नोटिफ़िकेशन चालू	✓ SMS আর নোটিফিকেশন চালু
+⚠️ Something is off — tap to fix	⚠️ कुछ बंद है — ठीक करने के लिए टैप करें	⚠️ কিছু বন্ধ আছে — ঠিক করতে ট্যাপ করুন
+Payment app notifications	पेमेंट ऐप के नोटिफ़िकेशन	পেমেন্ট অ্যাপের নোটিফিকেশন
+Google Pay, PhonePe, bank apps	Google Pay, PhonePe, बैंक ऐप	Google Pay, PhonePe, ব্যাংক অ্যাপ
+Bank SMS via the Messages app	Messages ऐप से बैंक SMS	Messages অ্যাপ থেকে ব্যাংক SMS
+A backup if an SMS is missed	अगर कोई SMS छूट जाए तो बैकअप	কোনো SMS বাদ পড়লে ব্যাকআপ
+Bank alert e-mails	बैंक अलर्ट ई-मेल	ব্যাংক অ্যালার্ট ই-মেল
+From Gmail notifications	Gmail नोटिफ़िकेशन से	Gmail নোটিফিকেশন থেকে
+Missed payments	छूटे पेमेंट	বাদ পড়া পেমেন্ট
+Find missed payments	छूटे पेमेंट खोजें	বাদ পড়া পেমেন্ট খুঁজুন
+Balance gaps show as “Unrecorded”	बैलेंस का फ़र्क़ “बिना रिकॉर्ड” दिखता है	ব্যালান্সের তফাত “রেকর্ড নেই” হিসেবে দেখায়
+Count ATM cash as spending	ATM कैश को ख़र्च गिनें	ATM ক্যাশকে খরচ ধরুন
+Off while the cash wallet is on	कैश बटुआ चालू होने पर बंद	ক্যাশ মানিব্যাগ চালু থাকলে বন্ধ
+Or use the cash wallet in Plan	या प्लान में कैश बटुआ इस्तेमाल करें	বা প্ল্যানে ক্যাশ মানিব্যাগ ব্যবহার করুন
+Read older SMS again	पुराने SMS फिर से पढ़ें	পুরোনো SMS আবার পড়ুন
+Bring in messages already on the phone	फ़ोन में पहले से मौजूद मैसेज लाएँ	ফোনে আগে থেকে থাকা মেসেজ আনুন
+Messages Money couldn't read{}	वे मैसेज जो Money पढ़ नहीं सका{}	যে মেসেজ Money পড়তে পারেনি{}
+None so far 👍	अभी तक कोई नहीं 👍	এখনও কিছু নেই 👍
+Share them to get them fixed	ठीक कराने के लिए इन्हें शेयर करें	ঠিক করাতে এগুলো শেয়ার করুন
+Right after a payment	पेमेंट के ठीक बाद	পেমেন্টের ঠিক পরে
+Ask “what for?”	“किसलिए?” पूछें	“কীসের জন্য?” জিজ্ঞেস করুন
+Only for new or unusual payments	सिर्फ़ नए या अजीब पेमेंट पर	শুধু নতুন বা অস্বাভাবিক পেমেন্টে
+Ask “Who was it?”	“यह किसे दिया?” पूछें	“কাকে দিলেন?” জিজ্ঞেস করুন
+When a payment has no name	जब पेमेंट में नाम न हो	যখন পেমেন্টে নাম থাকে না
+“Paid anyone?”	“किसी को पैसे दिए?”	“কাউকে টাকা দিলেন?”
+After you leave a UPI app	UPI ऐप से निकलने के बाद	UPI অ্যাপ থেকে বেরোনোর পরে
+⚠️ Needs Usage access	⚠️ Usage access चाहिए	⚠️ Usage access লাগবে
+Allow Usage access	Usage access की अनुमति दें	Usage access-এর অনুমতি দিন
+Only WHEN an app was open	सिर्फ़ यह कि कोई ऐप कब खुला था	শুধু কোন অ্যাপ কখন খোলা ছিল
+Today's spending at {}	{} बजे आज का ख़र्च	{}-টায় আজকের খরচ
+Summary time	सार का समय	সারাংশের সময়
+A few days before they're due	देय तारीख़ से कुछ दिन पहले	দেওয়ার তারিখের কয়েক দিন আগে
+Renewals, refunds & EMIs	रिन्यूअल, रिफ़ंड और EMI	রিনিউয়াল, রিফান্ড আর EMI
+Plan expiry, insurance, PUC, EMI	प्लान की मियाद, बीमा, PUC, EMI	প্ল্যানের মেয়াদ, বিমা, PUC, EMI
+Budget warnings	बजट चेतावनी	বাজেটের সতর্কতা
+At 80% and 100%	80% और 100% पर	80% আর 100%-এ
+Weekly balance check	हफ़्ते की बैलेंस जाँच	সাপ্তাহিক ব্যালান্স মেলানো
+Catches payments that sent nothing	जिन पेमेंट का कोई मैसेज नहीं आया उन्हें पकड़ता है	যে পেমেন্টের কোনো মেসেজ আসেনি সেগুলো ধরে
+Monthly statement reminder	महीने के स्टेटमेंट की याद	মাসিক স্টেটমেন্টের রিমাইন্ডার
+Check last month with the bank	पिछला महीना बैंक से मिलाएँ	গত মাস ব্যাংকের সঙ্গে মেলান
+Safety	सुरक्षा	সুরক্ষা
+Unusual payments	अजीब पेमेंट	অস্বাভাবিক পেমেন্ট
+Much bigger than usual, or twice	आम से बहुत बड़ा, या दो बार	সাধারণের চেয়ে অনেক বড়, বা দুবার
+Fraud watch	धोखाधड़ी पर नज़र	জালিয়াতির দিকে নজর
+Asks “Was this you?”	पूछता है “क्या यह आप थे?”	জিজ্ঞেস করে “এটা কি আপনি?”
+A note for every payment	हर पेमेंट पर एक नोट	প্রতিটা পেমেন্টে একটা নোট
+A quiet notification each time	हर बार एक शांत नोटिफ़िकेशन	প্রতিবার একটা চুপচাপ নোটিফিকেশন
+Sounds & vibration	आवाज़ और वाइब्रेशन	শব্দ আর ভাইব্রেশন
+Android notification settings	Android नोटिफ़िकेशन सेटिंग्स	Android নোটিফিকেশন সেটিংস
+Save where you paid	जहाँ पेमेंट किया वह सेव करें	যেখানে পেমেন্ট করলেন সেটা সেভ করুন
+See payments on a map	नक़्शे पर पेमेंट देखें	ম্যাপে পেমেন্ট দেখুন
+⚠️ Allow location “all the time”	⚠️ लोकेशन को “हर समय” अनुमति दें	⚠️ লোকেশনে “সবসময়” অনুমতি দিন
+Allow location	लोकेशन की अनुमति दें	লোকেশনের অনুমতি দিন
+Needed for saving places	जगहें सेव करने के लिए ज़रूरी	জায়গা সেভ করতে লাগবে
+Show area names	इलाक़े के नाम दिखाएँ	এলাকার নাম দেখান
+“near Garia Station Road”	“Garia Station Road के पास”	“Garia Station Road-এর কাছে”
+Names from contacts	कॉन्टैक्ट से नाम	কন্টাক্ট থেকে নাম
+✓ For phone-number UPI IDs	✓ फ़ोन-नंबर वाली UPI ID के लिए	✓ ফোন নম্বরের UPI ID-র জন্য
+For phone-number UPI IDs	फ़ोन-नंबर वाली UPI ID के लिए	ফোন নম্বরের UPI ID-র জন্য
+App lock	ऐप लॉक	অ্যাপ লক
+Fingerprint, face or PIN	फ़िंगरप्रिंट, चेहरा या PIN	ফিঙ্গারপ্রিন্ট, মুখ বা PIN
+Set a phone screen lock first	पहले फ़ोन का स्क्रीन लॉक लगाएँ	আগে ফোনের স্ক্রিন লক দিন
+Hide amounts when opening	खोलते समय रकम छिपाएँ	খোলার সময় অঙ্ক লুকোন
+Shows ₹ •••• until you tap	टैप करने तक ₹ •••• दिखाता है	ট্যাপ না করা পর্যন্ত ₹ •••• দেখায়
+Block screenshots	स्क्रीनशॉट रोकें	স্ক্রিনশট বন্ধ করুন
+Also hides Money in recent apps	हाल के ऐप में भी Money छिप जाता है	সাম্প্রতিক অ্যাপেও Money লুকিয়ে থাকে
+🔒 Your messages and money data never leave this phone.	🔒 आपके मैसेज और पैसों का डेटा कभी इस फ़ोन से बाहर नहीं जाता।	🔒 আপনার মেসেজ আর টাকার তথ্য কখনো এই ফোনের বাইরে যায় না।
+Backup	बैकअप	ব্যাকআপ
+Back up now	अभी बैकअप लें	এখনই ব্যাকআপ নিন
+No backup yet	अभी कोई बैकअप नहीं	এখনও কোনো ব্যাকআপ নেই
+Daily automatic backup	रोज़ अपने आप बैकअप	রোজ নিজে থেকেই ব্যাকআপ
+Newest 7 kept, on this phone	सबसे नए 7 रखे जाते हैं, इसी फ़ोन पर	সবচেয়ে নতুন 7টা রাখা হয়, এই ফোনেই
+Backup password	बैकअप पासवर्ड	ব্যাকআপ পাসওয়ার্ড
+Set a backup password	बैकअप पासवर्ड सेट करें	ব্যাকআপ পাসওয়ার্ড দিন
+Backups are locked with it	बैकअप इसी से लॉक होते हैं	ব্যাকআপ এটা দিয়েই লক হয়
+Needed for backups	बैकअप के लिए ज़रूरी	ব্যাকআপের জন্য লাগবে
+Restore from a backup	बैकअप से वापस लाएँ	ব্যাকআপ থেকে ফিরিয়ে আনুন
+Pick a .mbak file	कोई .mbak फ़ाइल चुनें	একটা .mbak ফাইল বাছুন
+Your data	आपका डेटा	আপনার ডেটা
+PDF, CSV or Excel	PDF, CSV या Excel	PDF, CSV বা Excel
+Export to a spreadsheet	स्प्रेडशीट में एक्सपोर्ट करें	স্প্রেডশিটে এক্সপোর্ট করুন
+CSV in Documents/Money	Documents/Money में CSV	Documents/Money-তে CSV
+Deleted accounts ({})	हटाए गए खाते ({})	মুছে ফেলা অ্যাকাউন্ট ({})
+Tap to bring one back	वापस लाने के लिए टैप करें	ফিরিয়ে আনতে ট্যাপ করুন
+{} is back	{} वापस आ गया	{} ফিরে এসেছে
+Delete all data	सारा डेटा हटाएँ	সব ডেটা মুছুন
+Tip: copy Documents/Money/Backups to your PC now and then.	सुझाव: समय-समय पर Documents/Money/Backups को अपने PC में कॉपी कर लें।	পরামর্শ: মাঝে মাঝে Documents/Money/Backups আপনার PC-তে কপি করে রাখুন।
+Check for updates	अपडेट देखें	আপডেট দেখুন
+You have version {}	आपके पास वर्ज़न {} है	আপনার কাছে ভার্সন {} আছে
+Check automatically	अपने आप देखें	নিজে থেকেই দেখুন
+Shows a popup when ready	तैयार होने पर पॉपअप दिखाता है	তৈরি হলে পপআপ দেখায়
+Updates open with	अपडेट किससे खुलें	আপডেট কী দিয়ে খুলবে
+{} · tap to ask next time	{} · अगली बार पूछने के लिए टैप करें	{} · পরের বার জিজ্ঞেস করতে ট্যাপ করুন
+Delete old update files	पुरानी अपडेट फ़ाइलें हटाएँ	পুরোনো আপডেট ফাইল মুছুন
+Money.apk files in Downloads	Downloads में Money.apk फ़ाइलें	Downloads-এ Money.apk ফাইল
+Share Money with family	परिवार से Money शेयर करें	পরিবারের সঙ্গে Money শেয়ার করুন
+Sends the download link	डाउनलोड लिंक भेजता है	ডাউনলোড লিংক পাঠায়
+Set a screen lock (PIN, pattern or fingerprint) in your phone's settings first	पहले फ़ोन की सेटिंग्स में स्क्रीन लॉक (PIN, पैटर्न या फ़िंगरप्रिंट) लगाएँ	আগে ফোনের সেটিংসে স্ক্রিন লক (PIN, প্যাটার্ন বা ফিঙ্গারপ্রিন্ট) দিন
+Evening summary at	शाम का सार इस समय	সন্ধ্যার সারাংশ এই সময়ে
+Money only learns WHEN Google Pay, PhonePe or another UPI app was open — not what you did there.	Money सिर्फ़ यह जानता है कि Google Pay, PhonePe या कोई और UPI ऐप कब खुला था — यह नहीं कि आपने उसमें क्या किया।	Money শুধু জানে Google Pay, PhonePe বা অন্য UPI অ্যাপ কখন খোলা ছিল — আপনি সেখানে কী করলেন তা নয়।
+Open settings	सेटिंग्स खोलें	সেটিংস খুলুন
+{}{} named from your contacts	{}{} को कॉन्टैक्ट से नाम मिला	{}{}-এর নাম কন্টাক্ট থেকে এসেছে
+These look like payments, but their wording is new to Money. Share them with whoever set up Money for you so the reader can learn them — the next version then picks them up by itself. They stay on this phone unless you share.	ये पेमेंट जैसे लगते हैं, पर इनकी भाषा Money के लिए नई है। जिसने आपके लिए Money सेट किया उसे शेयर करें ताकि रीडर इन्हें सीख सके — अगला वर्ज़न इन्हें अपने आप पकड़ लेगा। जब तक आप शेयर न करें, ये इसी फ़ोन पर रहते हैं।	এগুলো পেমেন্টের মতো, কিন্তু এদের ভাষা Money-র কাছে নতুন। যিনি আপনার জন্য Money সেট করেছেন তাঁকে শেয়ার করুন যাতে রিডার এগুলো শিখতে পারে — পরের ভার্সন নিজে থেকেই ধরবে। শেয়ার না করলে এগুলো এই ফোনেই থাকে।
+Couldn't read ({})	नहीं पढ़ सका ({})	পড়া যায়নি ({})
+Share all	सब शेयर करें	সব শেয়ার করুন
+Bank SMS that Money couldn't read:	बैंक SMS जो Money पढ़ नहीं सका:	ব্যাংক SMS যা Money পড়তে পারেনি:
+Still to settle	चुकाना बाक़ी	মেটানো বাকি
+Share messages	मैसेज शेयर करें	মেসেজ শেয়ার করুন
+Clear list	सूची साफ़ करें	তালিকা মুছুন
+Backing up…	बैकअप हो रहा है…	ব্যাকআপ হচ্ছে…
+Backup failed: {}	बैकअप नहीं हुआ: {}	ব্যাকআপ হয়নি: {}
+Export spreadsheet?	स्प्रेडशीट एक्सपोर्ट करें?	স্প্রেডশিট এক্সপোর্ট করবেন?
+The CSV file is NOT password-protected — anyone with the file can read it. Delete it when you're done.	CSV फ़ाइल पर पासवर्ड नहीं होता — जिसके पास फ़ाइल है वह इसे पढ़ सकता है। काम होने पर इसे हटा दें।	CSV ফাইলে পাসওয়ার্ড থাকে না — যার কাছে ফাইল আছে সে পড়তে পারবে। কাজ হয়ে গেলে মুছে দিন।
+Export	एक्सपोर्ट	এক্সপোর্ট
+Export failed: {}	एक्सपोर्ट नहीं हुआ: {}	এক্সপোর্ট হয়নি: {}
+No file picker found	कोई फ़ाइल चुनने वाला ऐप नहीं मिला	ফাইল বাছার কোনো অ্যাপ পাওয়া যায়নি
+Couldn't read the file	फ़ाइल पढ़ी नहीं जा सकी	ফাইল পড়া গেল না
+That isn't a Money backup (.mbak)	यह Money का बैकअप (.mbak) नहीं है	এটা Money-র ব্যাকআপ (.mbak) নয়
+Unlock backup	बैकअप खोलें	ব্যাকআপ খুলুন
+Opening…	खुल रहा है…	খুলছে…
+Wrong password	ग़लत पासवर्ड	ভুল পাসওয়ার্ড
+Couldn't open: {}	नहीं खुल सका: {}	খোলা গেল না: {}
+Restore {} transactions?	{} लेन-देन वापस लाएँ?	{}টি লেনদেন ফিরিয়ে আনবেন?
+Everything in the app now is replaced by this backup. New SMS that arrived after the backup are read again automatically.	ऐप में अभी जो कुछ है वह इस बैकअप से बदल जाएगा। बैकअप के बाद आए नए SMS अपने आप फिर से पढ़े जाएँगे।	অ্যাপে এখন যা আছে সব এই ব্যাকআপ দিয়ে বদলে যাবে। ব্যাকআপের পরে আসা নতুন SMS নিজে থেকেই আবার পড়া হবে।
+Restore	वापस लाएँ	ফিরিয়ে আনুন
+Restored	वापस आ गया	ফিরিয়ে আনা হয়েছে
+Restore failed: {}	वापस नहीं ला सके: {}	ফিরিয়ে আনা গেল না: {}
+This erases everything in the app (backup files in Documents/Money stay). Type DELETE to confirm.	इससे ऐप का सब कुछ मिट जाएगा (Documents/Money की बैकअप फ़ाइलें रहेंगी)। पक्का करने के लिए DELETE लिखें।	এতে অ্যাপের সবকিছু মুছে যাবে (Documents/Money-র ব্যাকআপ ফাইল থাকবে)। নিশ্চিত করতে DELETE লিখুন।
+Delete all data?	सारा डेटा हटाएँ?	সব ডেটা মুছবেন?
+Not deleted	नहीं हटाया	মোছা হয়নি
+All data deleted	सारा डेटा हटा दिया	সব ডেটা মুছে ফেলা হয়েছে
+Money — tracks your spending automatically from bank SMS & UPI notifications. Everything stays on your phone.	Money — बैंक SMS और UPI नोटिफ़िकेशन से आपका ख़र्च अपने आप लिखता है। सब कुछ आपके फ़ोन पर रहता है।	Money — ব্যাংক SMS আর UPI নোটিফিকেশন থেকে আপনার খরচ নিজে থেকেই লেখে। সবকিছু আপনার ফোনেই থাকে।
+Share Money	Money शेयर करें	Money শেয়ার করুন
+Let's make it automatic	चलिए इसे अपने आप चलने वाला बनाएँ	চলুন এটাকে নিজে থেকে চলার মতো করি
+Money reads your bank SMS and payment notifications on this phone and fills everything in by itself — amounts, shops, balances. Nothing leaves your phone.	Money इस फ़ोन पर आपके बैंक SMS और पेमेंट नोटिफ़िकेशन पढ़ता है और सब कुछ ख़ुद भरता है — रकम, दुकानें, बैलेंस। कुछ भी आपके फ़ोन से बाहर नहीं जाता।	Money এই ফোনে আপনার ব্যাংক SMS আর পেমেন্ট নোটিফিকেশন পড়ে আর সব নিজেই ভরে — অঙ্ক, দোকান, ব্যালান্স। কিছুই আপনার ফোনের বাইরে যায় না।
+Nothing is turned on yet	अभी कुछ भी चालू नहीं है	এখনও কিছুই চালু নেই
+Without SMS or notification access the app can't see any payments. You can turn them on later in Settings → Automatic capture.	SMS या नोटिफ़िकेशन की अनुमति के बिना ऐप कोई पेमेंट नहीं देख सकता। बाद में सेटिंग्स → पेमेंट पकड़ना में चालू कर सकते हैं।	SMS বা নোটিফিকেশনের অনুমতি ছাড়া অ্যাপ কোনো পেমেন্ট দেখতে পায় না। পরে সেটিংস → পেমেন্ট ধরা থেকে চালু করতে পারেন।
+Continue anyway	फिर भी आगे बढ़ें	তবুও এগিয়ে যান
+Go back	वापस जाएँ	ফিরে যান
+Read bank SMS	बैंक SMS पढ़ें	ব্যাংক SMS পড়ুন
+Every debit, credit, card spend and ATM withdrawal your bank texts you — with the balance. This is the main source.	हर डेबिट, क्रेडिट, कार्ड ख़र्च और ATM निकासी जिसका बैंक आपको SMS भेजता है — बैलेंस के साथ। यही मुख्य स्रोत है।	প্রতিটা ডেবিট, ক্রেডিট, কার্ড খরচ আর ATM থেকে তোলা যার SMS ব্যাংক পাঠায় — ব্যালান্স সহ। এটাই মূল উৎস।
+Allow	अनुमति दें	অনুমতি দিন
+Read payment notifications	पेमेंट नोटिफ़िकेशन पढ़ें	পেমেন্ট নোটিফিকেশন পড়ুন
+Google Pay, PhonePe, Paytm, CRED and bank apps — catches the payment the moment it happens and gives better names. Also a backup when an SMS is late. Only payment and Messages apps are read; every other notification is ignored.	Google Pay, PhonePe, Paytm, CRED और बैंक ऐप — पेमेंट होते ही पकड़ लेता है और बेहतर नाम देता है। SMS देर से आए तो बैकअप भी। सिर्फ़ पेमेंट और Messages ऐप पढ़े जाते हैं; बाक़ी हर नोटिफ़िकेशन अनदेखा किया जाता है।	Google Pay, PhonePe, Paytm, CRED আর ব্যাংক অ্যাপ — পেমেন্ট হওয়া মাত্রই ধরে আর ভালো নাম দেয়। SMS দেরিতে এলে ব্যাকআপও। শুধু পেমেন্ট আর Messages অ্যাপ পড়া হয়; বাকি সব নোটিফিকেশন উপেক্ষা করা হয়।
+Turn on	चालू करें	চালু করুন
+Find “Money” and switch it on	“Money” खोजें और उसे चालू करें	“Money” খুঁজে চালু করুন
+Alerts	अलर्ट	অ্যালার্ট
+Charged twice, unusual payments, budget warnings, bills due, renewals and a short evening summary.	दो बार कटा, अजीब पेमेंट, बजट चेतावनी, बिल की तारीख़, रिन्यूअल और शाम का छोटा सार।	দুবার কাটা, অস্বাভাবিক পেমেন্ট, বাজেটের সতর্কতা, বিলের তারিখ, রিনিউয়াল আর সন্ধ্যার ছোট সারাংশ।
+Keep working in the background	बैकग्राउंड में चलता रहे	ব্যাকগ্রাউন্ডে চলতে থাকুক
+So your phone's battery saver doesn't stop the app from getting SMS.{}	ताकि फ़ोन का बैटरी सेवर ऐप को SMS पाने से न रोके।{}	যাতে ফোনের ব্যাটারি সেভার অ্যাপকে SMS পেতে না আটকায়।{}
+ On this phone also switch on Autostart for Money.	 इस फ़ोन पर Money के लिए Autostart भी चालू करें।	 এই ফোনে Money-র জন্য Autostart-ও চালু করুন।
+Autostart	Autostart	Autostart
+Remember where you paid (optional)	याद रखें कहाँ पेमेंट किया (चाहें तो)	মনে রাখুন কোথায় পেমেন্ট করলেন (ইচ্ছে হলে)
+Saves the spot of each new payment, so a month later you can see it on a map and remember “the shop near the station”. One quick check per payment.	हर नए पेमेंट की जगह सेव करता है, ताकि महीने भर बाद नक़्शे पर देखकर याद आए “स्टेशन के पास वाली दुकान”। हर पेमेंट पर एक छोटी जाँच।	প্রতিটা নতুন পেমেন্টের জায়গা সেভ করে, যাতে এক মাস পরে ম্যাপে দেখে মনে পড়ে “স্টেশনের কাছের দোকান”। প্রতি পেমেন্টে একবার ছোট্ট খোঁজ।
+Bring in your past messages	अपने पुराने मैसेज लाएँ	আপনার পুরোনো মেসেজ আনুন
+Reads the bank SMS already on your phone, so you start with months of history.	फ़ोन में पहले से मौजूद बैंक SMS पढ़ता है, ताकि आप महीनों के इतिहास के साथ शुरू करें।	ফোনে আগে থেকে থাকা ব্যাংক SMS পড়ে, যাতে কয়েক মাসের হিসেব নিয়ে শুরু করেন।
+{} transactions so far. You can read older messages again any time.	अब तक {} लेन-देन। पुराने मैसेज कभी भी फिर से पढ़ सकते हैं।	এখন পর্যন্ত {}টি লেনদেন। পুরোনো মেসেজ যখন খুশি আবার পড়তে পারেন।
+Choose	चुनें	বাছুন
+Again	फिर से	আবার
+Private backups	निजी बैकअप	নিজস্ব ব্যাকআপ
+On — a locked backup goes to Documents/Money/Backups on this phone every day (newest 7 kept).	चालू — हर दिन इसी फ़ोन पर Documents/Money/Backups में एक लॉक बैकअप जाता है (सबसे नए 7 रखे जाते हैं)।	চালু — প্রতিদিন এই ফোনে Documents/Money/Backups-এ একটা লক করা ব্যাকআপ যায় (সবচেয়ে নতুন 7টা রাখা হয়)।
+Daily backup to this phone's storage (Documents/Money/Backups), locked with a password you choose. No Google Drive.	रोज़ इसी फ़ोन की स्टोरेज (Documents/Money/Backups) में बैकअप, आपके चुने पासवर्ड से लॉक। Google Drive नहीं।	রোজ এই ফোনের স্টোরেজে (Documents/Money/Backups) ব্যাকআপ, আপনার বাছা পাসওয়ার্ডে লক করা। Google Drive নয়।
+Set password	पासवर्ड सेट करें	পাসওয়ার্ড দিন
+💡 Make sure messages keep coming	💡 पक्का करें कि मैसेज आते रहें	💡 নিশ্চিত করুন মেসেজ আসতে থাকে
+• Banks send an SMS for every debit and credit by default. If one bank's payments never show up, turn on SMS alerts for that account in its app or netbanking.	• बैंक हर डेबिट और क्रेडिट का SMS अपने आप भेजते हैं। अगर किसी बैंक के पेमेंट कभी न दिखें, तो उस खाते के लिए उसके ऐप या नेटबैंकिंग में SMS अलर्ट चालू करें।	• ব্যাংক প্রতিটা ডেবিট আর ক্রেডিটের SMS নিজে থেকেই পাঠায়। কোনো ব্যাংকের পেমেন্ট কখনো না দেখা গেলে, সেই অ্যাকাউন্টের জন্য তার অ্যাপ বা নেটব্যাংকিং-এ SMS অ্যালার্ট চালু করুন।
+Read again	फिर से पढ़ें	আবার পড়ুন
+Autostart settings	Autostart सेटिंग्स	Autostart সেটিংস
+SMS	SMS	SMS
+Blocked by Android?	Android ने रोका?	Android আটকে দিয়েছে?
+If no permission box appeared (or it says “Restricted setting”), Android is being careful because Money was installed from a file, not the Play Store. Allow it once:	अगर अनुमति का बॉक्स नहीं आया (या “Restricted setting” लिखा है), तो Android सावधानी बरत रहा है क्योंकि Money फ़ाइल से इंस्टॉल हुआ है, Play Store से नहीं। एक बार अनुमति दें:	অনুমতির বাক্স না এলে (বা “Restricted setting” লেখা থাকলে), Android সাবধান হচ্ছে কারণ Money ফাইল থেকে ইনস্টল হয়েছে, Play Store থেকে নয়। একবার অনুমতি দিন:
+Open app info	ऐप की जानकारी खोलें	অ্যাপের তথ্য খুলুন
+Allow SMS first	पहले SMS की अनुमति दें	আগে SMS-এর অনুমতি দিন
+Last 3 months	पिछले 3 महीने	গত 3 মাস
+Last 6 months	पिछले 6 महीने	গত 6 মাস
+Last 12 months	पिछले 12 महीने	গত 12 মাস
+Everything on the phone	फ़ोन में जो कुछ है	ফোনে যা আছে সব
+Read older bank messages	पुराने बैंक मैसेज पढ़ें	পুরোনো ব্যাংক মেসেজ পড়ুন
+Reading messages…	मैसेज पढ़ रहे हैं…	মেসেজ পড়া হচ্ছে…
+Bringing in your history	आपका इतिहास ला रहे हैं	আপনার পুরোনো হিসেব আনা হচ্ছে
+Read {} of {} messages	{1} में से {0} मैसेज पढ़े	{1}টির মধ্যে {0}টি মেসেজ পড়া হয়েছে
+All caught up	सब हो गया	সব হয়ে গেছে
+Done!	हो गया!	হয়ে গেছে!
+No new bank transactions in those messages.	उन मैसेज में कोई नया बैंक लेन-देन नहीं।	ওই মেসেজগুলোতে কোনো নতুন ব্যাংক লেনদেন নেই।
+Found {} transactions. From now on, new ones appear by themselves.	{} लेन-देन मिले। अब से नए अपने आप दिखेंगे।	{}টি লেনদেন পাওয়া গেছে। এখন থেকে নতুনগুলো নিজে থেকেই দেখা যাবে।
+You'll need this password to restore a backup (for example on a new phone). It can't be recovered — write it down somewhere safe.	बैकअप वापस लाने के लिए (जैसे नए फ़ोन पर) यह पासवर्ड चाहिए होगा। यह वापस नहीं मिल सकता — इसे कहीं सुरक्षित लिख लें।	ব্যাকআপ ফিরিয়ে আনতে (যেমন নতুন ফোনে) এই পাসওয়ার্ড লাগবে। এটা উদ্ধার করা যায় না — কোথাও নিরাপদে লিখে রাখুন।
+Password (at least 6 characters)	पासवर्ड (कम से कम 6 अक्षर)	পাসওয়ার্ড (অন্তত 6 অক্ষর)
+Type it again	फिर से लिखें	আবার লিখুন
+Change backup password	बैकअप पासवर्ड बदलें	ব্যাকআপ পাসওয়ার্ড বদলান
+At least 6 characters	कम से कम 6 अक्षर	অন্তত 6 অক্ষর
+Doesn't match	मेल नहीं खाता	মিলছে না
+First backup saved: {}	पहला बैकअप सेव हुआ: {}	প্রথম ব্যাকআপ সেভ হয়েছে: {}
+Couldn't save: {}	सेव नहीं हो सका: {}	সেভ করা গেল না: {}
+Bank statement	बैंक स्टेटमेंट	ব্যাংক স্টেটমেন্ট
+Check a month against your bank	किसी महीने को अपने बैंक से मिलाएँ	একটা মাস আপনার ব্যাংকের সঙ্গে মেলান
+Download last month's statement from your bank app, net banking or the e-mail the bank sends (PDF — even password-protected — CSV or Excel). Money compares it with what it recorded:	पिछले महीने का स्टेटमेंट अपने बैंक ऐप, नेट बैंकिंग या बैंक के भेजे ई-मेल से डाउनलोड करें (PDF — पासवर्ड वाला भी — CSV या Excel)। Money इसे अपने रिकॉर्ड से मिलाता है:	গত মাসের স্টেটমেন্ট আপনার ব্যাংক অ্যাপ, নেট ব্যাংকিং বা ব্যাংকের পাঠানো ই-মেল থেকে ডাউনলোড করুন (PDF — পাসওয়ার্ড দেওয়া হলেও — CSV বা Excel)। Money এটা নিজের রেকর্ডের সঙ্গে মেলায়:
+Choose the statement file	स्टेटमेंट फ़ाइल चुनें	স্টেটমেন্ট ফাইল বাছুন
+Tip: you can also share the PDF to Money from your files or mail app.	सुझाव: अपनी फ़ाइल या मेल ऐप से PDF को सीधे Money में शेयर भी कर सकते हैं।	পরামর্শ: ফাইল বা মেল অ্যাপ থেকে PDF সোজা Money-তে শেয়ারও করতে পারেন।
+Reading the statement…	स्टेटमेंट पढ़ रहे हैं…	স্টেটমেন্ট পড়া হচ্ছে…
+Couldn't open the file: {}	फ़ाइल नहीं खुल सकी: {}	ফাইল খোলা গেল না: {}
+Password	पासवर्ड	পাসওয়ার্ড
+Old Excel files (.xls) can't be read — download the statement as PDF or CSV instead.	पुरानी Excel फ़ाइलें (.xls) नहीं पढ़ी जा सकतीं — स्टेटमेंट PDF या CSV में डाउनलोड करें।	পুরোনো Excel ফাইল (.xls) পড়া যায় না — স্টেটমেন্ট PDF বা CSV-তে ডাউনলোড করুন।
+Couldn't find any payments in “{}” — this bank's layout is new to Money. Try the CSV or Excel download from net banking (those work for every bank), or share the file with whoever set up Money for you.	“{}” में कोई पेमेंट नहीं मिला — इस बैंक का ढाँचा Money के लिए नया है। नेट बैंकिंग से CSV या Excel डाउनलोड आज़माएँ (ये हर बैंक के लिए चलते हैं), या फ़ाइल उसे शेयर करें जिसने आपके लिए Money सेट किया।	“{}”-এ কোনো পেমেন্ট পাওয়া যায়নি — এই ব্যাংকের ধরন Money-র কাছে নতুন। নেট ব্যাংকিং থেকে CSV বা Excel ডাউনলোড করে দেখুন (এগুলো সব ব্যাংকের জন্য চলে), বা ফাইলটা তাঁকে শেয়ার করুন যিনি আপনার জন্য Money সেট করেছেন।
+Couldn't read this statement ({}). Try the CSV or Excel download from net banking, or share it with whoever set up Money for you.	यह स्टेटमेंट नहीं पढ़ा जा सका ({})। नेट बैंकिंग से CSV या Excel डाउनलोड आज़माएँ, या उसे शेयर करें जिसने आपके लिए Money सेट किया।	এই স্টেটমেন্ট পড়া গেল না ({})। নেট ব্যাংকিং থেকে CSV বা Excel ডাউনলোড করে দেখুন, বা তাঁকে শেয়ার করুন যিনি আপনার জন্য Money সেট করেছেন।
+PDF password	PDF पासवर्ड	PDF পাসওয়ার্ড
+{}Banks usually use a mix of your name, date of birth or customer ID — the e-mail with the statement says which. Money doesn't save it.	{}बैंक आमतौर पर आपके नाम, जन्मतिथि या कस्टमर ID को मिलाकर पासवर्ड बनाते हैं — स्टेटमेंट वाले ई-मेल में लिखा होता है। Money इसे सेव नहीं करता।	{}ব্যাংক সাধারণত আপনার নাম, জন্মতারিখ বা কাস্টমার ID মিলিয়ে পাসওয়ার্ড বানায় — স্টেটমেন্টের ই-মেলে লেখা থাকে। Money এটা সেভ করে না।
+That password didn't work. 	वह पासवर्ड नहीं चला। 	ওই পাসওয়ার্ড কাজ করেনি।
+This statement is locked	यह स्टेटमेंट लॉक है	এই স্টেটমেন্ট লক করা
+{} – {} · {} entries	{} – {} · {} एंट्री	{} – {} · {}টি এন্ট্রি
+Which account is this?	यह कौन-सा खाता है?	এটা কোন অ্যাকাউন্ট?
+Bank	बैंक	ব্যাংক
+  (new)	  (नया)	  (নতুন)
+No bank account in Money yet — it will be added as {}.	Money में अभी कोई बैंक खाता नहीं — इसे {} के रूप में जोड़ा जाएगा।	Money-তে এখনও কোনো ব্যাংক অ্যাকাউন্ট নেই — এটা {} হিসেবে যোগ হবে।
+Compare with Money	Money से मिलाएँ	Money-র সঙ্গে মেলান
+Choose another file	दूसरी फ़ाइल चुनें	অন্য ফাইল বাছুন
+All matched ✓	सब मिल गया ✓	সব মিলে গেছে ✓
+Checked ✓	जाँच हो गई ✓	মেলানো হয়েছে ✓
+Matched	मिले	মিলেছে
+Added	जोड़े	যোগ হয়েছে
+Details filled	जानकारी भरी	তথ্য ভরা হয়েছে
+Money had missed these	ये Money से छूट गए थे	এগুলো Money-র বাদ পড়ে গিয়েছিল
+Now added. Tap one to add a reason while the statement jogs your memory.	अब जोड़ दिए। स्टेटमेंट देखकर याद ताज़ा है — किसी पर टैप करके वजह जोड़ें।	এখন যোগ করা হয়েছে। স্টেটমেন্ট দেখে মনে পড়তে পারে — কোনোটায় ট্যাপ করে কারণ লিখুন।
+In Money, not in the statement	Money में है, स्टेटमेंट में नहीं	Money-তে আছে, স্টেটমেন্টে নেই
+Usually the same payment counted twice, or a payment that failed. Tap Hide if it never happened.	आमतौर पर एक ही पेमेंट दो बार गिना गया, या कोई फ़ेल पेमेंट। अगर हुआ ही नहीं, तो छिपाएँ टैप करें।	সাধারণত একই পেমেন্ট দুবার গোনা, বা কোনো ফেল পেমেন্ট। আদৌ না হয়ে থাকলে লুকোন ট্যাপ করুন।
+Hidden	छिपा दिया	লুকোনো হয়েছে
+Hide	छिपाएँ	লুকোন
+Hidden: not in the bank statement	छिपाया: बैंक स्टेटमेंट में नहीं	লুকোনো: ব্যাংক স্টেটমেন্টে নেই
+Check another statement	दूसरा स्टेटमेंट जाँचें	অন্য স্টেটমেন্ট মেলান
+📄 Check {} with your bank statement	📄 {} को अपने बैंक स्टेटमेंट से मिलाएँ	📄 {} আপনার ব্যাংক স্টেটমেন্টের সঙ্গে মেলান
+Open it in Money — missed payments get added, names filled in.	इसे Money में खोलें — छूटे पेमेंट जुड़ जाएँगे, नाम भर जाएँगे।	এটা Money-তে খুলুন — বাদ পড়া পেমেন্ট যোগ হবে, নাম ভরে যাবে।
+80C · Savings & insurance	80C · बचत और बीमा	80C · সঞ্চয় আর বিমা
+ELSS / tax-saver funds, PPF, EPF (voluntary), LIC & life insurance, Sukanya, NSC, 5-year tax-saver FD, children's tuition fees, home-loan principal.	ELSS / टैक्स-सेवर फ़ंड, PPF, EPF (स्वैच्छिक), LIC और जीवन बीमा, सुकन्या, NSC, 5 साल की टैक्स-सेवर FD, बच्चों की ट्यूशन फ़ीस, होम लोन का मूलधन।	ELSS / ট্যাক্স-সেভার ফান্ড, PPF, EPF (ঐচ্ছিক), LIC আর জীবনবিমা, সুকন্যা, NSC, 5 বছরের ট্যাক্স-সেভার FD, সন্তানের টিউশন ফি, হোম লোনের আসল।
+80D · Health insurance	80D · स्वास्थ्य बीमा	80D · স্বাস্থ্য বিমা
+Health insurance for you, your spouse and children (₹25,000; more for parents / seniors) and preventive check-ups.	आपके, जीवनसाथी और बच्चों के लिए स्वास्थ्य बीमा (₹25,000; माता-पिता / बुज़ुर्गों के लिए ज़्यादा) और प्रिवेंटिव चेक-अप।	আপনার, স্বামী/স্ত্রী আর সন্তানের স্বাস্থ্য বিমা (₹25,000; বাবা-মা / প্রবীণদের জন্য বেশি) আর প্রিভেন্টিভ চেক-আপ।
+80CCD(1B) · NPS	80CCD(1B) · NPS	80CCD(1B) · NPS
+Your own extra NPS contribution — up to ₹50,000 on top of 80C.	आपका अपना अतिरिक्त NPS योगदान — 80C के ऊपर ₹50,000 तक।	আপনার নিজের বাড়তি NPS জমা — 80C-র ওপরে ₹50,000 পর্যন্ত।
+Rent paid (HRA / 80GG)	किराया दिया (HRA / 80GG)	ভাড়া দেওয়া (HRA / 80GG)
+Rent you pay — useful for HRA from your employer, or 80GG if you don't get HRA. Keep rent receipts.	आप जो किराया देते हैं — कंपनी से HRA के लिए काम का, या HRA न मिले तो 80GG। किराए की रसीदें रखें।	আপনি যে ভাড়া দেন — কোম্পানি থেকে HRA-র জন্য কাজে লাগে, বা HRA না পেলে 80GG। ভাড়ার রসিদ রাখুন।
+80G · Donations	80G · दान	80G · দান
+Donations to registered charities / relief funds (keep the 80G receipt).	रजिस्टर्ड संस्थाओं / राहत कोष को दान (80G रसीद रखें)।	রেজিস্টার্ড সংস্থা / ত্রাণ তহবিলে দান (80G রসিদ রাখুন)।
+{} · 80C, 80D, NPS, rent	{} · 80C, 80D, NPS, किराया	{} · 80C, 80D, NPS, ভাড়া
+{} found · {}	{} मिला · {}	{} পাওয়া গেছে · {}
+Tax helper	टैक्स मददगार	ট্যাক্স সহায়ক
+Deductions found	मिली कटौतियाँ	পাওয়া ছাড়
+From your payments this year (counted up to each limit). Tap a payment to leave it out, or add one paid another way (salary deduction, cash, cheque).	इस साल के आपके पेमेंट से (हर सीमा तक गिने)। किसी पेमेंट को हटाने के लिए टैप करें, या दूसरे तरीक़े से दिया पेमेंट जोड़ें (तनख़्वाह से कटौती, कैश, चेक)।	এই বছরের আপনার পেমেন্ট থেকে (প্রতিটা সীমা পর্যন্ত ধরা)। কোনো পেমেন্ট বাদ দিতে ট্যাপ করুন, বা অন্যভাবে দেওয়া পেমেন্ট যোগ করুন (বেতন থেকে কাটা, ক্যাশ, চেক)।
+⬇ Save as CSV	⬇ CSV में सेव करें	⬇ CSV-তে সেভ করুন
+ⓘ Old vs new regime	ⓘ पुरानी बनाम नई व्यवस्था	ⓘ পুরোনো বনাম নতুন ব্যবস্থা
+Which tax regime?	कौन-सी टैक्स व्यवस्था?	কোন ট্যাক্স ব্যবস্থা?
+These deductions count only in the OLD tax regime. The NEW regime (the default now) has lower rates but almost no deductions — only your employer's NPS share and the standard deduction.	ये कटौतियाँ सिर्फ़ पुरानी टैक्स व्यवस्था में गिनी जाती हैं। नई व्यवस्था (अब डिफ़ॉल्ट) में दरें कम हैं पर लगभग कोई कटौती नहीं — सिर्फ़ कंपनी का NPS हिस्सा और स्टैंडर्ड डिडक्शन।	এই ছাড়গুলো শুধু পুরোনো ট্যাক্স ব্যবস্থায় ধরা হয়। নতুন ব্যবস্থায় (এখন ডিফল্ট) হার কম কিন্তু প্রায় কোনো ছাড় নেই — শুধু কোম্পানির NPS ভাগ আর স্ট্যান্ডার্ড ডিডাকশন।
+Not tax advice — a starting list to check with your documents or CA.	टैक्स सलाह नहीं — अपने काग़ज़ों या CA से जाँचने के लिए एक शुरुआती सूची।	ট্যাক্সের পরামর্শ নয় — আপনার কাগজপত্র বা CA-র সঙ্গে মেলানোর জন্য একটা শুরুর তালিকা।
+ · limit reached ✓	 · सीमा पूरी ✓	 · সীমা পূর্ণ ✓
+ · {} room left	 · {} की जगह बाक़ी	 · আরও {} বাকি
+Leave this out?	इसे छोड़ दें?	এটা বাদ দেবেন?
+{} · {} won't count for {}.	{} · {} {} में नहीं गिना जाएगा।	{} · {} {}-এ ধরা হবে না।
+Leave out	छोड़ दें	বাদ দিন
+Open payment	पेमेंट खोलें	পেমেন্ট খুলুন
+{} · added by you · tap to remove	{} · आपने जोड़ा · हटाने के लिए टैप करें	{} · আপনি যোগ করেছেন · সরাতে ট্যাপ করুন
+＋ Add	＋ जोड़ें	＋ যোগ করুন
+What (e.g. PPF, LIC premium, EPF)	क्या (जैसे PPF, LIC प्रीमियम, EPF)	কী (যেমন PPF, LIC প্রিমিয়াম, EPF)
+Amount ₹	रकम ₹	অঙ্ক ₹
+Add to {}	{} में जोड़ें	{}-এ যোগ করুন
+Saved {} in the app's folder	ऐप के फ़ोल्डर में {} सेव हुआ	অ্যাপের ফোল্ডারে {} সেভ হয়েছে
+Add a name	नाम जोड़ें	নাম দিন
+⚠️ No message came for this	⚠️ इसका कोई मैसेज नहीं आया	⚠️ এর কোনো মেসেজ আসেনি
+⚠️ Worth a look	⚠️ एक बार देख लें	⚠️ একবার দেখে নিন
+Your balance changed by this much without any SMS or app notification. It could be a cash deposit, a cheque, bank charges, or a payment whose SMS never arrived. Tap the name to say what it was, or mark it OK.	आपका बैलेंस बिना किसी SMS या ऐप नोटिफ़िकेशन के इतना बदला। यह कैश जमा, चेक, बैंक चार्ज, या ऐसा पेमेंट हो सकता है जिसका SMS कभी नहीं आया। क्या था बताने के लिए नाम पर टैप करें, या ठीक है लिखें।	আপনার ব্যালান্স কোনো SMS বা অ্যাপ নোটিফিকেশন ছাড়াই এতটা বদলেছে। এটা ক্যাশ জমা, চেক, ব্যাংক চার্জ, বা এমন পেমেন্ট হতে পারে যার SMS কখনো আসেনি। কী ছিল বলতে নামে ট্যাপ করুন, বা ঠিক আছে চিহ্ন দিন।
+This looked unusual (much bigger than normal, or the same amount twice in a few minutes). If it was you, mark it OK.	यह अजीब लगा (आम से बहुत बड़ा, या कुछ मिनट में दो बार वही रकम)। अगर यह आप थे, तो ठीक है लिखें।	এটা অস্বাভাবিক লাগল (সাধারণের চেয়ে অনেক বড়, বা কয়েক মিনিটে একই অঙ্ক দুবার)। আপনি হলে ঠিক আছে চিহ্ন দিন।
+Find out what it was	पता करें यह क्या था	খুঁজে দেখুন এটা কী ছিল
+Check it	जाँचें	দেখে নিন
+It's OK	ठीक है	ঠিক আছে
+When	कब	কখন
+Into	किसमें	কোথায় এল
+UPI ID	UPI ID	UPI ID
+Balance after	बाद का बैलेंस	পরের ব্যালান্স
+Card limit left	बची कार्ड लिमिट	বাকি কার্ড লিমিট
+Reference	रेफ़रेंस	রেফারেন্স
+Found by the balance check	बैलेंस जाँच से मिला	ব্যালান্স মেলানো থেকে পাওয়া
+Added by you	आपने जोड़ा	আপনি যোগ করেছেন
+  (SMS + app, counted once)	  (SMS + ऐप, एक बार गिना)	  (SMS + অ্যাপ, একবার ধরা)
+Seen in	कहाँ दिखा	কোথায় দেখা গেছে
+Where	कहाँ	কোথায়
+Pin saved (±{} m)	जगह सेव हुई (±{} मी)	জায়গা সেভ হয়েছে (±{} মি)
+Map	नक़्शा	ম্যাপ
+🤔 Probably {}?	🤔 शायद {}?	🤔 সম্ভবত {}?
+You paid {} {}{} before at this spot / amount / time.	आपने इसी जगह / रकम / समय पर पहले {} को {}{} दिया था।	আপনি এই জায়গা / অঙ্ক / সময়ে আগে {}-কে {}{} দিয়েছিলেন।
+Yes, it was {}	हाँ, यह {} था	হ্যাঁ, এটা {}
+🤝  Borrowed / paid back	🤝  उधार लिया / लौटाया	🤝  ধার নিয়েছি / ফেরত দিয়েছি
+👥  Split / lend	👥  बाँटें / उधार दें	👥  ভাগ / ধার দিন
+↩️  Refund tracking	↩️  रिफ़ंड पर नज़र	↩️  রিফান্ডে নজর
+❌  Payment failed?	❌  भुगतान फ़ेल?	❌  পেমেন্ট ফেল?
+Payment failed but money left?	भुगतान फ़ेल पर पैसे कट गए?	পেমেন্ট ফেল কিন্তু টাকা কেটেছে?
+Money will keep {} out of your spending, watch for it to come back, and remind you if it doesn't.	Money {} को आपके ख़र्च से बाहर रखेगा, वापसी पर नज़र रखेगा, और न आए तो याद दिलाएगा।	Money {} আপনার খরচের বাইরে রাখবে, ফেরতের দিকে নজর রাখবে, আর না এলে মনে করিয়ে দেবে।
+Track the refund	रिफ़ंड पर नज़र रखें	রিফান্ডে নজর রাখুন
+Watching for {} to come back	{} की वापसी पर नज़र	{} ফেরতের দিকে নজর
+⏰  Return / warranty ✓	⏰  वापसी / वारंटी ✓	⏰  ফেরত / ওয়ারেন্টি ✓
+⏰  Return / warranty	⏰  वापसी / वारंटी	⏰  ফেরত / ওয়ারেন্টি
+📷  Add bill photo	📷  बिल की फ़ोटो जोड़ें	📷  বিলের ছবি যোগ করুন
+Add a note	नोट जोड़ें	নোট লিখুন
+Paid from — tap to change	किस खाते से — बदलने के लिए टैप करें	কোন অ্যাকাউন্ট থেকে — বদলাতে ট্যাপ করুন
+Moved to {} — balance updated	{} में भेजा — बैलेंस अपडेट हुआ	{}-এ সরানো হয়েছে — ব্যালান্স আপডেট হয়েছে
+Not income (money from my own account, a refund I'm tracking elsewhere…)	आमदनी नहीं (मेरे अपने खाते से पैसा, कोई रिफ़ंड जिसे कहीं और देख रहा हूँ…)	আয় নয় (আমার নিজের অ্যাকাউন্ট থেকে টাকা, অন্য কোথাও নজর রাখা রিফান্ড…)
+Not spending (moved to my own account, card bill, investment…)	ख़र्च नहीं (मेरे अपने खाते में भेजा, कार्ड बिल, निवेश…)	খরচ নয় (আমার নিজের অ্যাকাউন্টে পাঠানো, কার্ড বিল, বিনিয়োগ…)
+Hide this (not mine, or counted twice)	इसे छिपाएँ (मेरा नहीं, या दो बार गिना)	এটা লুকোন (আমার নয়, বা দুবার গোনা)
+Original message	असली मैसेज	আসল মেসেজ
+Delete this?	इसे हटाएँ?	এটা মুছবেন?
+It's removed from your totals and the balance goes back. (If the same SMS is read again later, it won't come back.)	यह आपके जोड़ से हट जाएगा और बैलेंस वापस हो जाएगा। (अगर वही SMS बाद में फिर पढ़ा गया, तो यह वापस नहीं आएगा।)	এটা আপনার হিসেব থেকে বাদ যাবে আর ব্যালান্স আগের মতো হবে। (একই SMS পরে আবার পড়া হলে এটা ফিরে আসবে না।)
+Category	श्रेणी	ক্যাটেগরি
+All {} payments?	सभी {} पेमेंट?	সব {} পেমেন্ট?
+Put {} other {} to {} in {} too — and new ones automatically?	{2} को बाक़ी {0} {1} भी {3} में डालें — और नए भी अपने आप?	{2}-কে বাকি {0}টি {1}-ও {3}-এ রাখবেন — আর নতুনগুলোও নিজে থেকে?
+Yes, all	हाँ, सब	হ্যাঁ, সব
+Only this one	सिर्फ़ यह वाला	শুধু এটা
+UPI ID: {}	UPI ID: {}	UPI ID: {}
+Who is this?	यह कौन है?	এটা কে?
+Save for all {}	सभी {} के लिए सेव करें	সব {}-এর জন্য সেভ করুন
+For what / to whom (e.g. chips, Ramesh)	किसलिए / किसे (जैसे चिप्स, Ramesh)	কীসের জন্য / কাকে (যেমন চিপস, Ramesh)
+The balance in Money changes right away. If the bank's SMS comes later, it joins this — no double entry.	Money में बैलेंस तुरंत बदलता है। अगर बैंक का SMS बाद में आए, तो यह उसी में जुड़ जाता है — दो बार एंट्री नहीं।	Money-তে ব্যালান্স সঙ্গে সঙ্গে বদলায়। ব্যাংকের SMS পরে এলে এর সঙ্গেই জুড়ে যায় — দুবার এন্ট্রি হয় না।
+🎤  Say it instead — “50 for Lays, paid from Union Bank”	🎤  इसके बजाय बोलें — “50 for Lays, paid from Union Bank”	🎤  বরং বলুন — “50 for Lays, paid from Union Bank”
+Add a payment	पेमेंट जोड़ें	পেমেন্ট যোগ করুন
+Enter an amount	रकम लिखें	অঙ্ক লিখুন
+Added ✓ {} from {}	जोड़ा ✓ {} {} से	যোগ হয়েছে ✓ {} {} থেকে
+Say a payment — “200 for chai” or “500 to Ramesh on Google Pay”	पेमेंट बोलें — “200 चाय के लिए” या “Google Pay पर Ramesh को 500”	পেমেন্ট বলুন — “200 চায়ের জন্য” বা “Google Pay-তে Ramesh-কে 500”
+Voice typing isn't available on this phone — type it instead	इस फ़ोन पर बोलकर लिखना उपलब्ध नहीं — लिखकर डालें	এই ফোনে বলে লেখা যায় না — লিখে দিন
+Didn't catch an amount	रकम समझ नहीं आई	অঙ্ক বোঝা গেল না
+{}Try “200 for chai” or “auto 50 and samosa 30”.	{}आज़माएँ “200 चाय के लिए” या “ऑटो 50 और समोसा 30”।	{}বলে দেখুন “200 চায়ের জন্য” বা “অটো 50 আর শিঙাড়া 30”।
+Try again	फिर से कोशिश करें	আবার চেষ্টা করুন
+Which {}account?	कौन-सा {}खाता?	কোন {}অ্যাকাউন্ট?
+No {}account{} yet — pick one	अभी कोई {}खाता{} नहीं — एक चुनें	এখনও কোনো {}অ্যাকাউন্ট{} নেই — একটা বাছুন
+ ending {}	 जिसके आख़िर में {}	 যার শেষে {}
+The balance of that account changes right away. Say “from Federal ending 1234” or “in cash” next time to skip this.	उस खाते का बैलेंस तुरंत बदलता है। अगली बार यह छोड़ने के लिए बोलें “Federal ending 1234 से” या “कैश में”।	ওই অ্যাকাউন্টের ব্যালান্স সঙ্গে সঙ্গে বদলায়। পরের বার এটা এড়াতে বলুন “Federal ending 1234 থেকে” বা “ক্যাশে”।
+Add this?	इसे जोड़ें?	এটা যোগ করবেন?
+Add {}?  ({})	{} जोड़ें?  ({})	{} যোগ করবেন?  ({})
+Cash spend	कैश ख़र्च	ক্যাশ খরচ
+{} left in cash	कैश में {} बचे	ক্যাশে {} বাকি
+From {}{}{}	{}{}{} से	{}{}{} থেকে
+Undo	वापस लें	আগের মতো করুন
+Undone	वापस लिया	আগের মতো হল
+Undone — balance is back	वापस लिया — बैलेंस पहले जैसा	আগের মতো হল — ব্যালান্স ফিরে এসেছে
+Excellent	बहुत बढ़िया	দুর্দান্ত
+Good	अच्छा	ভালো
+Okay	ठीक-ठाक	মোটামুটি
+Needs care	देखभाल चाहिए	যত্ন দরকার
+Getting there	पहुँच रहे हैं	এগোচ্ছেন
+Failed payment	फ़ेल भुगतान	ফেল পেমেন্ট
+Money back	पैसे वापस	টাকা ফেরত
+👥 Split	👥 बाँटा	👥 ভাগ
+Split	बाँटा	ভাগ
+🤝 Lent	🤝 उधार दिया	🤝 ধার দিয়েছি
+Lent	उधार दिया	ধার দিয়েছি
+🎁 Gift	🎁 तोहफ़ा	🎁 উপহার
+Category limits	श्रेणी की सीमाएँ	ক্যাটেগরির সীমা
+Optional: a monthly limit for one category (e.g. Food ₹6,000). You get a warning at 80% and 100%.	चाहें तो: किसी एक श्रेणी के लिए महीने की सीमा (जैसे खाना ₹6,000)। 80% और 100% पर चेतावनी मिलेगी।	ইচ্ছে হলে: একটা ক্যাটেগরির মাসিক সীমা (যেমন খাবার ₹6,000)। 80% আর 100%-এ সতর্ক করা হবে।
+ · over	 · ज़्यादा	 · বেশি
+ · {} left	 · {} बचे	 · {} বাকি
+Set category limits	श्रेणी की सीमाएँ सेट करें	ক্যাটেগরির সীমা ঠিক করুন
+Edit limits	सीमाएँ बदलें	সীমা বদলান
+Filled in from your average over the last 3 months. Leave a box empty for no limit.	पिछले 3 महीने के आपके औसत से भरा गया। सीमा न चाहिए तो बॉक्स ख़ाली छोड़ दें।	গত 3 মাসের আপনার গড় থেকে ভরা। সীমা না চাইলে বাক্স খালি রাখুন।
+Monthly limits (₹)	महीने की सीमाएँ (₹)	মাসিক সীমা (₹)
+Balance checked by you	आपने बैलेंस जाँचा	আপনি ব্যালান্স মিলিয়েছেন
+Balance corrected by you	आपने बैलेंस ठीक किया	আপনি ব্যালান্স ঠিক করেছেন
+Noted by you	आपने लिखा	আপনি লিখেছেন
+Allow all the time	हर समय अनुमति दें	সবসময় অনুমতি দিন
+No maps app found	कोई नक़्शा ऐप नहीं मिला	কোনো ম্যাপ অ্যাপ পাওয়া যায়নি
+1 month	1 महीना	1 মাস
+2 weeks	2 हफ़्ते	2 সপ্তাহ
+1 week	1 हफ़्ता	1 সপ্তাহ
+Pick end date	आख़िरी तारीख़ चुनें	শেষের তারিখ বাছুন
+Starts {} ({})	{} से शुरू ({})	{} থেকে শুরু ({})
+Finished {} under budget 🎉	बजट से {} कम में पूरा 🎉	বাজেটের চেয়ে {} কমে শেষ 🎉
+Finished {} over budget	बजट से {} ज़्यादा में पूरा	বাজেটের চেয়ে {} বেশিতে শেষ
+{} over budget	बजट से {} ज़्यादा	বাজেটের চেয়ে {} বেশি
+{} a day for {}{}	{1}{2} के लिए रोज़ {0}	{1}{2} ধরে দিনে {0}
+Unrecorded spending	बिना रिकॉर्ड ख़र्च	রেকর্ড ছাড়া খরচ
+Unrecorded money in	बिना रिकॉर्ड आई रकम	রেকর্ড ছাড়া টাকা এসেছে
+Hidden automatically: the same payment was counted twice (your balance shows it only once).	अपने आप छिपाया: वही पेमेंट दो बार गिना गया था (आपका बैलेंस इसे एक ही बार दिखाता है)।	নিজে থেকে লুকোনো: একই পেমেন্ট দুবার গোনা হয়েছিল (আপনার ব্যালান্সে এটা একবারই দেখায়)।
+No SMS or notification was received for this. The balance went from {} ({}) to {} ({}), but the messages in between only explain {}.	इसका कोई SMS या नोटिफ़िकेशन नहीं आया। बैलेंस {} ({}) से {} ({}) हुआ, पर बीच के मैसेज सिर्फ़ {} समझाते हैं।	এর কোনো SMS বা নোটিফিকেশন আসেনি। ব্যালান্স {} ({}) থেকে {} ({}) হয়েছে, কিন্তু মাঝের মেসেজগুলো শুধু {}-এর হিসেব দেয়।
+Bank / SMS charges (probably)	बैंक / SMS चार्ज (शायद)	ব্যাংক / SMS চার্জ (সম্ভবত)
+Interest from the bank (probably)	बैंक से ब्याज (शायद)	ব্যাংক থেকে সুদ (সম্ভবত)
+Weekly	हर हफ़्ते	সাপ্তাহিক
+Monthly	हर महीने	মাসিক
+Yearly	हर साल	বার্ষিক
+Much more than you usually pay {} (usually {})	आप {} को आमतौर पर जितना देते हैं उससे बहुत ज़्यादा (आमतौर पर {})	{}-কে সাধারণত যা দেন তার চেয়ে অনেক বেশি (সাধারণত {})
+One of your biggest payments in 4 months	4 महीनों के आपके सबसे बड़े पेमेंट में से एक	4 মাসের মধ্যে আপনার সবচেয়ে বড় পেমেন্টগুলোর একটা
+Set a backup password first	पहले बैकअप पासवर्ड सेट करें	আগে ব্যাকআপ পাসওয়ার্ড দিন
+Couldn't create the file	फ़ाइल नहीं बन सकी	ফাইল তৈরি করা গেল না
+Couldn't write the file	फ़ाइल नहीं लिखी जा सकी	ফাইল লেখা গেল না
+Storage not available	स्टोरेज उपलब्ध नहीं	স্টোরেজ পাওয়া যাচ্ছে না
+Couldn't open the file	फ़ाइल नहीं खुल सकी	ফাইল খোলা গেল না
+not a protected backup	यह सुरक्षित बैकअप नहीं है	এটা সুরক্ষিত ব্যাকআপ নয়
+(unknown)	(अनजान)	(অজানা)
+Bank statement{}	बैंक स्टेटमेंट{}	ব্যাংক স্টেটমেন্ট{}
+Open Settings → Apps → Special access → Usage access → Money	सेटिंग्स खोलें → Apps → Special access → Usage access → Money	সেটিংস খুলুন → Apps → Special access → Usage access → Money
+Under 1 year	1 साल से कम	1 বছরের কম
+Savings account, or an FD that ends before your date	बचत खाता, या ऐसी FD जो आपकी तारीख़ से पहले पूरी हो	সেভিংস অ্যাকাউন্ট, বা এমন FD যা আপনার তারিখের আগে শেষ হয়
+A short trip 🚲 — money you need soon should sit somewhere safe, like a locker. It won't grow much, but it will surely be there on the day.	छोटा सफ़र 🚲 — जो पैसा जल्दी चाहिए वह लॉकर जैसी सुरक्षित जगह रहे। ज़्यादा नहीं बढ़ेगा, पर उस दिन पक्का मिलेगा।	ছোট যাত্রা 🚲 — যে টাকা তাড়াতাড়ি লাগবে সেটা লকারের মতো নিরাপদ জায়গায় থাকুক। খুব বাড়বে না, কিন্তু সেই দিন নিশ্চিত পাবেন।
+1 to 3 years	1 से 3 साल	1 থেকে 3 বছর
+RD or FD, or a debt fund	RD या FD, या डेट फ़ंड	RD বা FD, বা ডেট ফান্ড
+A longer trip 🚌 — the bank pays you a little extra for keeping money with it (that's interest). Small growth, tiny wobbles. Shares are too bumpy for money you need this soon.	थोड़ा लंबा सफ़र 🚌 — पैसा रखने पर बैंक थोड़ा अतिरिक्त देता है (यही ब्याज है)। छोटी बढ़त, हल्के झटके। इतनी जल्दी चाहिए पैसे के लिए शेयर बहुत उछलते हैं।	একটু লম্বা যাত্রা 🚌 — টাকা রাখলে ব্যাংক একটু বাড়তি দেয় (এটাই সুদ)। অল্প বৃদ্ধি, হালকা ঝাঁকুনি। এত তাড়াতাড়ি লাগবে এমন টাকার জন্য শেয়ার খুব ওঠানামা করে।
+3 to 5 years	3 से 5 साल	3 থেকে 5 বছর
+Mostly FD or debt funds, a small part in a balanced (hybrid) fund	ज़्यादातर FD या डेट फ़ंड, थोड़ा हिस्सा बैलेंस्ड (हाइब्रिड) फ़ंड में	বেশিরভাগ FD বা ডেট ফান্ড, অল্প অংশ ব্যালান্সড (হাইব্রিড) ফান্ডে
+A long train ride 🚆 — a small part can take the faster, bumpier road. In the last year, move everything back to safe places.	लंबी ट्रेन यात्रा 🚆 — थोड़ा हिस्सा तेज़, झटकों वाली सड़क ले सकता है। आख़िरी साल में सब कुछ वापस सुरक्षित जगह ले आएँ।	লম্বা ট্রেনযাত্রা 🚆 — অল্প অংশ দ্রুত, ঝাঁকুনির রাস্তা নিতে পারে। শেষ বছরে সব আবার নিরাপদ জায়গায় ফিরিয়ে আনুন।
+5 years or more	5 साल या ज़्यादा	5 বছর বা বেশি
+Equity mutual funds or an index fund through a monthly SIP; PPF for very long goals	महीने की SIP से इक्विटी म्यूचुअल फ़ंड या इंडेक्स फ़ंड; बहुत लंबे लक्ष्यों के लिए PPF	মাসিক SIP দিয়ে ইকুইটি মিউচুয়াল ফান্ড বা ইনডেক্স ফান্ড; খুব লম্বা লক্ষ্যের জন্য PPF
+A long flight ✈️ — shares go up and down like a roller-coaster, but over many years they have usually grown more than FD. Time smooths out the bumps.	लंबी उड़ान ✈️ — शेयर रोलर-कोस्टर की तरह ऊपर-नीचे होते हैं, पर कई सालों में आमतौर पर FD से ज़्यादा बढ़े हैं। समय झटकों को बराबर कर देता है।	লম্বা উড়ান ✈️ — শেয়ার রোলার-কোস্টারের মতো ওঠানামা করে, কিন্তু অনেক বছরে সাধারণত FD-র চেয়ে বেশি বেড়েছে। সময় ঝাঁকুনি মিলিয়ে দেয়।
+Durga Puja	दुर्गा पूजा	দুর্গাপুজো
+Diwali & Kali Puja	दिवाली और काली पूजा	দীপাবলি আর কালীপুজো
+Christmas & New Year	क्रिसमस और नया साल	বড়দিন আর নতুন বছর
+Holi	होली	দোল
+Eid	ईद	ইদ
+Poila Baisakh	पोइला बैसाख	পয়লা বৈশাখ
+Half on needs, a third on wants, a fifth saved — the classic	आधा ज़रूरतों पर, तिहाई शौक़ पर, पाँचवाँ हिस्सा बचत — सबसे जाना-माना	অর্ধেক প্রয়োজনে, তিন ভাগের এক ভাগ শখে, পাঁচ ভাগের এক ভাগ সঞ্চয় — সবচেয়ে চেনা
+For big-city rent: more room for needs, still 20% saved	बड़े शहर के किराए के लिए: ज़रूरतों को ज़्यादा जगह, फिर भी 20% बचत	বড় শহরের ভাড়ার জন্য: প্রয়োজনে বেশি জায়গা, তবুও 20% সঞ্চয়
+For tight months or a first job: start with 10% saved	तंगी के महीने या पहली नौकरी के लिए: 10% बचत से शुरू करें	টানাটানির মাস বা প্রথম চাকরির জন্য: 10% সঞ্চয় দিয়ে শুরু করুন
+Pay yourself first	पहले ख़ुद को दो	আগে নিজেকে দিন
+Save 20% the day money comes in — spend the rest freely	पैसा आते ही 20% बचाएँ — बाक़ी खुलकर ख़र्च करें	টাকা আসার দিনই 20% জমান — বাকিটা খুশিমতো খরচ করুন
+{} min of work	{} मिनट का काम	{} মিনিটের কাজ
+{} hours of work	{} घंटे का काम	{} ঘণ্টার কাজ
+{} working days	{} कामकाजी दिन	{} কাজের দিন
+App updates	ऐप अपडेट	অ্যাপ আপডেট
+Tells you when a new version of Money is ready	Money का नया वर्ज़न तैयार होने पर बताता है	Money-র নতুন ভার্সন তৈরি হলে জানায়
+Money{} is downloaded	Money{} डाउनलोड हो गया	Money{} ডাউনলোড হয়েছে
+Tap to install the update	अपडेट इंस्टॉल करने के लिए टैप करें	আপডেট ইনস্টল করতে ট্যাপ করুন
+Money {} is ready	Money {} तैयार है	Money {} তৈরি
+Tap to update — your data stays as it is	अपडेट के लिए टैप करें — आपका डेटा वैसा ही रहेगा	আপডেট করতে ট্যাপ করুন — আপনার ডেটা যেমন আছে থাকবে
+Checking for updates…	अपडेट देख रहे हैं…	আপডেট দেখা হচ্ছে…
+Couldn't check — are you online? Try again in a minute.	जाँच नहीं हो सकी — क्या इंटरनेट चालू है? एक मिनट में फिर कोशिश करें।	দেখা গেল না — ইন্টারনেট চালু আছে? এক মিনিট পরে আবার চেষ্টা করুন।
+You have the latest version ({})	आपके पास सबसे नया वर्ज़न है ({})	আপনার কাছে সবচেয়ে নতুন ভার্সন আছে ({})
+Update	अपडेट करें	আপডেট করুন
+Help	मदद	সাহায্য
+Money download link	Money डाउनलोड लिंक	Money ডাউনলোড লিংক
+When the download finishes, tap Money.apk and choose Update	डाउनलोड पूरा होने पर Money.apk पर टैप करें और Update चुनें	ডাউনলোড শেষ হলে Money.apk-তে ট্যাপ করে Update বাছুন
+No browser found — use Copy link	कोई ब्राउज़र नहीं मिला — लिंक कॉपी करें	কোনো ব্রাউজার পাওয়া যায়নি — লিংক কপি করুন
+Money{} update	Money{} अपडेट	Money{} আপডেট
+Tap to install	इंस्टॉल करने के लिए टैप करें	ইনস্টল করতে ট্যাপ করুন
+Starting…	शुरू हो रहा है…	শুরু হচ্ছে…
+GitHub may be busy for a moment, or the internet dropped. Try again in a minute.	GitHub शायद थोड़ी देर व्यस्त है, या इंटरनेट चला गया। एक मिनट में फिर कोशिश करें।	GitHub হয়তো কিছুক্ষণ ব্যস্ত, বা ইন্টারনেট চলে গেছে। এক মিনিট পরে আবার চেষ্টা করুন।
+Trouble? Tap Help.	दिक़्क़त? मदद पर टैप करें।	সমস্যা? সাহায্যে ট্যাপ করুন।
+Version {} is ready (you have {}).	वर्ज़न {} तैयार है (आपके पास {} है)।	ভার্সন {} তৈরি (আপনার কাছে {} আছে)।
+What's new:	नया क्या है:	নতুন কী আছে:
+How to update:	अपडेट कैसे करें:	কীভাবে আপডেট করবেন:
+1. Tap Update — Money downloads it (you'll see a progress bar).	1. अपडेट करें टैप करें — Money इसे डाउनलोड करेगा (आपको प्रोग्रेस बार दिखेगा)।	1. আপডেট করুন ট্যাপ করুন — Money ডাউনলোড করবে (একটা প্রোগ্রেস বার দেখবেন)।
+2. Tap Install and pick your phone's Files app (tick “Always use this app” so it's never Drive).	2. Install टैप करें और फ़ोन का Files ऐप चुनें (“Always use this app” पर टिक करें ताकि Drive कभी न खुले)।	2. Install ট্যাপ করে ফোনের Files অ্যাপ বাছুন (“Always use this app”-এ টিক দিন যাতে কখনো Drive না খোলে)।
+Tap Money-update.apk if it doesn't open by itself, then choose Update.	अपने आप न खुले तो Money-update.apk टैप करें, फिर Update चुनें।	নিজে থেকে না খুললে Money-update.apk ট্যাপ করুন, তারপর Update বাছুন।
+3. Done. Your data stays, and the downloaded file is deleted automatically.	3. हो गया। आपका डेटा रहेगा, और डाउनलोड हुई फ़ाइल अपने आप हट जाएगी।	3. হয়ে গেল। আপনার ডেটা থাকবে, আর ডাউনলোড করা ফাইল নিজে থেকেই মুছে যাবে।
+Update available	अपडेट उपलब्ध है	আপডেট এসেছে
+• Download fails or says “504” / error	• डाउनलोड नहीं होता या “504” / एरर दिखता है	• ডাউনলোড হয় না বা “504” / এরর দেখায়
+GitHub is busy for a moment. Wait a minute and tap Update again.	GitHub थोड़ी देर व्यस्त है। एक मिनट रुककर फिर अपडेट करें टैप करें।	GitHub কিছুক্ষণ ব্যস্ত। এক মিনিট অপেক্ষা করে আবার আপডেট করুন ট্যাপ করুন।
+• It opens in Drive (or the wrong app)	• Drive (या ग़लत ऐप) में खुलता है	• Drive-এ (বা ভুল অ্যাপে) খোলে
+Settings → App updates → Open updates with → Ask next time. Then pick your Files app.	सेटिंग्स → ऐप अपडेट → अपडेट किससे खुलें → अगली बार पूछें। फिर अपना Files ऐप चुनें।	সেটিংস → অ্যাপ আপডেট → আপডেট কী দিয়ে খুলবে → পরের বার জিজ্ঞেস করুন। তারপর আপনার Files অ্যাপ বাছুন।
+• Can't find the file	• फ़ाइल नहीं मिल रही	• ফাইল খুঁজে পাচ্ছেন না
+Files app → Downloads → Money-update.apk (newest at the top).	Files ऐप → Downloads → Money-update.apk (सबसे नई ऊपर)।	Files অ্যাপ → Downloads → Money-update.apk (সবচেয়ে নতুনটা ওপরে)।
+• “Install unknown apps” / install blocked	• “Install unknown apps” / इंस्टॉल रुका	• “Install unknown apps” / ইনস্টল আটকে গেছে
+Allow it for Files (or Downloads) when Android asks — it's needed once.	Android पूछे तो Files (या Downloads) को अनुमति दें — बस एक बार चाहिए।	Android জিজ্ঞেস করলে Files (বা Downloads)-কে অনুমতি দিন — একবারই লাগে।
+• Play Protect says “App blocked”	• Play Protect कहता है “App blocked”	• Play Protect বলছে “App blocked”
+In India, Google blocks apps from outside the Play Store that read SMS or notifications — even your own. Play Store → profile picture → Play Protect → ⚙ → turn off “Scan apps with Play Protect” → install the update → turn it back ON right after.	भारत में Google, Play Store के बाहर के उन ऐप को रोकता है जो SMS या नोटिफ़िकेशन पढ़ते हैं — आपके अपने ऐप को भी। Play Store → प्रोफ़ाइल फ़ोटो → Play Protect → ⚙ → “Scan apps with Play Protect” बंद करें → अपडेट इंस्टॉल करें → तुरंत बाद फिर चालू करें।	ভারতে Google, Play Store-এর বাইরের যে অ্যাপ SMS বা নোটিফিকেশন পড়ে তা আটকায় — আপনার নিজেরটাও। Play Store → প্রোফাইল ছবি → Play Protect → ⚙ → “Scan apps with Play Protect” বন্ধ করুন → আপডেট ইনস্টল করুন → সঙ্গে সঙ্গে আবার চালু করুন।
+Never do this because someone on a call or message asks you to.	अगर कोई फ़ोन या मैसेज पर ऐसा करने को कहे, तो कभी न करें।	কেউ ফোনে বা মেসেজে এটা করতে বললে কখনো করবেন না।
+• “App not installed”	• “App not installed”	• “App not installed”
+An older file was opened. Tap Update again: Money replaces the old file.	पुरानी फ़ाइल खुल गई। फिर से अपडेट करें टैप करें: Money पुरानी फ़ाइल बदल देगा।	পুরোনো ফাইল খুলে গেছে। আবার আপডেট করুন ট্যাপ করুন: Money পুরোনো ফাইল বদলে দেবে।
+• Still stuck	• फिर भी अटके हैं	• তবুও আটকে আছেন
+Download in the browser instead, or copy the link and open it on your computer.	इसके बजाय ब्राउज़र में डाउनलोड करें, या लिंक कॉपी करके कंप्यूटर पर खोलें।	বরং ব্রাউজারে ডাউনলোড করুন, বা লিংক কপি করে কম্পিউটারে খুলুন।
+(Files downloaded by the browser can't be deleted by Money automatically — use Settings → Delete old update files.)	(ब्राउज़र से डाउनलोड हुई फ़ाइलें Money अपने आप नहीं हटा सकता — सेटिंग्स → पुरानी अपडेट फ़ाइलें हटाएँ इस्तेमाल करें।)	(ব্রাউজারে ডাউনলোড করা ফাইল Money নিজে থেকে মুছতে পারে না — সেটিংস → পুরোনো আপডেট ফাইল মুছুন ব্যবহার করুন।)
+Update help	अपडेट में मदद	আপডেটে সাহায্য
+Update again	फिर से अपडेट करें	আবার আপডেট করুন
+Use browser	ब्राउज़र इस्तेमाल करें	ব্রাউজার ব্যবহার করুন
+Link copied	लिंक कॉपी हुआ	লিংক কপি হয়েছে
+Downloading update	अपडेट डाउनलोड हो रहा है	আপডেট ডাউনলোড হচ্ছে
+Download failed	डाउनलोड नहीं हुआ	ডাউনলোড হয়নি
+Waiting for the connection…	कनेक्शन का इंतज़ार…	কানেকশনের অপেক্ষা…
+Update ready	अपडेट तैयार	আপডেট তৈরি
+Money{} is downloaded.	Money{} डाउनलोड हो गया।	Money{} ডাউনলোড হয়েছে।
+Tap Install and pick your Files app. If the file doesn't open by itself, tap “{}” in Downloads and choose Update.	Install टैप करें और अपना Files ऐप चुनें। फ़ाइल अपने आप न खुले तो Downloads में “{}” टैप करें और Update चुनें।	Install ট্যাপ করে আপনার Files অ্যাপ বাছুন। ফাইল নিজে থেকে না খুললে Downloads-এ “{}” ট্যাপ করে Update বাছুন।
+Your data stays, and Money deletes this file by itself after the update.	आपका डेटा रहेगा, और अपडेट के बाद Money यह फ़ाइल ख़ुद हटा देगा।	আপনার ডেটা থাকবে, আর আপডেটের পরে Money এই ফাইল নিজেই মুছে দেবে।
+Install	इंस्टॉल करें	ইনস্টল করুন
+Pick your phone's Files app. Then tap “{}” (if it doesn't open by itself) and choose Update.	फ़ोन का Files ऐप चुनें। फिर “{}” टैप करें (अगर अपने आप न खुले) और Update चुनें।	ফোনের Files অ্যাপ বাছুন। তারপর “{}” ট্যাপ করুন (নিজে থেকে না খুললে) আর Update বাছুন।
+Always use this app	हमेशा यही ऐप इस्तेमाल करें	সবসময় এই অ্যাপ ব্যবহার করুন
+Opens the update directly	अपडेट सीधे खोलता है	আপডেট সরাসরি খোলে
+Opens the app — go to Downloads	ऐप खोलता है — Downloads में जाएँ	অ্যাপ খোলে — Downloads-এ যান
+Open the update with	अपडेट किससे खोलें	আপডেট কী দিয়ে খুলবেন
+Tap {}, then Update	{} टैप करें, फिर Update	{} ট্যাপ করুন, তারপর Update
+Open Downloads → tap {} → Update	Downloads खोलें → {} टैप करें → Update	Downloads খুলুন → {} ট্যাপ করুন → Update
+Install the update	अपडेट इंस्टॉल करें	আপডেট ইনস্টল করুন
+Open the Files app → Downloads → tap {} → Update.	Files ऐप खोलें → Downloads → {} टैप करें → Update।	Files অ্যাপ খুলুন → Downloads → {} ট্যাপ করুন → Update।
+Or pull down your notifications and tap “Money update”.	या नोटिफ़िकेशन नीचे खींचें और “Money update” टैप करें।	বা নোটিফিকেশন নামিয়ে “Money update” ট্যাপ করুন।
+Long-press to select every old Money….apk, then tap Select	हर पुरानी Money….apk चुनने के लिए देर तक दबाएँ, फिर Select टैप करें	প্রতিটা পুরোনো Money….apk বাছতে লম্বা চাপ দিন, তারপর Select ট্যাপ করুন
+Open the Files app → Downloads and delete the Money.apk files	Files ऐप खोलें → Downloads और Money.apk फ़ाइलें हटाएँ	Files অ্যাপ খুলুন → Downloads আর Money.apk ফাইলগুলো মুছুন
+1 file deleted	1 फ़ाइल हटाई	1টা ফাইল মোছা হয়েছে
+{} files deleted	{} फ़ाइलें हटाईं	{}টা ফাইল মোছা হয়েছে
+ · {} couldn't be deleted — remove them in the Files app	 · {} नहीं हट सकीं — Files ऐप में हटाएँ	 · {}টা মোছা গেল না — Files অ্যাপে মুছুন
+The downloaded Money.apk isn't needed any more. Tap “Delete file”, select Money.apk (and any Money (1).apk…) in Downloads, and tap Select.	डाउनलोड हुई Money.apk की अब ज़रूरत नहीं। “फ़ाइल हटाएँ” टैप करें, Downloads में Money.apk (और कोई Money (1).apk…) चुनें, और Select टैप करें।	ডাউনলোড করা Money.apk আর দরকার নেই। “ফাইল মুছুন” ট্যাপ করুন, Downloads-এ Money.apk (আর যেকোনো Money (1).apk…) বাছুন, আর Select ট্যাপ করুন।
+The update file Money downloaded has been deleted automatically. If your browser or Files app saved older Money.apk files, tap “Clean up old files” to remove them.	Money की डाउनलोड की अपडेट फ़ाइल अपने आप हट गई है। अगर ब्राउज़र या Files ऐप ने पुरानी Money.apk फ़ाइलें रखी हैं, तो उन्हें हटाने के लिए “पुरानी फ़ाइलें साफ़ करें” टैप करें।	Money-র ডাউনলোড করা আপডেট ফাইল নিজে থেকেই মুছে গেছে। ব্রাউজার বা Files অ্যাপে পুরোনো Money.apk ফাইল থাকলে, মুছতে “পুরোনো ফাইল পরিষ্কার করুন” ট্যাপ করুন।
+Updated to {}	{} पर अपडेट हुआ	{}-এ আপডেট হয়েছে
+Delete file	फ़ाइल हटाएँ	ফাইল মুছুন
+Clean up old files	पुरानी फ़ाइलें साफ़ करें	পুরোনো ফাইল পরিষ্কার করুন
 e.g. Puja shopping, Goa trip, new guitar	जैसे पूजा की ख़रीदारी, गोवा ट्रिप, नया गिटार	যেমন পুজোর কেনাকাটা, গোয়া ট্রিপ, নতুন গিটার
+It has {}{}. Keep them in your history, or delete them too?	इसमें {}{} हैं। इन्हें अपने इतिहास में रखें, या इन्हें भी हटाएँ?	এতে {}{} আছে। এগুলো আপনার হিসেবে রাখবেন, নাকি এগুলোও মুছবেন?
+Showing: {}   ✕	दिखा रहे हैं: {}   ✕	দেখানো হচ্ছে: {}   ✕
+Today: {} in {}	आज: {1} में {0}	আজ: {1}-এ {0}
+Budget: {} of {} spent · {}	बजट: {1} में से {0} ख़र्च · {2}	বাজেট: {1}-এর মধ্যে {0} খরচ · {2}
+Still using it?	अभी भी इस्तेमाल करते हैं?	এখনও ব্যবহার করেন?
+▲ Price went up: {} → {}	▲ दाम बढ़ा: {} → {}	▲ দাম বেড়েছে: {} → {}
+🗑️ You want to cancel this	🗑️ आप इसे बंद करना चाहते हैं	🗑️ আপনি এটা বাতিল করতে চান
+🤔 Still using it? Tap	🤔 अभी भी इस्तेमाल करते हैं? टैप करें	🤔 এখনও ব্যবহার করেন? ট্যাপ করুন
+Today: use {}	आज: {} इस्तेमाल करें	আজ: {} ব্যবহার করুন
+{} (app)	{} (ऐप)	{} (অ্যাপ)
+E-mail · {}	ई-मेल · {}	ই-মেল · {}
+80+ excellent · 60+ good · 40+ okay.	80+ बहुत बढ़िया · 60+ अच्छा · 40+ ठीक-ठाक।	80+ দুর্দান্ত · 60+ ভালো · 40+ মোটামুটি।
+More insights → Monthly report gives a PDF of the whole month.	और जानकारी → महीने की रिपोर्ट पूरे महीने की PDF देती है।	আরও বিশ্লেষণ → মাসিক রিপোর্ট পুরো মাসের PDF দেয়।
+Payments are caught in the background (when the SMS arrives), so Money needs location “Allow all the time”.	पेमेंट बैकग्राउंड में पकड़े जाते हैं (जब SMS आता है), इसलिए Money को लोकेशन “हर समय अनुमति” चाहिए।	পেমেন্ট ব্যাকগ্রাউন্ডে ধরা হয় (যখন SMS আসে), তাই Money-র লোকেশনে “সবসময় অনুমতি” লাগবে।
+On the next screen choose “Allow all the time”. Money checks the location once per payment — nothing else.	अगली स्क्रीन पर “Allow all the time” चुनें। Money हर पेमेंट पर एक बार लोकेशन देखता है — और कुछ नहीं।	পরের স্ক্রিনে “Allow all the time” বাছুন। Money প্রতি পেমেন্টে একবার লোকেশন দেখে — আর কিছু নয়।
+near {}	{} के पास	{}-এর কাছে
+From: {}  ▾	किससे: {}  ▾	কোথা থেকে: {}  ▾
+Thanks!	धन्यवाद!	ধন্যবাদ!
+UPI: {}	UPI: {}	UPI: {}
+Biggest: {}	सबसे ज़्यादा: {}	সবচেয়ে বেশি: {}
+More than usual on {}	आम से ज़्यादा: {}	সাধারণের চেয়ে বেশি: {}
+Still not back? Raise it in your UPI app (Help → Report an issue), then call the bank. If it's not solved in 30 days, you can complain at cms.rbi.org.in.	अभी तक वापस नहीं आए? अपने UPI ऐप में शिकायत करें (Help → Report an issue), फिर बैंक को फ़ोन करें। 30 दिन में हल न हो, तो cms.rbi.org.in पर शिकायत कर सकते हैं।	এখনও ফেরত আসেনি? আপনার UPI অ্যাপে অভিযোগ করুন (Help → Report an issue), তারপর ব্যাংকে ফোন করুন। 30 দিনে সমাধান না হলে cms.rbi.org.in-এ অভিযোগ করতে পারেন।
+To track a payment yourself: open it → “❌ Payment failed?”.	किसी पेमेंट पर ख़ुद नज़र रखने के लिए: उसे खोलें → “❌ भुगतान फ़ेल?”।	নিজে কোনো পেমেন্টে নজর রাখতে: সেটা খুলুন → “❌ পেমেন্ট ফেল?”।
+Late by {}{} — the bank owes ₹100 a day	{}{} की देरी — बैंक को रोज़ ₹100 देने होंगे	{}{} দেরি — ব্যাংককে দিনে ₹100 দিতে হবে
+Should be back by {} · day {}	{} तक वापस आना चाहिए · दिन {}	{}-এর মধ্যে ফেরত আসার কথা · দিন {}
+Came back {} ✓	{} को वापस आया ✓	{} তারিখে ফেরত এসেছে ✓
+Counted as spent	ख़र्च में गिना	খরচে ধরা হয়েছে
+somewhere between {} and {}	{} और {} के बीच कभी	{} আর {}-এর মধ্যে কোনো এক সময়
+Last: {}	पिछला: {}	শেষ: {}
+If you leave the app and no payment message arrives within a minute, Money asks “Paid anyone?”. Quick visits (under 12 seconds) are ignored.	अगर आप ऐप से निकलें और एक मिनट में कोई पेमेंट मैसेज न आए, तो Money पूछता है “किसी को पैसे दिए?”। छोटी झलक (12 सेकंड से कम) अनदेखी की जाती है।	অ্যাপ থেকে বেরোনোর পর এক মিনিটে কোনো পেমেন্টের মেসেজ না এলে, Money জিজ্ঞেস করে “কাউকে টাকা দিলেন?”। অল্প সময়ের দেখা (12 সেকেন্ডের কম) উপেক্ষা করা হয়।
+Next screen: find Money → turn on “Permit usage access”.	अगली स्क्रीन: Money खोजें → “Permit usage access” चालू करें।	পরের স্ক্রিন: Money খুঁজুন → “Permit usage access” চালু করুন।
+Saved: {}	सेव हुआ: {}	সেভ হয়েছে: {}
+Download: {}	डाउनलोड: {}	ডাউনলোড: {}
+• Keep notifications ON inside Google Pay / PhonePe / Paytm (their own settings).	• Google Pay / PhonePe / Paytm के अंदर (उनकी अपनी सेटिंग्स में) नोटिफ़िकेशन चालू रखें।	• Google Pay / PhonePe / Paytm-এর ভেতরে (ওদের নিজের সেটিংসে) নোটিফিকেশন চালু রাখুন।
+• If a message is ever missed anyway, Money spots it: the balance in the next SMS won't add up, and an “Unrecorded” entry appears under Needs a look.	• फिर भी कोई मैसेज छूट जाए, तो Money पकड़ लेता है: अगले SMS का बैलेंस नहीं मिलेगा, और “देखना बाक़ी” में एक “बिना रिकॉर्ड” एंट्री दिखेगी।	• তবুও কোনো মেসেজ বাদ পড়লে, Money ধরে ফেলে: পরের SMS-এর ব্যালান্স মিলবে না, আর “দেখা বাকি”-তে একটা “রেকর্ড নেই” এন্ট্রি দেখা যাবে।
+1. Tap “Open app info” below.	1. नीचे “ऐप की जानकारी खोलें” टैप करें।	1. নিচে “অ্যাপের তথ্য খুলুন” ট্যাপ করুন।
+2. Tap ⋮ (top right) → “Allow restricted settings” and confirm.	2. ⋮ (ऊपर दाएँ) टैप करें → “Allow restricted settings” और पक्का करें।	2. ⋮ (ওপরে ডানদিকে) ট্যাপ করুন → “Allow restricted settings” আর নিশ্চিত করুন।
+3. Come back and tap Allow / Turn on again.	3. वापस आएँ और फिर से अनुमति दें / चालू करें टैप करें।	3. ফিরে এসে আবার অনুমতি দিন / চালু করুন ট্যাপ করুন।
+A home	अपना घर	নিজের বাড়ি

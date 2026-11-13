@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.6 — the app in English, हिंदी and বাংলা (tabs, Home, Grow and all calculators; the rest in 2.6.1).** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.6.1 — the whole app in English, हिंदी and বাংলা.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -266,3 +266,8 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - Hooked in: `Ui.text` (LText), `Ui.LSwitch`, toasts, `Popup` (title, message, buttons, lists), `Alerts`, `Reasons` notifications, chart labels, hints, month/day names (`Lang.dates`).
 - Picker: `Lang.choose` (Settings) and `Lang.chips` (first tour page); the app restarts in the new language. Voice uses `Lang.speech()` (hi-IN / bn-IN) and `Voice.local()` turns Hindi/Bengali digits and money words into the forms the parser knows.
 - Add a translation = add one line to strings.tsv. 2.6.1 adds the remaining screens.
+
+## Version 2.6.1 — the rest of the app translated
+- strings.tsv now has ~2,270 lines: every screen, notification channel, notification text and button, RemoteInput label and the widget (`Lang.t` added where Android shows text directly).
+- Ask: `Ask.Answer.tpl/args` hold each answer as a sentence pattern ({0}, {1}…) plus pieces; `Lang.answer` says it in Hindi/Bengali (word order changes per language). Pieces use internal keys `ask:at {}`, `ask:on {}`, `ask:day {}`, `ask:in {}`. English text is unchanged. Typed questions are still understood in English only.
+- Same-word clashes split: People section "Open" → "Still to settle"; goal template "Home" → "A home"; Plan section "Money" → "Your money".

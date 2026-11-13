@@ -92,7 +92,7 @@ final class PlanPage {
         }
 
         // ---- everything else: round icons, 4 to a row (like Google Pay)
-        body.addView(Ui.label(a, "Money"));
+        body.addView(Ui.label(a, "Your money"));
         body.addView(gridCard(
                 Ui.action(a, "🏦", 0xFF0B6F86, "Accounts", v -> a.startActivity(new Intent(a, AccountsActivity.class))),
                 Ui.action(a, "💵", 0xFF65A30D, "Cash", v -> Cash.sheet(a)),

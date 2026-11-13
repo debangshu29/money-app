@@ -84,7 +84,7 @@ final class Lang {
             exact.put(en, tr);
             exact.put(en.trim(), tr.trim());
             // pieces chosen by a ternary in code (" payments need a look") usually follow a number
-            if (en.startsWith(" ") && !en.trim().isEmpty()) template("{}" + en, "{}" + (tr.startsWith(" ") ? tr : " " + tr));
+            if (en.startsWith(" ") && !en.trim().isEmpty()) template("{}" + en, "{}" + (tr.startsWith(" ") || tr.startsWith("টি") ? tr : " " + tr));
             if (en.endsWith(" ") && !en.trim().isEmpty()) template(en + "{}", (tr.endsWith(" ") ? tr : tr + " ") + "{}");
             return;
         }
@@ -179,6 +179,22 @@ final class Lang {
             return fill((String) tp[1], g);
         }
         return null;
+    }
+
+    /** An Ask answer in the chosen language: its sentence pattern translated, then each piece. Falls back to the English text. */
+    static String answer(String english, String tpl, String[] args) {
+        if (english() || tpl == null) return english;
+        String tr = t(tpl).toString();
+        if (tr.equals(tpl)) return english;
+        String[] g = new String[args.length];
+        for (int i = 0; i < args.length; i++) {
+            String x = args[i];
+            if (x == null || x.trim().isEmpty()) { g[i] = ""; continue; }
+            String r = t(x).toString();
+            g[i] = r.equals(x) ? (x.startsWith(" ") ? " " : "") + t(x.trim()) : r;
+        }
+        String out = fill(tr, g).replaceAll("[ \\t]+", " ").replace(" ।", "।").replace(" .", ".").replace(" ,", ",").replace("( ", "(").trim();
+        return out.replace("ask:", "");
     }
 
     private static String fill(String tr, String[] g) {

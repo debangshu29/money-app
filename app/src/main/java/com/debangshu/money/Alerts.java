@@ -39,8 +39,8 @@ public final class Alerts {
     }
 
     private static NotificationChannel ch(String id, String name, int imp, String desc) {
-        NotificationChannel ch = new NotificationChannel(id, name, imp);
-        ch.setDescription(desc);
+        NotificationChannel ch = new NotificationChannel(id, Lang.t(name), imp);
+        ch.setDescription(Lang.t(desc));
         return ch;
     }
 
@@ -196,9 +196,9 @@ public final class Alerts {
         // the typed text must be added to this intent, so it has to stay mutable
         PendingIntent pName = PendingIntent.getBroadcast(c, nid, nameI, PendingIntent.FLAG_UPDATE_CURRENT
                 | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
-        android.app.RemoteInput ri = new android.app.RemoteInput.Builder(NameReceiver.KEY).setLabel("Who & what for? e.g. Ramesh - test").build();
+        android.app.RemoteInput ri = new android.app.RemoteInput.Builder(NameReceiver.KEY).setLabel(Lang.t("Who & what for? e.g. Ramesh - test")).build();
         Notification.Action aName = new Notification.Action.Builder(
-                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Type name", pName).addRemoteInput(ri).build();
+                android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), Lang.t("Type name"), pName).addRemoteInput(ri).build();
 
         android.content.Intent skipI = new android.content.Intent(c, NameReceiver.class).setAction(NameReceiver.SKIP)
                 .putExtra("txn", t.id).putExtra("nid", nid);
@@ -206,8 +206,8 @@ public final class Alerts {
 
         @SuppressWarnings("deprecation")
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, CH_ASK) : new Notification.Builder(c);
-        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(title).setContentText(text)
-                .setStyle(new Notification.BigTextStyle().bigText(text)).setContentIntent(pOpen).setAutoCancel(true)
+        b.setSmallIcon(R.drawable.ic_notify).setContentTitle(Lang.t(title)).setContentText(Lang.t(text))
+                .setStyle(new Notification.BigTextStyle().bigText(Lang.t(text))).setContentIntent(pOpen).setAutoCancel(true)
                 .setOnlyAlertOnce(true).setColor(c.getColor(R.color.accent));
         if (g != null) {
             android.content.Intent yesI = new android.content.Intent(c, NameReceiver.class).setAction(NameReceiver.YES)
@@ -215,10 +215,10 @@ public final class Alerts {
             PendingIntent pYes = PendingIntent.getBroadcast(c, nid + 2, yesI, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             String label = g.name.length() > 18 ? g.name.substring(0, 17) + "…" : g.name;
             b.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify),
-                    "Yes, " + label, pYes).build());
+                    Lang.t("Yes, " + label), pYes).build());
         }
         b.addAction(aName);
-        b.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Skip", pSkip).build());
+        b.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), Lang.t("Skip"), pSkip).build());
         if (s.flag(Store.S_LOCK)) b.setVisibility(Notification.VISIBILITY_PRIVATE);
         NotificationManager nm = c.getSystemService(NotificationManager.class);
         if (nm != null) nm.notify(nid, b.build());
