@@ -1,5 +1,5 @@
-Money 2.0.1 — your banks, and anyone's
-• Bank statements: SBI, Union Bank (Vyom), Kotak, IndusInd, Jupiter / Federal Bank, plus HDFC, ICICI, Axis, Canara, PNB layouts — names, UPI IDs and your notes read from each row
-• Jupiter: debits (from Federal Bank) and credits (from Jupiter) land on the same account
-• Better SMS reading for IndusInd (A/C 2XXXXX1234) and Federal Bank (“to VPA …”)
-• 18 more banks recognised (IOB, Bank of Maharashtra, Karnataka Bank, Saraswat, J&K Bank…) — ready for friends & family
+Money 2.1 — tidy & calm ✨
+• Settings: just 6 groups (Payment capture · Questions & reminders · Names & places · Privacy · Backup & data · Updates) and a status card that says “All set” or what to fix
+• Plan: your budget on top, “Needs you” only when something does, then every tool as a round icon — Money · Life · Grow · Tools (like Google Pay)
+• Home: quick actions — Add · Say it · Accounts · Ask
+• Insights: the extra cards are now one “More insights” list

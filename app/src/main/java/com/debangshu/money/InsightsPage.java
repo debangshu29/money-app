@@ -110,12 +110,10 @@ final class InsightsPage {
         sr.addView(sp);
         TextView sw = Ui.text(a, "  Savings score · " + Smart.scoreWord(score), 13, Ui.col(a, R.color.text2), Ui.SEMIBOLD);
         sr.addView(Ui.oneLine(sw), Ui.weight1());
-        TextView rep = Ui.chip(a, "📄 Report", false);
-        rep.setOnClickListener(v -> Report.make(a, month));
-        sr.addView(rep);
+
         sw.setOnClickListener(v -> new Ui.Popup(a).setTitle("Savings score " + score + "/100")
                 .setMessage("How much of the money that came in this month you kept, plus a bonus for staying within your budget.\n\n"
-                        + "80+ excellent · 60+ good · 40+ okay.\n\nTap “Report” for a PDF of the whole month — summary, categories, places and every payment.")
+                        + "80+ excellent · 60+ good · 40+ okay.\n\nMore insights → Monthly report gives a PDF of the whole month.")
                 .setPositiveButton("OK", null).show());
         sc.addView(sr);
         body.addView(sc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
@@ -175,7 +173,10 @@ final class InsightsPage {
         dd.addView(avg);
         body.addView(dd, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
 
-        // ---- top places
+        // ---- more insights: one tidy list; each opens in a sheet
+        List<Object[]> extra = new java.util.ArrayList<>();   // {emoji, colour, title, line, view}
+
+        // top places
         LinkedHashMap<String, Long> shops = Ledger.byMerchant(all, month, end, null);
         if (!shops.isEmpty()) {
             LinearLayout tc = Ui.card(a);
@@ -190,12 +191,12 @@ final class InsightsPage {
                 tc.addView(Rows.amountRow(a, Cats.emoji(cat), Cats.color(cat), e.getKey(), n + (n == 1 ? " payment" : " payments"),
                         e.getValue(), e.getValue() / (float) top));
             }
-            body.addView(tc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+            extra.add(new Object[]{"🏪", 0xFF3B82F6, "Top places", shops.keySet().iterator().next() + " and " + Math.max(0, shops.size() - 1) + " more", tc});
         }
 
-        // ---- where you spend (places, from saved locations)
+        // where you spend (places, from saved locations)
         View places = places(all, month, end);
-        if (places != null) body.addView(places, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+        if (places != null) extra.add(new Object[]{"📍", 0xFF0EA5E9, "Where you spend", "Areas on a map", places});
 
         // ---- prices you pay (personal inflation)
         List<Smart.PriceChange> pc = Smart.inflation(all, now);
@@ -220,7 +221,7 @@ final class InsightsPage {
                 r.addView(Ui.text(a, (up ? "▲ " : "▼ ") + Math.abs(c.pct) + "%", 14, up ? Ui.col(a, R.color.danger) : Ui.col(a, R.color.success), Ui.EXTRABOLD));
                 ic.addView(r);
             }
-            body.addView(ic, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+            extra.add(new Object[]{"📈", 0xFFEF4444, "Prices you pay", pc.size() + (pc.size() == 1 ? " place costs more or less" : " places cost more or less"), ic});
         }
 
         // ---- charges & fees
@@ -250,7 +251,20 @@ final class InsightsPage {
                 fc.addView(more, Ui.margins(Ui.lp(-2, -2), a, 0, 8, 0, 0));
             }
         }
-        body.addView(fc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
+        long feeTot = 0;
+        for (Txn t : fees) feeTot += t.amount;
+        extra.add(new Object[]{"🧾", 0xFFF59E0B, "Charges & fees", fees.isEmpty() ? "None this year ✓" : Fmt.rs(feeTot) + " this year", fc});
+
+        body.addView(Ui.label(a, "More insights"));
+        LinearLayout mc = Ui.card(a);
+        mc.setPadding(Ui.dp(a, 10), Ui.dp(a, 4), Ui.dp(a, 10), Ui.dp(a, 4));
+        for (Object[] m : extra) {
+            View content = (View) m[4];
+            String title = (String) m[2];
+            mc.addView(Ui.navRow(a, (String) m[0], (Integer) m[1], title, (String) m[3], v -> Ui.sheetOf(a, title, content)));
+        }
+        mc.addView(Ui.navRow(a, "📄", 0xFF0E9F6E, "Monthly report (PDF)", "Save or share " + Fmt.month(month), v -> Report.make(a, month)));
+        body.addView(mc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12));
     }
 
     /** Groups this month's payments by the area they were made in (needs “Save where you paid”). */

@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.List;
 
 /**
- * Plan: the things you organise, as a calm grid of tiles. Each tile shows one live line and opens its own screen.
- * New features from the roadmap get a tile here (Goals, People, Challenges, Net worth, Tax, Cards) —
- * so Home never fills up.
+ * Plan: your budget on top, a short "Needs you" list (only when something does), then every tool as a round icon,
+ * four to a row, in four groups — Money · Life · Grow · Tools (like Google Pay's home).
  */
 final class PlanPage {
 
@@ -38,121 +36,92 @@ final class PlanPage {
         LinearLayout body = Ui.vbox(a);
         body.setPadding(Ui.dp(a, 16), 0, Ui.dp(a, 16), 0);
         box.addView(body);
-        TextView intro = Ui.sub(a, "Set things up once — Money keeps them up to date by itself.");
-        intro.setPadding(Ui.dp(a, 6), 0, 0, Ui.dp(a, 4));
-        body.addView(intro);
 
         Store s = Store.get(a);
         List<Txn> all = s.txns();
         long now = System.currentTimeMillis();
 
-        // Budget
+        // ---- your budget, front and centre
         Plan p = s.plan();
-        String bLine;
-        float bFrac = -1;
-        if (p == null) bLine = "Not set — tap to start one";
-        else {
+        LinearLayout bc = Ui.card(a);
+        bc.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 22));
+        LinearLayout bh = Ui.hbox(a);
+        bh.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        LinearLayout bcol = Ui.vbox(a);
+        bcol.addView(Ui.text(a, "Budget", 13, Ui.col(a, R.color.text2), Ui.SEMIBOLD));
+        if (p == null) {
+            bcol.addView(Ui.text(a, "Set a monthly budget", 18, Ui.BOLD));
+            bcol.addView(Ui.text(a, "See what's safe to spend each day", 12.5f, Ui.col(a, R.color.text2), Ui.REGULAR));
+            bh.addView(bcol, Ui.weight1());
+            bh.addView(Ui.text(a, "›", 26, Ui.col(a, R.color.hint), Ui.REGULAR));
+            bc.addView(bh);
+        } else {
             long spent = p.spent(all);
-            bFrac = spent / (float) Math.max(1, p.amount);
-            bLine = spent <= p.amount ? Fmt.rs(p.amount - spent) + " left · " + p.daysLeft(now) + " days" : Fmt.rs(spent - p.amount) + " over";
-        }
-        View budget = tile("🎯", 0xFF10B981, "Budget", bLine, bFrac, v -> a.startActivity(new Intent(a, BudgetActivity.class)));
-
-        // Bills & subscriptions
-        List<Ledger.Recurring> rec = Ledger.recurring(all, now);
-        int dueSoon = 0;
-        for (Ledger.Recurring r : rec) if (r.next >= Fmt.startOfDay(now) && r.next < now + 7L * 86400000) dueSoon++;
-        for (Store.Bill b : s.bills()) if (!b.paid && b.dueDate >= now - 86400000 && b.dueDate < now + 7L * 86400000 && !Alerts.billPaid(s, b)) dueSoon++;
-        long monthly = 0;
-        for (Ledger.Recurring r : rec) monthly += r.amount * 30 / Math.max(1, r.period);
-        String billLine = rec.isEmpty() && dueSoon == 0 ? "Found by themselves as they repeat"
-                : (dueSoon > 0 ? dueSoon + " due this week · " : "") + "≈ " + Fmt.rs(monthly) + "/month";
-        View bills = tile("📅", 0xFF3B82F6, "Bills & subscriptions", billLine, -1, v -> a.startActivity(new Intent(a, BillsActivity.class)));
-
-        // Accounts
-        long total = 0;
-        int n = 0;
-        for (Account ac : s.accounts()) if (!ac.card && !ac.hidden && ac.balance >= 0) { total += ac.balance; n++; }
-        View accounts = tile("🏦", 0xFF0B6F86, "Accounts", n == 0 ? "Appear after a bank SMS with a balance" : Fmt.rs(total) + " in " + n + (n == 1 ? " account" : " accounts"),
-                -1, v -> a.startActivity(new Intent(a, AccountsActivity.class)));
-
-        // Cash
-        View cash = tile("💵", 0xFF65A30D, "Cash wallet", Cash.on(a) ? Fmt.rs(Cash.balance(a)) + " in your wallet" : "Track cash without typing every spend",
-                -1, v -> Cash.sheet(a));
-
-        // Goals · Challenges · Net worth
-        float gp = Goals.progress(a);
-        View goals = tile("🏆", 0xFFF59E0B, "Goals", Goals.summary(a), gp >= 0 ? Math.min(1f, gp) : -1, v -> a.startActivity(new Intent(a, Goals.class)), false);
-        View chal = tile("🔥", 0xFFEF4444, "Challenges", Challenges.summary(a), -1, v -> a.startActivity(new Intent(a, Challenges.class)));
-        View nw = tile("💎", 0xFF0EA5E9, "Net worth", NetWorthActivity.summary(a), -1, v -> a.startActivity(new Intent(a, NetWorthActivity.class)));
-
-        // People
-        long[] pp = People.totals(a);
-        String pl = pp[0] == 0 && pp[1] == 0 ? "Split bills, lend & borrow — settled automatically"
-                : (pp[0] > 0 ? "You'll get " + Fmt.rs(pp[0]) : "") + (pp[0] > 0 && pp[1] > 0 ? " · " : "") + (pp[1] > 0 ? "you owe " + Fmt.rs(pp[1]) : "");
-        View people = tile("👥", 0xFFA855F7, "People", pl, -1, v -> a.startActivity(new Intent(a, People.class)));
-
-        // Tools
-        View tax = tile("🧾", 0xFF6366F1, "Tax helper", TaxActivity.summary(a), -1, v -> a.startActivity(new Intent(a, TaxActivity.class)));
-        float cu = CardsActivity.usedFrac(a);
-        View cards = tile("💳", 0xFF6D28D9, "Credit cards", CardsActivity.summary(a), cu, v -> a.startActivity(new Intent(a, CardsActivity.class)));
-
-        View remind = tile("🔔", 0xFF0EA5E9, "Renewals & reminders", Reminders.summary(a), -1, v -> a.startActivity(new Intent(a, Reminders.class)));
-        View refunds = tile("↩️", 0xFFF59E0B, "Refunds", Refunds.summary(a), -1, v -> a.startActivity(new Intent(a, Refunds.class)));
-        View loans = tile("🏦", 0xFF64748B, "Loans & EMIs", Loans.summary(a), -1, v -> a.startActivity(new Intent(a, Loans.class)));
-        View rewards = tile("⭐", 0xFFEA580C, "Cashback & rewards", Rewards.summary(a), -1, v -> a.startActivity(new Intent(a, Rewards.class)));
-
-        body.addView(label("Everyday"));
-        body.addView(row(budget, bills));
-        body.addView(row(accounts, cash));
-        body.addView(row(remind, refunds));
-        body.addView(label("Grow"));
-        body.addView(row(goals, chal));
-        body.addView(label("Together"));
-        body.addView(row(people, nw));
-        body.addView(label("Tools"));
-        body.addView(row(tax, cards));
-        body.addView(row(loans, rewards));
-    }
-
-    private TextView label(String s) {
-        TextView t = Ui.text(a, s.toUpperCase(java.util.Locale.ROOT), 11.5f, Ui.col(a, R.color.text2), Ui.BOLD);
-        t.setLetterSpacing(0.12f);
-        t.setPadding(Ui.dp(a, 6), Ui.dp(a, 8), 0, Ui.dp(a, 10));
-        return t;
-    }
-
-    private View row(View l, View r) {
-        LinearLayout row = Ui.hbox(a);
-        row.setBaselineAligned(false);
-        row.addView(l, Ui.margins(new LinearLayout.LayoutParams(0, -1, 1), a, 0, 0, 6, 12));
-        if (r != null) row.addView(r, Ui.margins(new LinearLayout.LayoutParams(0, -1, 1), a, 6, 0, 0, 12));
-        else row.addView(new View(a), Ui.margins(new LinearLayout.LayoutParams(0, -1, 1), a, 6, 0, 0, 12));
-        return row;
-    }
-
-    private View tile(String emoji, int color, String title, String line, float frac, View.OnClickListener l) {
-        return tile(emoji, color, title, line, frac, l, true);
-    }
-
-    private View tile(String emoji, int color, String title, String line, float frac, View.OnClickListener l, boolean budgetBar) {
-        LinearLayout t = Ui.card(a);
-        t.setMinimumHeight(Ui.dp(a, 132));
-        t.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 22));
-        t.addView(Ui.badge(a, emoji, color, 44));
-        TextView tt = Ui.text(a, title, 16, Ui.BOLD);
-        tt.setPadding(0, Ui.dp(a, 12), 0, Ui.dp(a, 2));
-        t.addView(tt);
-        TextView ln = Ui.text(a, line, 12.5f, Ui.col(a, R.color.text2), Ui.REGULAR);
-        ln.setMaxLines(2);
-        t.addView(ln);
-        if (frac >= 0) {
+            float frac = spent / (float) Math.max(1, p.amount);
+            bcol.addView(Ui.text(a, spent <= p.amount ? Fmt.rs(p.amount - spent) + " left" : Fmt.rs(spent - p.amount) + " over", 22, Ui.EXTRABOLD));
+            bcol.addView(Ui.text(a, Fmt.rs(spent) + " of " + Fmt.rs(p.amount) + " · " + p.daysLeft(now) + " days to go", 12.5f, Ui.col(a, R.color.text2), Ui.REGULAR));
+            bh.addView(bcol, Ui.weight1());
+            bh.addView(Ui.text(a, "›", 26, Ui.col(a, R.color.hint), Ui.REGULAR));
+            bc.addView(bh);
             Charts.Progress pr = new Charts.Progress(a);
-            if (budgetBar) pr.budget(frac, 6);
-            else pr.set(frac, color);
-            t.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 8, 0, 0));
+            pr.budget(frac, 8);
+            bc.addView(pr, Ui.margins(Ui.matchWrap(), a, 0, 12, 0, 0));
         }
-        t.setOnClickListener(l);
-        return t;
+        bc.setOnClickListener(v -> a.startActivity(new Intent(a, BudgetActivity.class)));
+        body.addView(bc, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 4));
+
+        // ---- only what needs you now
+        List<View> need = new java.util.ArrayList<>();
+        int late = Refunds.overdue(a);
+        if (late > 0) need.add(Ui.navRow(a, "↩️", 0xFFF59E0B, late + (late == 1 ? " refund is late" : " refunds are late"), "See what to do",
+                v -> a.startActivity(new Intent(a, Refunds.class))));
+        List<org.json.JSONObject> soon = Reminders.upcoming(a, 3);
+        if (!soon.isEmpty()) need.add(Ui.navRow(a, Reminders.emoji(soon.get(0).optString("kind")), Reminders.color(soon.get(0).optString("kind")),
+                soon.get(0).optString("name") + " " + Reminders.when(soon.get(0).optLong("until")), soon.size() > 1 ? "+" + (soon.size() - 1) + " more" : "Renewals & reminders",
+                v -> a.startActivity(new Intent(a, Reminders.class))));
+        int dueSoon = 0;
+        for (Store.Bill b : s.bills()) if (!b.paid && b.dueDate >= now - 86400000 && b.dueDate < now + 5L * 86400000 && !Alerts.billPaid(s, b)) dueSoon++;
+        if (dueSoon > 0) need.add(Ui.navRow(a, "📅", 0xFF3B82F6, dueSoon + (dueSoon == 1 ? " card bill due soon" : " card bills due soon"), "Bills & subscriptions",
+                v -> a.startActivity(new Intent(a, BillsActivity.class))));
+        if (!need.isEmpty()) {
+            body.addView(Ui.label(a, "Needs you"));
+            LinearLayout nc = Ui.card(a);
+            nc.setPadding(Ui.dp(a, 10), Ui.dp(a, 4), Ui.dp(a, 10), Ui.dp(a, 4));
+            for (View v : need) nc.addView(v);
+            body.addView(nc);
+        }
+
+        // ---- everything else: round icons, 4 to a row (like Google Pay)
+        body.addView(Ui.label(a, "Money"));
+        body.addView(gridCard(
+                Ui.action(a, "🏦", 0xFF0B6F86, "Accounts", v -> a.startActivity(new Intent(a, AccountsActivity.class))),
+                Ui.action(a, "💵", 0xFF65A30D, "Cash", v -> Cash.sheet(a)),
+                Ui.action(a, "📅", 0xFF3B82F6, "Bills", v -> a.startActivity(new Intent(a, BillsActivity.class))),
+                Ui.action(a, "💳", 0xFF6D28D9, "Cards", v -> a.startActivity(new Intent(a, CardsActivity.class)))));
+        body.addView(Ui.label(a, "Life"));
+        body.addView(gridCard(
+                Ui.action(a, "👥", 0xFFA855F7, "People", v -> a.startActivity(new Intent(a, People.class))),
+                Ui.action(a, "🔔", 0xFF0EA5E9, "Reminders", v -> a.startActivity(new Intent(a, Reminders.class))),
+                Ui.action(a, "↩️", 0xFFF59E0B, "Refunds", v -> a.startActivity(new Intent(a, Refunds.class))),
+                Ui.action(a, "🏠", 0xFF64748B, "Loans", v -> a.startActivity(new Intent(a, Loans.class)))));
+        body.addView(Ui.label(a, "Grow"));
+        body.addView(gridCard(
+                Ui.action(a, "🏆", 0xFFF59E0B, "Goals", v -> a.startActivity(new Intent(a, Goals.class))),
+                Ui.action(a, "🔥", 0xFFEF4444, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class))),
+                Ui.action(a, "💎", 0xFF0EA5E9, "Net worth", v -> a.startActivity(new Intent(a, NetWorthActivity.class))),
+                Ui.action(a, "⭐", 0xFFEA580C, "Rewards", v -> a.startActivity(new Intent(a, Rewards.class)))));
+        body.addView(Ui.label(a, "Tools"));
+        body.addView(gridCard(
+                Ui.action(a, "🧾", 0xFF6366F1, "Tax", v -> a.startActivity(new Intent(a, TaxActivity.class))),
+                Ui.action(a, "📄", 0xFF0E9F6E, "Statement", v -> a.startActivity(new Intent(a, StatementActivity.class))),
+                Ui.action(a, "✏️", 0xFF8B5CF6, "Add payment", v -> TxnSheet.addManual(a)),
+                Ui.action(a, "⚙️", 0xFF94A3B8, "Settings", v -> a.startActivity(new Intent(a, SettingsActivity.class)))));
+    }
+
+    private View gridCard(View... items) {
+        LinearLayout c = Ui.card(a);
+        c.setPadding(Ui.dp(a, 6), Ui.dp(a, 10), Ui.dp(a, 6), Ui.dp(a, 10));
+        c.addView(Ui.grid(a, items));
+        return c;
     }
 }

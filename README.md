@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.0.1 — bank statements for SBI, Union, Kotak, IndusInd, Jupiter/Federal and more; Jupiter credits & debits on one account.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.1 — a tidy, Google Pay-style layout: 6 settings groups, Plan as round icons, quick actions on Home.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -19,6 +19,17 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 **Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
+
+## Finding your way (version 2.1)
+
+| Where | What's there |
+|---|---|
+| 🏠 **Home** | Safe to spend / this month · quick actions (**Add · Say it · Accounts · Ask**) · today / month spending · balances · latest · a slim strip only when something needs you |
+| 📋 **Activity** | every payment — list or calendar, search, filters |
+| ⭕ **Pay & note** | the round button: pick a UPI app, pay, then note who & what for (long-press: add by hand) |
+| 📊 **Insights** | Ask bar · month summary + savings score · where it went · day by day · **More insights** (top places, map, prices you pay, charges & fees, monthly PDF) |
+| 🧩 **Plan** | budget card · **Needs you** (late refunds, renewals, card bills — only when there are any) · round icons: **Money** (Accounts, Cash, Bills, Cards) · **Life** (People, Reminders, Refunds, Loans) · **Grow** (Goals, Challenges, Net worth, Rewards) · **Tools** (Tax, Statement, Add payment, Settings) |
+| ⚙️ **Settings** | status card (“All set” / what to fix) + 6 groups: Payment capture · Questions & reminders · Names & places · Privacy & security · Backup & data · Updates & about |
 
 ## Banks (version 2.0.1)
 

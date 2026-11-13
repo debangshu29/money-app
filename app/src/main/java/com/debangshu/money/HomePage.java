@@ -90,6 +90,15 @@ final class HomePage {
         }
 
         body.addView(hero(s, all, now), gap());
+        // quick actions, Google Pay style
+        LinearLayout qa = Ui.card(a);
+        qa.setPadding(Ui.dp(a, 6), Ui.dp(a, 10), Ui.dp(a, 6), Ui.dp(a, 10));
+        qa.addView(Ui.grid(a,
+                Ui.action(a, "✏️", 0xFF8B5CF6, "Add", v -> TxnSheet.addManual(a)),
+                Ui.action(a, "🎤", 0xFFEC4899, "Say it", v -> VoiceActivity.start(a)),
+                Ui.action(a, "🏦", 0xFF0B6F86, "Accounts", v -> a.startActivity(new Intent(a, AccountsActivity.class))),
+                Ui.action(a, "💬", 0xFF0EA5E9, "Ask", v -> a.startActivity(new Intent(a, AskActivity.class)))));
+        body.addView(qa, gap());
         body.addView(spending(all, now), gap());
         View bal = balances(s);
         if (bal != null) body.addView(bal, gap());

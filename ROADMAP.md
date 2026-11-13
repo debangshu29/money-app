@@ -33,7 +33,8 @@ Built one version at a time; each version is checked on the phone before the nex
 | **1.9.2** | No payment slips through | Scan & Pay = note in Money → pay in your UPI app → “Paid ₹__?” on return · bank alert e-mails from Gmail notifications · add UPI payments by hand / voice · weekly balance check · noted payments merge with the later SMS | ✅ built (13 Nov 2026) |
 | **1.9.3** | Removed | Accessibility “read payment screens” removed at your request (didn't work on your phone) | ✅ built (13 Nov 2026) |
 | **2.0** | Remember why you paid | Pay & note (UPI app list → “Paid? ₹ to whom for what”) replaces Scan & Pay · instant “what for?” only for unusual payments + one-tap reasons + auto note for regulars · usage access “Paid anyone on Google Pay?” ~1 min after leaving a UPI app · bank statement check (PDF / CSV / Excel, match / add / not-in-statement) + monthly reminder · names from contacts | ✅ built (13 Nov 2026) |
-| **2.0.1** | Your banks | statement layouts: SBI, Union (Vyom), Kotak, IndusInd, Jupiter/Federal + HDFC, ICICI, Axis, Canara, PNB · Jupiter credits/debits on one account · IndusInd / Federal SMS fixes · 18 more banks for friends & family | ✅ built (13 Nov 2026) — waiting for your check |
+| **2.0.1** | Your banks | statement layouts: SBI, Union (Vyom), Kotak, IndusInd, Jupiter/Federal + HDFC, ICICI, Axis, Canara, PNB · Jupiter credits/debits on one account · IndusInd / Federal SMS fixes · 18 more banks for friends & family | ✅ built (13 Nov 2026) |
+| **2.1** | Tidy & calm | Settings → 6 groups + status card · Plan → budget card, “Needs you”, round icons in Money / Life / Grow / Tools · Home quick actions · Insights “More insights” list | ✅ built (13 Nov 2026) — waiting for your check |
 
 ## Ideas for later
 

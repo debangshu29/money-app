@@ -194,6 +194,79 @@ public final class Ui {
         return t;
     }
 
+    /** A list row: round icon · title + one short grey line · ›  (Settings, Plan, More insights). */
+    public static LinearLayout navRow(Context c, String emoji, int color, String title, String sub, View.OnClickListener l) {
+        LinearLayout r = hbox(c);
+        r.setPadding(dp(c, 6), dp(c, 11), dp(c, 6), dp(c, 11));
+        r.addView(badge(c, emoji, color, 40));
+        LinearLayout col = vbox(c);
+        col.setPadding(dp(c, 14), 0, dp(c, 8), 0);
+        TextView t = text(c, title, 15.5f, SEMIBOLD);
+        t.setSingleLine(true);
+        t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        col.addView(t);
+        if (sub != null && !sub.isEmpty()) {
+            TextView st = text(c, sub, 12.5f, col(c, R.color.text2), REGULAR);
+            st.setSingleLine(true);
+            st.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            col.addView(st);
+        }
+        r.addView(col, weight1());
+        if (l != null) {
+            r.addView(text(c, "›", 22, col(c, R.color.hint), REGULAR));
+            r.setBackground(rippleRound(c, 0x00000000, 16));
+            r.setOnClickListener(l);
+        }
+        return r;
+    }
+
+    /** Google Pay-style action: a soft round icon with a short label under it (4 to a row). */
+    public static LinearLayout action(Context c, String emoji, int color, String label, View.OnClickListener l) {
+        LinearLayout v = vbox(c);
+        v.setGravity(Gravity.CENTER_HORIZONTAL);
+        v.setPadding(0, dp(c, 6), 0, dp(c, 6));
+        TextView b = badge(c, emoji, color, 54);
+        v.addView(b);
+        TextView t = text(c, label, 12, col(c, R.color.text), SEMIBOLD);
+        t.setGravity(Gravity.CENTER);
+        t.setMaxLines(2);
+        t.setPadding(dp(c, 2), dp(c, 7), dp(c, 2), 0);
+        v.addView(t);
+        v.setBackground(rippleRound(c, 0x00000000, 18));
+        v.setOnClickListener(l);
+        return v;
+    }
+
+    /** Lays views out 4 to a row (empty slots keep the grid even). */
+    public static LinearLayout grid(Context c, View... items) {
+        LinearLayout g = vbox(c);
+        LinearLayout row = null;
+        for (int i = 0; i < items.length; i++) {
+            if (i % 4 == 0) { row = hbox(c); row.setBaselineAligned(false); g.addView(row, matchWrap()); }
+            row.addView(items[i], new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        }
+        if (row != null) while (row.getChildCount() < 4) row.addView(new View(c), new LinearLayout.LayoutParams(0, 1, 1));
+        return g;
+    }
+
+    /** Small grey section label above a card. */
+    public static TextView label(Context c, String s) {
+        TextView t = text(c, s, 13.5f, col(c, R.color.text2), BOLD);
+        t.setPadding(dp(c, 6), dp(c, 14), 0, dp(c, 8));
+        return t;
+    }
+
+    /** Opens a view in a tall bottom sheet with a title (for "More insights" etc.). */
+    public static void sheetOf(android.app.Activity a, String title, View content) {
+        android.widget.ScrollView sv = new android.widget.ScrollView(a);
+        LinearLayout b = vbox(a);
+        b.setPadding(dp(a, 12), 0, dp(a, 12), dp(a, 8));
+        if (content.getParent() instanceof ViewGroup) ((ViewGroup) content.getParent()).removeView(content);
+        b.addView(content);
+        sv.addView(b);
+        new Popup(a).sheet().setTitle(title).setView(capHeight(sv, 0.8f)).setNegativeButton("Close", null).show();
+    }
+
     public static View divider(Context c) {
         View v = new View(c);
         v.setBackgroundColor(col(c, R.color.divider));

@@ -24,6 +24,7 @@ public class SettingsActivity extends Activity {
 
     private static final int REQ_RESTORE = 41;
     private LinearLayout box;
+    private TextView titleView;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -35,7 +36,8 @@ public class SettingsActivity extends Activity {
         ImageView back = Ui.icon(this, R.drawable.ic_back, Ui.col(this, R.color.text), 22);
         back.setOnClickListener(v -> finish());
         bar.addView(back);
-        bar.addView(Ui.text(this, "Settings", 24, Ui.EXTRABOLD));
+        titleView = Ui.text(this, "Settings", 24, Ui.EXTRABOLD);
+        bar.addView(titleView);
         root.addView(bar);
         ScrollView sv = new ScrollView(this);
         box = Ui.vbox(this);
@@ -52,140 +54,223 @@ public class SettingsActivity extends Activity {
         build();
     }
 
+    /** Which page: null = the main list; "capture", "ask", "names", "privacy", "data", "about". */
+    private String page;
+
+    private static final String[][] PAGES = {
+            // id, emoji, colour, title, short line
+            {"capture", "📥", "#0E9F6E", "Payment capture", "SMS, payment apps, e-mails"},
+            {"ask", "🔔", "#F59E0B", "Questions & reminders", "“What for?”, bills, summaries"},
+            {"names", "📍", "#0EA5E9", "Names & places", "Who you paid, and where"},
+            {"privacy", "🔒", "#6366F1", "Privacy & security", "App lock, hide amounts"},
+            {"data", "💾", "#8B5CF6", "Backup & data", "Backups, export, bank statements"},
+            {"about", "⬆️", "#64748B", "Updates & about", "Version, share with family"},
+    };
+
     private void build() {
         box.removeAllViews();
+        if (page == null) page = getIntent().getStringExtra("page");
+        String title = "Settings";
+        for (String[] p : PAGES) if (p[0].equals(page)) title = p[3];
+        if (titleView != null) titleView.setText(title);
+        if (page == null) main();
+        else switch (page) {
+            case "capture": capture(); break;
+            case "ask": ask(); break;
+            case "names": names(); break;
+            case "privacy": privacy(); break;
+            case "data": data(); break;
+            default: about(); break;
+        }
+    }
+
+    private void open(String id) { startActivity(new Intent(this, SettingsActivity.class).putExtra("page", id)); }
+
+    // ---- the main page: a status card + six groups
+    private void main() {
         Store s = Store.get(this);
+        List<String> fix = new java.util.ArrayList<>();
+        if (!Setup.smsOn(this)) fix.add("Reading bank SMS is off");
+        if (!Setup.listenerOn(this)) fix.add("Payment notifications are off");
+        if (s.flag(Store.S_USAGE) && !UsageWatch.allowed(this)) fix.add("“Paid anyone?” needs Usage access");
+        if (s.flag(Store.S_LOCATION) && (!Locator.allowed(this) || !Locator.backgroundAllowed(this))) fix.add("Location needs “Allow all the time”");
+        if (!Backup.hasPassword(this)) fix.add("No backup password yet");
 
-        LinearLayout cap = section("Automatic capture");
+        LinearLayout st = Ui.card(this);
+        st.setOrientation(LinearLayout.HORIZONTAL);
+        st.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        boolean ok = fix.isEmpty();
+        st.setBackground(Ui.round(Ui.col(this, ok ? R.color.accent_soft : R.color.warn_soft), Ui.dp(this, 22)));
+        st.addView(Ui.text(this, ok ? "✅" : "⚠️", 26, Ui.REGULAR));
+        LinearLayout col = Ui.vbox(this);
+        col.setPadding(Ui.dp(this, 14), 0, 0, 0);
+        col.addView(Ui.text(this, ok ? "All set" : fix.size() == 1 ? "1 thing to fix" : fix.size() + " things to fix", 16, Ui.BOLD));
+        col.addView(Ui.text(this, ok ? "Money is catching your payments by itself" : fix.get(0), 13, Ui.col(this, R.color.text2), Ui.REGULAR));
+        st.addView(col, Ui.weight1());
+        if (!ok) {
+            st.setOnClickListener(v -> {
+                if (!Setup.smsOn(this) || !Setup.listenerOn(this)) startActivity(new Intent(this, SetupActivity.class));
+                else if (s.flag(Store.S_USAGE) && !UsageWatch.allowed(this)) usageSetup();
+                else if (s.flag(Store.S_LOCATION) && (!Locator.allowed(this) || !Locator.backgroundAllowed(this))) Locator.ask(this);
+                else SetupActivity.askPassword(this, this::build);
+            });
+        }
+        box.addView(st, Ui.margins(Ui.matchWrap(), this, 0, 4, 0, 14));
+
+        LinearLayout c = Ui.card(this);
+        c.setPadding(Ui.dp(this, 10), Ui.dp(this, 6), Ui.dp(this, 10), Ui.dp(this, 6));
+        for (String[] p : PAGES) c.addView(Ui.navRow(this, p[1], android.graphics.Color.parseColor(p[2]), p[3], p[4], v -> open(p[0])));
+        box.addView(c);
+
+        TextView info = Ui.sub(this, "🔒 Everything stays on this phone. Nothing is uploaded — the internet is used only to check for app updates.");
+        info.setGravity(android.view.Gravity.CENTER);
+        info.setPadding(Ui.dp(this, 16), Ui.dp(this, 18), Ui.dp(this, 16), 0);
+        box.addView(info);
+        TextView ver = Ui.text(this, "Money " + Updater.currentVersionName(this), 12, Ui.col(this, R.color.hint), Ui.SEMIBOLD);
+        ver.setGravity(android.view.Gravity.CENTER);
+        ver.setPadding(0, Ui.dp(this, 6), 0, 0);
+        box.addView(ver);
+    }
+
+    // ---- Payment capture
+    private void capture() {
+        Store s = Store.get(this);
+        LinearLayout c = section(null);
         boolean all = Setup.smsOn(this) && Setup.listenerOn(this);
-        row(cap, "Permissions & setup", all ? "✓ SMS and notifications are on" : "⚠️ Something is off — tap to fix",
-                v -> startActivity(new Intent(this, SetupActivity.class)));
-        sw(cap, "Read payment app notifications", "Google Pay, PhonePe, Paytm, CRED, bank apps", Store.S_READ_APPS, null);
-        sw(cap, "Read bank SMS from the Messages app too", "A backup in case Android doesn't pass an SMS to the app",
-                Store.S_READ_SMS_NOTIF, null);
-        sw(cap, "Read bank alert e-mails", "From Gmail's notifications — only e-mails from banks (some banks e-mail small UPI payments they don't text)",
-                Store.S_READ_MAIL, null);
-        sw(cap, "Ask “what for?” right after a payment", "Only for new people / places or odd amounts — regulars get their usual note by themselves",
-                Store.S_ASK_REASON, null);
-        boolean uw = UsageWatch.allowed(this);
-        sw(cap, "“Paid anyone?” after using a UPI app", !uw ? "⚠️ Needs Usage access — tap the row below"
-                        : "✓ A minute after you leave Google Pay / PhonePe… if no payment message came",
-                Store.S_USAGE, on -> { if (on && !UsageWatch.allowed(this)) usageSetup(); });
-        if (s.flag(Store.S_USAGE) && !uw) row(cap, "Allow Usage access", "Lets Money see WHEN a UPI app was open — never what's on the screen", v -> usageSetup());
-        boolean ca = Contacts.allowed(this);
-        sw(cap, "Names from your contacts", !ca ? "For UPI IDs that are just a phone number — needs Contacts permission"
-                        : "✓ 9830012345@ybl → the name in your contacts (looked up on the phone, never stored)",
-                Store.S_CONTACTS, on -> { if (on && !Contacts.allowed(this)) Contacts.ask(this); });
-        row(cap, "Check with a bank statement", "Adds what Money missed, fills in names — PDF (even locked), CSV or Excel",
-                v -> startActivity(new Intent(this, StatementActivity.class)));
-        sw(cap, "Monthly statement reminder", "Early each month: “Check last month with your bank statement”", Store.S_STMT, null);
-        sw(cap, "Weekly balance check", "Once a week: type your balance → any payment that sent nothing shows up while you remember it",
-                Store.S_BAL_CHECK, null);
-        sw(cap, "Find missed messages", "If the balance in a new SMS doesn't add up, an “Unrecorded” entry shows the difference",
-                Store.S_GAPS, on -> new Thread(() -> Engine.recheckGaps(getApplicationContext())).start());
-        sw(cap, "Count ATM cash as spending", Cash.on(this) ? "Not used while the cash wallet is on (Plan → Cash wallet)"
-                : "Or turn on the cash wallet in Plan, which counts cash as you spend it", Store.S_ATM_SPEND,
-                on -> atmChanged(on));
-        row(cap, "Read older messages again", "Bring in bank SMS already on your phone", v -> SetupActivity.importPast(this, this::build));
+        row(c, "Permissions", all ? "✓ SMS and notifications on" : "⚠️ Something is off — tap to fix", v -> startActivity(new Intent(this, SetupActivity.class)));
+        sw(c, "Payment app notifications", "Google Pay, PhonePe, bank apps", Store.S_READ_APPS, null);
+        sw(c, "Bank SMS via the Messages app", "A backup if an SMS is missed", Store.S_READ_SMS_NOTIF, null);
+        sw(c, "Bank alert e-mails", "From Gmail notifications", Store.S_READ_MAIL, null);
+
+        LinearLayout m = section("Missed payments");
+        sw(m, "Find missed payments", "Balance gaps show as “Unrecorded”", Store.S_GAPS,
+                on -> new Thread(() -> Engine.recheckGaps(getApplicationContext())).start());
+        sw(m, "Count ATM cash as spending", Cash.on(this) ? "Off while the cash wallet is on" : "Or use the cash wallet in Plan", Store.S_ATM_SPEND, this::atmChanged);
+        row(m, "Read older SMS again", "Bring in messages already on the phone", v -> SetupActivity.importPast(this, this::build));
         int unread = s.unread().size();
-        row(cap, "Messages Money couldn't read" + (unread > 0 ? " (" + unread + ")" : ""),
-                unread == 0 ? "None so far 👍" : "Send them to get them fixed — or add one as a payment",
+        row(m, "Messages Money couldn't read" + (unread > 0 ? " (" + unread + ")" : ""), unread == 0 ? "None so far 👍" : "Share them to get them fixed",
                 unread == 0 ? null : v -> showUnread());
+    }
 
-        LinearLayout rm = section("Remember every payment");
-        boolean locOk = Locator.allowed(this), bgOk = Locator.backgroundAllowed(this);
-        sw(rm, "Save where you paid", !s.flag(Store.S_LOCATION) ? "Notes the spot when a payment is caught — see it on a map later"
-                        : !locOk ? "⚠️ Location permission is off — tap here to allow"
-                        : !bgOk ? "⚠️ Choose “Allow all the time” so it works when the app is closed"
-                        : "✓ On — one quick location check per payment",
-                Store.S_LOCATION, on -> { if (on) Locator.ask(this); build(); });
-        if (s.flag(Store.S_LOCATION) && (!locOk || !bgOk)) row(rm, "Allow location", "Needed for “Save where you paid”", v -> Locator.ask(this));
-        sw(rm, "Show area names", "“near Garia Station Road” — asks Google's address lookup. Off = map pin only, nothing sent",
-                Store.S_PLACE_NAMES, null);
-        sw(rm, "Ask “Who was it?”", "When a payment comes without a name, type it right in the notification (with a guess when Money has one)",
-                Store.S_ASK_NAME, null);
+    // ---- Questions & reminders
+    private void ask() {
+        Store s = Store.get(this);
+        LinearLayout a = section("Right after a payment");
+        sw(a, "Ask “what for?”", "Only for new or unusual payments", Store.S_ASK_REASON, null);
+        sw(a, "Ask “Who was it?”", "When a payment has no name", Store.S_ASK_NAME, null);
+        boolean uw = UsageWatch.allowed(this);
+        sw(a, "“Paid anyone?”", uw ? "After you leave a UPI app" : "⚠️ Needs Usage access", Store.S_USAGE,
+                on -> { if (on && !UsageWatch.allowed(this)) usageSetup(); });
+        if (s.flag(Store.S_USAGE) && !uw) row(a, "Allow Usage access", "Only WHEN an app was open", v -> usageSetup());
 
-        LinearLayout al = section("Alerts");
+        LinearLayout r = section("Reminders");
         int hour = s.prefs().getInt(Alerts.P_DAILY_HOUR, 21);
-        sw(al, "Evening summary", "What you spent today, at " + hourName(hour), Store.S_DAILY, on -> Alerts.schedule(this));
-        row(al, "Summary time", hourName(hour), v -> pickHour());
-        sw(al, "Unusual payments & double charges", "Much bigger than normal, or the same amount twice in minutes", Store.S_UNUSUAL, null);
-        sw(al, "Refunds, renewals & EMIs", "Failed payments not back yet, plan / insurance / PUC expiry, FASTag low, return & warranty dates, EMI due", Store.S_REMIND, null);
-        sw(al, "Fraud watch", "Late-night, foreign, or a big first payment to someone new — asks “Was this you?”", Store.S_FRAUD, null);
-        sw(al, "Budget warnings", "At 80% and 100% of a budget", Store.S_BUDGET, null);
-        sw(al, "Bills due & renewals", "Card bills 3 days before, subscriptions 2 days before", Store.S_BILLS, null);
-        sw(al, "A note for every payment", "Quiet notification each time a payment is caught", Store.S_EACH, null);
-        row(al, "Notification settings", "Sound, vibration and more for each kind", v -> Setup.openNotificationSettings(this));
+        sw(r, "Evening summary", "Today's spending at " + hourName(hour), Store.S_DAILY, on -> Alerts.schedule(this));
+        if (s.flag(Store.S_DAILY)) row(r, "Summary time", hourName(hour), v -> pickHour());
+        sw(r, "Bills & subscriptions", "A few days before they're due", Store.S_BILLS, null);
+        sw(r, "Renewals, refunds & EMIs", "Plan expiry, insurance, PUC, EMI", Store.S_REMIND, null);
+        sw(r, "Budget warnings", "At 80% and 100%", Store.S_BUDGET, null);
+        sw(r, "Weekly balance check", "Catches payments that sent nothing", Store.S_BAL_CHECK, null);
+        sw(r, "Monthly statement reminder", "Check last month with the bank", Store.S_STMT, null);
 
-        LinearLayout pv = section("Privacy");
-        sw(pv, "App lock", Lock.deviceSecure(this) ? "Fingerprint, face or screen lock to open" : "Set a screen lock on your phone first",
-                Store.S_LOCK, on -> { if (on) Lock.done(); Widget.refresh(this); });
-        sw(pv, "Hide amounts when opening", "Every Home section starts as ₹ •••• — tap a section's eye to show it", Store.S_HIDE,
-                on -> { if (on) HomePage.hideAll(this); Widget.refresh(this); });
-        sw(pv, "Block screenshots", "Also hides the app's content in recent apps", Store.S_SECURE, on -> Ui.bars(this));
-        TextView info = Ui.sub(this, "🔒 Everything stays on this phone. Your messages and money data are never uploaded. "
-                + "The internet is used only to check for new versions of the app.");
-        info.setPadding(Ui.dp(this, 4), Ui.dp(this, 8), Ui.dp(this, 4), Ui.dp(this, 4));
-        pv.addView(info);
+        LinearLayout f = section("Safety");
+        sw(f, "Unusual payments", "Much bigger than usual, or twice", Store.S_UNUSUAL, null);
+        sw(f, "Fraud watch", "Asks “Was this you?”", Store.S_FRAUD, null);
+        sw(f, "A note for every payment", "A quiet notification each time", Store.S_EACH, null);
+        row(f, "Sounds & vibration", "Android notification settings", v -> Setup.openNotificationSettings(this));
+    }
 
-        LinearLayout bk = section("Backups (this phone only)");
+    // ---- Names & places
+    private void names() {
+        Store s = Store.get(this);
+        LinearLayout c = section(null);
+        boolean locOk = Locator.allowed(this), bgOk = Locator.backgroundAllowed(this);
+        sw(c, "Save where you paid", !s.flag(Store.S_LOCATION) ? "See payments on a map" : !locOk || !bgOk ? "⚠️ Allow location “all the time”" : "✓ On",
+                Store.S_LOCATION, on -> { if (on) Locator.ask(this); build(); });
+        if (s.flag(Store.S_LOCATION) && (!locOk || !bgOk)) row(c, "Allow location", "Needed for saving places", v -> Locator.ask(this));
+        sw(c, "Show area names", "“near Garia Station Road”", Store.S_PLACE_NAMES, null);
+        boolean ca = Contacts.allowed(this);
+        sw(c, "Names from contacts", ca ? "✓ For phone-number UPI IDs" : "For phone-number UPI IDs", Store.S_CONTACTS,
+                on -> { if (on && !Contacts.allowed(this)) Contacts.ask(this); });
+    }
+
+    // ---- Privacy & security
+    private void privacy() {
+        LinearLayout c = section(null);
+        sw(c, "App lock", Lock.deviceSecure(this) ? "Fingerprint, face or PIN" : "Set a phone screen lock first", Store.S_LOCK,
+                on -> { if (on) Lock.done(); Widget.refresh(this); });
+        sw(c, "Hide amounts when opening", "Shows ₹ •••• until you tap", Store.S_HIDE, on -> { if (on) HomePage.hideAll(this); Widget.refresh(this); });
+        sw(c, "Block screenshots", "Also hides Money in recent apps", Store.S_SECURE, on -> Ui.bars(this));
+        TextView info = Ui.sub(this, "🔒 Your messages and money data never leave this phone.");
+        info.setPadding(Ui.dp(this, 8), Ui.dp(this, 12), Ui.dp(this, 8), 0);
+        box.addView(info);
+    }
+
+    // ---- Backup & data
+    private void data() {
+        Store s = Store.get(this);
+        LinearLayout b = section("Backup");
         boolean pw = Backup.hasPassword(this);
-        row(bk, pw ? "Change backup password" : "Set backup password", pw ? "Backups are locked with it" : "Needed for backups — no Google Drive",
-                v -> SetupActivity.askPassword(this, this::build));
-        sw(bk, "Daily automatic backup", Backup.FOLDER + " · newest 7 kept", Store.S_AUTO_BACKUP, null);
         long last = Backup.lastBackup(this);
-        row(bk, "Back up now", last == 0 ? "No backup yet" : "Last: " + Fmt.dayTime(last) + "\n" + Backup.lastWhere(this), v -> backupNow());
-        row(bk, "Restore from a backup", "Pick a .mbak file (from this phone or copied from your old one)", v -> pickRestore());
-        row(bk, "Export spreadsheet (CSV)", "All transactions to Documents/Money — opens in Excel / Sheets", v -> exportCsv());
-        TextView tip = Ui.sub(this, "Tip: backups live on this phone. Copy the Documents/Money/Backups folder to your PC now and then, "
-                + "so a lost phone doesn't mean lost history.");
-        tip.setPadding(Ui.dp(this, 4), Ui.dp(this, 8), Ui.dp(this, 4), Ui.dp(this, 4));
-        bk.addView(tip);
+        row(b, "Back up now", last == 0 ? "No backup yet" : "Last: " + Fmt.dayTime(last), v -> backupNow());
+        sw(b, "Daily automatic backup", "Newest 7 kept, on this phone", Store.S_AUTO_BACKUP, null);
+        row(b, pw ? "Backup password" : "Set a backup password", pw ? "Backups are locked with it" : "Needed for backups", v -> SetupActivity.askPassword(this, this::build));
+        row(b, "Restore from a backup", "Pick a .mbak file", v -> pickRestore());
 
-        LinearLayout dt = section("Your data");
-        row(dt, "Accounts", s.accounts().size() + " found automatically · long-press one on Home to rename, correct, merge or delete", null);
+        LinearLayout d = section("Your data");
+        row(d, "Check with a bank statement", "PDF, CSV or Excel", v -> startActivity(new Intent(this, StatementActivity.class)));
+        row(d, "Export to a spreadsheet", "CSV in Documents/Money", v -> exportCsv());
         List<String> del = s.deletedAccounts();
-        if (!del.isEmpty()) row(dt, "Deleted accounts (" + del.size() + ")", "Tap to bring one back", v -> {
-            new Ui.Popup(this).setTitle("Bring back").setItems(del.toArray(new String[0]), (d, w) -> {
-                Store.get(this).restoreAccount(del.get(w));
-                new Thread(() -> Engine.recheckGaps(getApplicationContext())).start();
-                Ui.toast(this, del.get(w) + " is back");
-                build();
-            }).show();
-        });
-        row(dt, "Delete all data", "Erase every transaction, account, budget and rule", v -> deleteAll());
+        if (!del.isEmpty()) row(d, "Deleted accounts (" + del.size() + ")", "Tap to bring one back", v ->
+                new Ui.Popup(this).setTitle("Bring back").setItems(del.toArray(new String[0]), (x, w) -> {
+                    Store.get(this).restoreAccount(del.get(w));
+                    new Thread(() -> Engine.recheckGaps(getApplicationContext())).start();
+                    Ui.toast(this, del.get(w) + " is back");
+                    build();
+                }).show());
+        LinearLayout z = section(null);
+        TextView wipe = Ui.text(this, "Delete all data", 15, Ui.col(this, R.color.danger), Ui.SEMIBOLD);
+        wipe.setPadding(Ui.dp(this, 6), Ui.dp(this, 12), Ui.dp(this, 6), Ui.dp(this, 12));
+        wipe.setBackground(Ui.rippleRound(this, 0x00000000, 14));
+        wipe.setOnClickListener(v -> deleteAll());
+        z.addView(wipe);
+        TextView tip = Ui.sub(this, "Tip: copy Documents/Money/Backups to your PC now and then.");
+        tip.setPadding(Ui.dp(this, 8), Ui.dp(this, 10), Ui.dp(this, 8), 0);
+        box.addView(tip);
+    }
 
-        LinearLayout up = section("App updates");
-        sw(up, "Check for updates automatically", "Shows a popup when a new version is ready", Store.S_AUTO_UPDATE,
-                on -> Updater.scheduleBackgroundChecks(this));
-        row(up, "Check now", "You have version " + Updater.currentVersionName(this), v -> Updater.maybePrompt(this, true));
+    // ---- Updates & about
+    private void about() {
+        LinearLayout u = section(null);
+        row(u, "Check for updates", "You have version " + Updater.currentVersionName(this), v -> Updater.maybePrompt(this, true));
+        sw(u, "Check automatically", "Shows a popup when ready", Store.S_AUTO_UPDATE, on -> Updater.scheduleBackgroundChecks(this));
         String with = Updater.installWithLabel(this);
-        row(up, "Open updates with", with == null ? "Ask next time" : with + " (tap to ask next time)", v -> {
-            Updater.forgetInstallApp(this);
-            build();
-        });
-        row(up, "Delete old update files", "Money.apk files your browser downloaded", v -> Updater.pickOldFilesToDelete(this));
-        row(up, "Share Money with friends & family", "Sends the download link", v -> share());
+        if (with != null) row(u, "Updates open with", with + " · tap to ask next time", v -> { Updater.forgetInstallApp(this); build(); });
+        row(u, "Delete old update files", "Money.apk files in Downloads", v -> Updater.pickOldFilesToDelete(this));
+        LinearLayout f = section(null);
+        row(f, "Share Money with family", "Sends the download link", v -> share());
     }
 
     // ------------------------------------------------------------------ building blocks
 
     private LinearLayout section(String title) {
-        TextView t = Ui.text(this, title, 13, Ui.col(this, R.color.accent), Ui.BOLD);
-        t.setPadding(Ui.dp(this, 6), Ui.dp(this, 18), 0, Ui.dp(this, 6));
-        box.addView(t);
+        if (title != null) box.addView(Ui.label(this, title));
+        else box.addView(new View(this), Ui.lp(1, Ui.dp(this, 10)));
         LinearLayout c = Ui.card(this);
-        c.setPadding(Ui.dp(this, 12), Ui.dp(this, 6), Ui.dp(this, 12), Ui.dp(this, 6));
+        c.setPadding(Ui.dp(this, 10), Ui.dp(this, 4), Ui.dp(this, 10), Ui.dp(this, 4));
         box.addView(c);
         return c;
     }
 
     private void row(LinearLayout c, String title, String sub, View.OnClickListener l) {
-        LinearLayout r = Ui.vbox(this);
-        r.setPadding(Ui.dp(this, 6), Ui.dp(this, 10), Ui.dp(this, 6), Ui.dp(this, 10));
-        r.addView(Ui.text(this, title, 15, Ui.SEMIBOLD));
-        if (sub != null && !sub.isEmpty()) r.addView(Ui.text(this, sub, 12.5f, Ui.col(this, R.color.text2), Ui.REGULAR));
+        LinearLayout r = Ui.hbox(this);
+        r.setPadding(Ui.dp(this, 8), Ui.dp(this, 12), Ui.dp(this, 6), Ui.dp(this, 12));
+        LinearLayout col = Ui.vbox(this);
+        col.addView(Ui.text(this, title, 15, Ui.SEMIBOLD));
+        if (sub != null && !sub.isEmpty()) col.addView(Ui.text(this, sub, 12.5f, Ui.col(this, R.color.text2), Ui.REGULAR));
+        r.addView(col, Ui.weight1());
         if (l != null) {
+            r.addView(Ui.text(this, "›", 22, Ui.col(this, R.color.hint), Ui.REGULAR));
             r.setBackground(Ui.rippleRound(this, 0x00000000, 14));
             r.setOnClickListener(l);
         }
@@ -196,7 +281,7 @@ public class SettingsActivity extends Activity {
 
     private void sw(LinearLayout c, String title, String sub, String key, OnSwitch after) {
         LinearLayout r = Ui.hbox(this);
-        r.setPadding(Ui.dp(this, 6), Ui.dp(this, 8), Ui.dp(this, 2), Ui.dp(this, 8));
+        r.setPadding(Ui.dp(this, 8), Ui.dp(this, 10), Ui.dp(this, 2), Ui.dp(this, 10));
         LinearLayout col = Ui.vbox(this);
         col.addView(Ui.text(this, title, 15, Ui.SEMIBOLD));
         col.addView(Ui.text(this, sub, 12.5f, Ui.col(this, R.color.text2), Ui.REGULAR));
