@@ -41,6 +41,8 @@ public final class NotifParser {
             {"com.fampay.in", "FamPay"},
             {"com.pnb.onesmartbanking", "PNB ONE"},
             {"com.bankofbaroda.mconnect", "bob World"},
+            {"com.infrasoft.uboi", "Union Vyom"},
+            {"com.fedmobile", "FedMobile"},
     };
 
     public static final String[] SMS_APPS = {

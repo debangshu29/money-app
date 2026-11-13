@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.0 — Pay & note, “what for?” only for unusual payments, “Paid anyone?” after using a UPI app, bank statement check, names from contacts.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.0.1 — bank statements for SBI, Union, Kotak, IndusInd, Jupiter/Federal and more; Jupiter credits & debits on one account.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -19,6 +19,18 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 **Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
+
+## Banks (version 2.0.1)
+
+**SMS / notifications:** every bank that sends SMS with an amount — including SBI, HDFC, ICICI, Axis, Kotak, PNB, BOB, Canara, Union Bank, IDFC First, Yes, IndusInd, IDBI, Bank of India, Indian Bank, UCO, Central Bank, Bandhan, AU, Federal / Jupiter / Fi, RBL, SC, Citi, HSBC, Paytm Payments, Airtel Payments, IPPB, KVB, South Indian, City Union, DBS, Equitas, Ujjivan, IOB, Bank of Maharashtra, Punjab & Sind, J&K, Karnataka Bank, DCB, Jana, TMB, Saraswat, Fino, Jio Payments, NSDL Payments, Suryoday, ESAF, Utkarsh, Dhanlaxmi, CSB, Kerala Gramin.
+
+**Jupiter:** debits come by SMS from *Federal Bank*, small credits from *Jupiter* (often with the account number fully hidden) — Money puts both on your one Federal/Jupiter account (rename it to “Jupiter” from Accounts if you like).
+
+**Small payments without SMS:** some banks skip SMS for small UPI payments (HDFC: up to ₹100 sent / ₹500 received; Kotak the same) — the UPI app's notification, the bank's e-mail alert, “Paid anyone?” and the monthly statement fill that gap.
+
+**Statements tested on these layouts:** SBI · Union Bank (Vyom, with S.No / Tran Id, “(Dr)/(Cr)”, amounts on the next line) · Kotak (“06 Sep, 2024”, +/− amounts) · Federal Bank / Jupiter (UPIOUT / UPIIN) · HDFC · ICICI · Axis · Canara (multi-line rows) · PNB (amount before the description) · CSV / Excel from any bank's net banking. Any other bank: if the PDF isn't understood, the CSV / Excel download always works.
+
+**For friends & family:** install the same APK — setup asks for SMS + notification access, everything stays on their phone, and updates come the same way.
 
 ## Remember why you paid (version 2.0)
 

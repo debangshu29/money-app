@@ -1,7 +1,5 @@
-Money 2.0 — remember WHY you paid ✨
-• Pay & note (middle button): pick any UPI app on your phone → pay there → back in Money: “Paid ₹__ to __ for __?” with one-tap reasons
-• “₹1 to Ramesh — what for?” the moment a payment arrives — only for new people / places or odd amounts. Regulars get their usual note by themselves
-• “Paid anyone on Google Pay?” a minute after you leave a UPI app, if no payment message came (turn on Usage access in Settings)
-• Check with a bank statement: open or share the PDF (even locked), CSV or Excel → missed payments added with name, UPI ID and your UPI note
-• Names from your contacts for UPI IDs that are just a phone number
-• “Who was it?” now takes a reason too: “Ramesh - test”
+Money 2.0.1 — your banks, and anyone's
+• Bank statements: SBI, Union Bank (Vyom), Kotak, IndusInd, Jupiter / Federal Bank, plus HDFC, ICICI, Axis, Canara, PNB layouts — names, UPI IDs and your notes read from each row
+• Jupiter: debits (from Federal Bank) and credits (from Jupiter) land on the same account
+• Better SMS reading for IndusInd (A/C 2XXXXX1234) and Federal Bank (“to VPA …”)
+• 18 more banks recognised (IOB, Bank of Maharashtra, Karnataka Bank, Saraswat, J&K Bank…) — ready for friends & family

@@ -35,16 +35,25 @@ public final class StatementParser {
 
     private static final int CI = Pattern.CASE_INSENSITIVE;
     private static final String MON = "jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec";
+    /** Optional serial no. / transaction id before the date: "15 16/07/2023 …", "S83182271 28/09/2021 …". */
+    private static final String LEAD = "(?:[0-9]{1,5}\\s+|[A-Z]{1,3}[0-9]{5,12}\\s+)?";
     private static final Pattern DATE = Pattern.compile(
-            "^\\s*(?:([0-3]?[0-9])[/.\\-]([01]?[0-9])[/.\\-]((?:19|20)?[0-9]{2})|([0-3]?[0-9])[\\s\\-/]?(" + MON + ")[a-z]*[\\s\\-/,]*((?:19|20)?[0-9]{2})"
+            "^\\s*" + LEAD + "(?:([0-3]?[0-9])[/.\\-]([01]?[0-9])[/.\\-]((?:19|20)?[0-9]{2})|([0-3]?[0-9])[\\s\\-/]?(" + MON + ")[a-z]*[\\s\\-/,]*((?:19|20)?[0-9]{2})"
             + "|((?:19|20)[0-9]{2})-([01][0-9])-([0-3][0-9]))\\b", CI);
     private static final Pattern TIME = Pattern.compile("\\b([0-2]?[0-9]):([0-5][0-9])(?::[0-5][0-9])?\\s*(am|pm)?\\b", CI);
     /** Money in statements: 1,234.56 / 1234.56 / 1,23,456.00, optionally followed by Cr / Dr. */
-    private static final Pattern AMT = Pattern.compile("(?<![0-9.,])(-?[0-9]{1,3}(?:,[0-9]{2,3})*(?:\\.[0-9]{2})|-?[0-9]+\\.[0-9]{2})(?![0-9])\\s*(cr|dr)?\\b", CI);
+    private static final Pattern AMT = Pattern.compile("(?<![0-9.,A-Za-z])([+-]?\\s?(?:[0-9]{1,3}(?:,[0-9]{2,3})+|[0-9]+)\\.[0-9]{2})(?![0-9])\\s*\\(?\\s*(cr|dr)?\\.?\\s*\\)?", CI);
     private static final Pattern OPENING = Pattern.compile("opening\\s*balance[^0-9]{0,30}([0-9][0-9,]*\\.[0-9]{2})", CI);
     private static final Pattern ACC = Pattern.compile("(?:a/c|account)\\s*(?:no\\.?|number|#)?\\s*[:\\-]?\\s*[x*•]*\\s*([0-9x*•]{4,20})", CI);
     private static final Pattern CREDIT_WORDS = Pattern.compile("\\b(?:cr|credit|credited|deposit|salary|refund|reversal|interest|/cr/|neft cr|imps cr|received)\\b", CI);
-    private static final Pattern SKIP_LINE = Pattern.compile("opening balance|closing balance|^\\s*total|brought forward|carried forward|b/f|c/f|statement summary", CI);
+    private static final Pattern SKIP_LINE = Pattern.compile("opening balance|closing balance|^\\s*total|brought forward|carried forward|carried over|\\bb/f\\b|\\bc/f\\b|statement summary", CI);
+    /** Column headings repeated on every page, page footers, bank addresses: ignored (they don't end a row). */
+    private static final Pattern JUNK = Pattern.compile(
+            "page\\s*(?:no\\.?\\s*)?[0-9]+|www\\.|https?://|phone ?(?:number|banking)|registered office|corporate office|customer care|toll free|"
+            + "beware|disclaimer|computer generated|system generated|generated (?:on|by)|does not require|deposit insurance|"
+            + "\\bs\\.? ?no\\.?\\b.*\\bdate\\b|\\bdate\\b.*(?:remarks|particulars|narration|description|details).*(?:balance|amount)|"
+            + "(?:withdrawal|debit).*(?:deposit|credit).*balance|^\\s*(?:dr|cr|chq|cheque|value date|tran(?:saction)? ?id)\\s*$", CI);
+    private static final Pattern DATE_TIME_ONLY = Pattern.compile("^\\s*[0-3]?[0-9][/.\\-][01]?[0-9][/.\\-](?:19|20)?[0-9]{2}\\s+[0-2]?[0-9]:[0-5][0-9](?::[0-5][0-9])?\\s*$");
 
     // ------------------------------------------------------------------ text (PDF)
 
@@ -52,8 +61,10 @@ public final class StatementParser {
         Result res = new Result();
         if (text == null) return res;
         String[] lines = text.replace('\u00a0', ' ').split("\\r?\\n");
-        String lo = text.toLowerCase(Locale.ROOT);
-        res.bank = SmsParser.bankOf("", lo.length() > 3000 ? lo.substring(0, 3000) : lo);
+        StringBuilder head = new StringBuilder();
+        for (String l : lines) { if (DATE.matcher(l.trim()).find() && !l.toLowerCase(Locale.ROOT).contains("statement")) break; head.append(l).append('\n'); if (head.length() > 4000) break; }
+        String hl = head.toString().toLowerCase(Locale.ROOT);
+        res.bank = hl.contains("jupiter") || hl.contains("federal bank") ? "Federal" : SmsParser.bankOf("", hl);
         Matcher a = ACC.matcher(text);
         while (a.find()) {
             String d = a.group(1).replaceAll("[^0-9]", "");
@@ -66,14 +77,16 @@ public final class StatementParser {
         List<List<String>> blocks = new ArrayList<>();
         for (String raw : lines) {
             String l = raw.trim();
-            if (l.isEmpty()) continue;
-            if (DATE.matcher(l).find()) {
+            if (l.isEmpty() || JUNK.matcher(l).find()) continue;
+            // "4/01/2024 17:27:27" inside a wrapped narration (Canara) is a time stamp, not a new row
+            boolean stamp = DATE_TIME_ONLY.matcher(l).find() && block != null && !hasAmount(block);
+            if (!stamp && DATE.matcher(l).find()) {
                 block = new ArrayList<>();
                 blocks.add(block);
                 block.add(l);
-            } else if (block != null && block.size() < 6 && !SKIP_LINE.matcher(l).find()) {
+            } else if (block != null && block.size() < 10 && !SKIP_LINE.matcher(l).find()) {
                 // a wrapped narration has no amounts; a line with amounts after the row's own amounts is something else (a summary)
-                if (AMT.matcher(block.get(0)).find() && AMT.matcher(l).find()) { block = null; continue; }
+                if (hasAmount(block) && AMT.matcher(l).find()) { block = null; continue; }
                 block.add(l);
             }
         }
@@ -83,6 +96,11 @@ public final class StatementParser {
         }
         finish(res);
         return res;
+    }
+
+    private static boolean hasAmount(List<String> b) {
+        for (String x : b) if (AMT.matcher(x).find()) return true;
+        return false;
     }
 
     private static Row rowFrom(List<String> b) {
@@ -103,9 +121,11 @@ public final class StatementParser {
         List<long[]> amts = new ArrayList<>();   // {paise, crdr(0 none,1 cr,2 dr), start}
         Matcher am = AMT.matcher(rest);
         while (am.find()) {
-            long v = SmsParser.paise(am.group(1).replace("-", ""));
+            String num = am.group(1).replace(" ", "");
+            long v = SmsParser.paise(num.replace("-", "").replace("+", ""));
             String cd = am.group(2);
-            amts.add(new long[]{v, cd == null ? 0 : cd.equalsIgnoreCase("cr") ? 1 : 2, am.start()});
+            long flag = cd != null ? (cd.equalsIgnoreCase("cr") ? 1 : 2) : num.startsWith("+") ? 1 : num.startsWith("-") ? 2 : 0;
+            amts.add(new long[]{v, flag, am.start(), am.end()});
         }
         if (amts.isEmpty()) return null;
         Row r = new Row();
@@ -132,16 +152,32 @@ public final class StatementParser {
                 else if (dpt[0] == 0 && w[0] > 0) { r.credit = false; r.directionKnown = true; }
             }
             r.narration = trimTail(clean(rest.substring(0, (int) amts.get(0)[2])));
+            if (r.narration.replaceAll("[^A-Za-z]", "").length() < 3)
+                r.narration = trimTail(clean(rest.substring((int) amts.get(amts.size() - 1)[3])));
         } else {
             long[] only = amts.get(0);
             r.amount = only[0];
             if (only[1] != 0) { r.credit = only[1] == 1; r.directionKnown = true; }
             r.narration = trimTail(clean(rest.substring(0, (int) only[2])));
+            if (r.narration.replaceAll("[^A-Za-z]", "").length() < 3) r.narration = trimTail(clean(rest.substring((int) only[3])));
         }
         if (r.amount <= 0) return null;
-        if (!r.directionKnown && CREDIT_WORDS.matcher(r.narration).find()) r.credit = true;
+        r.narration = r.narration.replaceFirst("^[A-Z]{1,3}[0-9]{5,12}\\s*", "").trim();
+        if (!r.directionKnown) r.credit = credit(r.narration);
         narration(r);
         return r;
+    }
+
+    private static final Pattern CREDIT_HINT = Pattern.compile(
+            "upiab|upi ?in\\b|upiin/|upi/cr/|/cr/|\\bcr/|by transfer|transfer from|neft ?cr|imps ?cr|impsab|imps-in|credit interest|int\\.? ?pd|"
+            + "interest paid|salary|refund|reversal|reversed|cash dep|deposit|received|cashback", CI);
+    private static final Pattern DEBIT_HINT = Pattern.compile(
+            "upiar|upiout|upi/dr/|/dr/|\\bdr/|to transfer|transfer to|neft ?dr|imps ?dr|impsar|atm|\\bpos\\b|ecom|wdl|withdrawal|charges|\\bemi\\b|ach ?d|nach", CI);
+
+    static boolean credit(String narration) {
+        Matcher c = CREDIT_HINT.matcher(narration), d = DEBIT_HINT.matcher(narration);
+        int ci = c.find() ? c.start() : -1, di = d.find() ? d.start() : -1;
+        return ci >= 0 && (di < 0 || ci < di);
     }
 
     // ------------------------------------------------------------------ CSV / Excel cells
@@ -150,7 +186,7 @@ public final class StatementParser {
     public static Result fromTable(List<List<String>> table, String headerText) {
         Result res = new Result();
         String lo = headerText == null ? "" : headerText.toLowerCase(Locale.ROOT);
-        res.bank = SmsParser.bankOf("", lo);
+        res.bank = lo.contains("jupiter") || lo.contains("federal bank") ? "Federal" : SmsParser.bankOf("", lo);
         Matcher a = ACC.matcher(headerText == null ? "" : headerText);
         if (a.find()) { String d = a.group(1).replaceAll("[^0-9]", ""); if (d.length() >= 4) res.last4 = d.substring(d.length() - 4); }
         int hdr = -1, cDate = -1, cNar = -1, cW = -1, cD = -1, cBal = -1, cAmt = -1, cType = -1;
@@ -215,7 +251,7 @@ public final class StatementParser {
             long b = money(cell(row, cBal));
             if (b >= 0 && !cell(row, cBal).trim().isEmpty()) r.balance = b;
             r.narration = clean(cell(row, cNar));
-            if (!r.directionKnown && CREDIT_WORDS.matcher(r.narration).find()) r.credit = true;
+            if (!r.directionKnown) r.credit = credit(r.narration);
             narration(r);
             res.rows.add(r);
         }
@@ -250,10 +286,7 @@ public final class StatementParser {
             if (r.balance >= 0) prev = r.balance;
         }
         // the very first row (no opening balance): its balance minus/plus amount should equal "before"; use the next row's agreement
-        if (!rs.isEmpty() && res.opening < 0 && !rs.get(0).directionKnown && rs.get(0).balance >= 0) {
-            Row r = rs.get(0);
-            r.credit = CREDIT_WORDS.matcher(r.narration).find();
-        }
+        if (!rs.isEmpty() && res.opening < 0 && !rs.get(0).directionKnown) rs.get(0).credit = credit(rs.get(0).narration);
         if (!rs.isEmpty()) { res.from = rs.get(0).date; res.to = rs.get(rs.size() - 1).date; }
     }
 
@@ -283,30 +316,44 @@ public final class StatementParser {
     private static final Pattern VPA = Pattern.compile("([A-Za-z0-9._]{2,}@[A-Za-z][A-Za-z0-9]{1,30})");
     private static final Pattern REF = Pattern.compile("(?<![0-9])([0-9]{12})(?![0-9])");
     private static final Pattern GENERIC = Pattern.compile(
-            "^(?:(?:upi|imps|neft|rtgs|ach|nach)\\s*(?:cr|dr|in|out|p2a|p2m)?|dr|cr|to transfer|by transfer|transfer to|transfer from|debit|credit|p2a|p2m|pay(?:ment)?|transfer|trf|to|by|from|via|na|n/a|null|sent using.*|payment from.*|paid via.*|upi intent|collect|"
+            "^(?:(?:upi|imps|neft|rtgs|ach|nach)[a-z]{0,4}\\s*(?:cr|dr|in|out|p2a|p2m)?|dr|cr|tfr|clg|cash|wdl|int\\.? ?pd|pay to|paying|sent (?:from|using|via) .*|to transfer|by transfer|transfer to|transfer from|debit|credit|p2a|p2m|pay(?:ment)?|transfer|trf|to|by|from|via|na|n/a|null|sent using.*|payment from.*|paid via.*|upi intent|collect|"
             + "pos|ecom|ach|nach|mb|ib|inb|ft|sbin|hdfc|icic|utib|kkbk|punb|barb|cnrb|ubin|idib|ioba|bkid|yesb|indb|fdrl|"
             + "[a-z]{4}0[a-z0-9]{6}|[0-9 .-]+|bank|ok|yes|state bank of india|hdfc bank|icici bank|axis bank|kotak mahindra bank|paytm payments bank|"
             + "upi transaction|money transfer|fund transfer|transaction)$", CI);
 
     /** "UPI/DR/431712345678/RAMESH KUMAR/HDFC/ramesh@okaxis/chai" → name, UPI ID, reference, your note. */
+    /** Bank codes that sit inside UPI narrations (from IFSC): SBIN, UTIB, YESB… */
+    private static final Pattern BANKCODE = Pattern.compile(
+            "(?i)(?:SBIN|HDFC|ICIC|UTIB|KKBK|PUNB|BARB|CNRB|UBIN|IDIB|IOBA|BKID|YESB|INDB|FDRL|IDFB|AUBL|PYTM|AIRP|UCBA|CBIN|MAHB|KLGB|IPOS|ESFB|"
+            + "RATN|SIBL|KVBL|CIUB|DBSS|SCBL|CITI|HSBC|JAKA|PSIB|TMBL|DLXB|NTBL|KARB|BDBL|UJVN|FINO|JIOP|NSPB|ANDB|CORP|ORBC|SYNB|VIJB|ALLA|UTBI|ICICI|AXIS|PAYTM)"
+            + "(?:0[A-Z0-9]{6})?");
+
     static void narration(Row r) {
         String n = r.narration;
         Matcher v = VPA.matcher(n);
         if (v.find()) r.vpa = v.group(1).toLowerCase(Locale.ROOT);
         Matcher rf = REF.matcher(n);
         if (rf.find()) r.ref = rf.group(1);
-        String[] parts = n.split("\\s*[/|]\\s*|\\s+-\\s*|-(?=[A-Za-z])|(?<=[A-Za-z])-");
+        String[] parts = n.split("\\s*[/|]\\s*|\\s+-\\s*|-(?=[A-Za-z])|(?<=[A-Za-z])-|\\s*:\\s*");
         List<String> words = new ArrayList<>();
+        int vpaAt = -1;
         for (String p : parts) {
             String t = p.trim();
-            if (t.length() < 2 || GENERIC.matcher(t).matches() || t.contains("@") || REF.matcher(t).find() || !t.matches(".*[A-Za-z]{2,}.*")) continue;
+            if (t.contains("@")) { vpaAt = words.size(); continue; }
+            t = t.replaceAll("(?i)\\b(?:tfr|clg|chq|cheque|upi|ref|no|txn|ecom|pos|cr|dr)\\b\\.?|\\b[0-9]+\\b|\\*+", " ").replaceAll("\\s+", " ").replaceAll("^[^A-Za-z]+|[^A-Za-z.)]+$", "").trim();
+            if (t.matches("[a-z0-9._]+\\.[a-z0-9._]+")) continue;              // a cut-off UPI handle (rahul.hospital)
+            if (t.length() < 2 || GENERIC.matcher(t).matches() || REF.matcher(t).find() || !t.matches(".*[A-Za-z]{2,}.*")) continue;
+            if (t.replaceAll("[^0-9]", "").length() > 4) continue;               // codes: paytmqr2810050501011q852, ICICN12345678
             words.add(t);
         }
-        if (!words.isEmpty()) r.name = SmsParser.cleanName(words.get(0));
-        if (words.size() >= 2) {
+        for (String w : words) if (!BANKCODE.matcher(w).matches()) { r.name = SmsParser.cleanName(w); break; }   // not a bank code (SBIN, UTIB…)
+        // your note: the last word after the UPI ID (HDFC "…-vpa-IFSC-ref-NOTE", SBI "/vpa/NOTE-"), never a bank code
+        if (vpaAt >= 0 && vpaAt < words.size()) {
             String last = words.get(words.size() - 1);
-            last = last.replaceAll("\\s*\\b[A-Z0-9]*[0-9][A-Z0-9]*\\b", "").trim();   // drop codes like ICICN12345678
-            if (!last.isEmpty() && !last.equalsIgnoreCase(words.get(0)) && last.length() <= 40) r.remark = last;
+            if (!BANKCODE.matcher(last).matches() && !last.equalsIgnoreCase(r.name) && last.length() <= 40) r.remark = last;
+        } else if (vpaAt < 0 && words.size() >= 2) {
+            String last = words.get(words.size() - 1);
+            if (!BANKCODE.matcher(last).matches() && !last.matches("(?i)[A-Z]{4}0[A-Z0-9]{6}|.*\\bbank\\b.*") && !last.equalsIgnoreCase(r.name) && last.length() <= 40) r.remark = last;
         }
         if (r.name.isEmpty() && !r.vpa.isEmpty()) r.name = SmsParser.nameFromVpa(r.vpa);
     }

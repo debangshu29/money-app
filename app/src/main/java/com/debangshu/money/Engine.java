@@ -55,6 +55,13 @@ public final class Engine {
         // accounts you merged ("these two are the same")
         String merged = t.account.isEmpty() ? null : s.alias(t.account);
         if (merged != null && !r.viaCard) t.account = merged;
+        // "credited to your Federal Bank account xxxxxxxx" (no digits): your only account at that bank
+        if (!t.account.isEmpty() && !t.account.contains("••") && !r.card && !r.wallet) {
+            String only = null;
+            int n = 0;
+            for (Account a : s.accounts()) if (!a.card && a.key.startsWith(t.account + " ••")) { only = a.key; n++; }
+            if (n == 1) t.account = only;
+        }
         // a debit-card message: put it on the bank account behind the card (so balances add up)
         if (r.viaCard && !r.card && !t.account.isEmpty()) {
             String acc = s.alias(t.account);

@@ -167,16 +167,16 @@ public class StatementActivity extends Screen {
                 r = fromCsv(new String(data, "UTF-8"));
             }
             if (r.rows.isEmpty()) {
-                ui("Couldn't find any payments in “" + fileName + "”. Which bank is it? Tell Claude the bank and the format (PDF / CSV), "
-                        + "and the reader will be taught that layout.");
+                ui("Couldn't find any payments in “" + fileName + "” — this bank's layout is new to Money. Try the CSV or Excel download "
+                        + "from net banking (those work for every bank), or share the file with whoever set up Money for you.");
                 return;
             }
             parsed = r;
             status = null;
             runOnUiThread(this::rebuild);
         } catch (Throwable e) {
-            ui("Couldn't read this statement (" + e.getClass().getSimpleName() + "). Try the CSV / Excel download from net banking, "
-                    + "or tell Claude which bank it's from.");
+            ui("Couldn't read this statement (" + e.getClass().getSimpleName() + "). Try the CSV or Excel download from net banking, "
+                    + "or share it with whoever set up Money for you.");
         }
     }
 

@@ -272,7 +272,7 @@ public class SettingsActivity extends Activity {
         List<String[]> list = Store.get(this).unread();
         LinearLayout b = Ui.vbox(this);
         b.setPadding(Ui.dp(this, 16), 0, Ui.dp(this, 16), 0);
-        TextView info = Ui.sub(this, "These look like bank payments, but their wording is new to Money. Share them (to Claude, for example) "
+        TextView info = Ui.sub(this, "These look like payments, but their wording is new to Money. Share them with whoever set up Money for you "
                 + "so the reader can learn them — the next version then picks them up by itself. They stay on this phone unless you share.");
         info.setPadding(0, 0, 0, Ui.dp(this, 8));
         b.addView(info);

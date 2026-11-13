@@ -57,10 +57,10 @@ public final class SmsParser {
             {"YESB", "yes bank", "Yes Bank"},
             {"INDUS", "indusind", "IndusInd"},
             {"IDBI", "\\bidbi\\b", "IDBI"},
-            {"BOI", "bank of india|\\bboi\\b", "BOI"},
+            {"BOI", "(?<!central |union |state )bank of india|\\bboi\\b", "BOI"},
             {"INDBNK", "indian bank", "Indian Bank"},
             {"UCO", "\\buco\\b", "UCO"},
-            {"CENTBK", "central bank", "Central Bank"},
+            {"CENTBK", "central bank", "Central Bank"},          // BOI skips "Central / Union / State Bank of India"
             {"BANDHN", "bandhan", "Bandhan"},
             {"AUBANK", "\\bau bank|au small", "AU Bank"},
             {"FEDBNK", "federal bank", "Federal"},
@@ -77,12 +77,30 @@ public final class SmsParser {
             {"DBS", "\\bdbs\\b", "DBS"},
             {"EQUTAS", "equitas", "Equitas"},
             {"UJJIVN", "ujjivan", "Ujjivan"},
-            {"JUPITR", "jupiter", "Jupiter"},
+            {"JUPITR", "jupiter", "Federal"},          // Jupiter accounts are Federal Bank accounts (debits come from Federal, credits from Jupiter)
             {"FIMONY", "\\bfi money|federal bank", "Fi"},
             {"AMZPAY", "amazon pay", "Amazon Pay"},
             {"MOBIKW", "mobikwik", "MobiKwik"},
             {"ONECRD", "onecard|one card", "OneCard"},
             {"SLICE", "\\bslice\\b", "Slice"},
+            {"IOB", "indian overseas", "IOB"},
+            {"MAHABK", "bank of maharashtra|\\bmahabank\\b", "Bank of Maharashtra"},
+            {"PSBANK", "punjab (?:&|and) sind", "Punjab & Sind"},
+            {"JKBANK", "j ?& ?k bank|jammu (?:&|and) kashmir bank", "J&K Bank"},
+            {"KBLBNK", "karnataka bank", "Karnataka Bank"},
+            {"DCBBNK", "\\bdcb\\b", "DCB"},
+            {"JANABK", "jana small|jana bank", "Jana Bank"},
+            {"TMBANK", "tamilnad mercantile|\\btmb\\b", "TMB"},
+            {"SARBNK", "saraswat", "Saraswat"},
+            {"FINOBK", "fino payments|\\bfino\\b", "Fino"},
+            {"JIOPBS", "jio payments", "Jio Payments"},
+            {"NSDLPB", "nsdl payments", "NSDL Payments"},
+            {"SURYOD", "suryoday", "Suryoday"},
+            {"ESAFBK", "\\besaf\\b", "ESAF"},
+            {"UTKSFB", "utkarsh", "Utkarsh"},
+            {"DHANBK", "dhanlaxmi|dhanlakshmi", "Dhanlaxmi"},
+            {"CSBBNK", "\\bcsb bank", "CSB"},
+            {"KGBANK", "kerala gramin", "Kerala Gramin"},
     };
 
     /** "AX-HDFCBK-S" → "HDFCBK" */
@@ -111,12 +129,13 @@ public final class SmsParser {
     private static final Pattern AMT_AFTER = Pattern.compile("^(?:ance)?\\s*(?:\\.|is|:|-|of|amt|amount)*\\s*(?:(?:rs\\.?|inr|₹)\\s*)?[:.]?\\s*(-?\\s?[0-9][0-9,]*(?:\\.[0-9]{1,2})?)", CI);
 
     private static final Pattern ACC = Pattern.compile(
-            "(?:\\ba/?c\\b|\\bacct\\b|\\baccount\\b|\\bac\\b|a/c(?=[x*0-9]))\\.?\\s*(?:no\\.?|number|num)?\\s*[:\\-]?\\s*(?:ending\\s*(?:with|in)?\\s*)?[x*.\\s]*([0-9]{3,6})\\b", CI);
+            "(?:\\ba/?c\\b|\\bacct\\b|\\baccount\\b|\\bac\\b|a/c(?=[x*0-9]))\\.?\\s*(?:no\\.?|number|num)?\\s*[:\\-]?\\s*(?:ending\\s*(?:with|in)?\\s*)?[x*.\\s]*(?:[0-9]{1,6}[x*]{2,}[x*.\\s]*)?([0-9]{3,6})\\b", CI);
     private static final Pattern CARD = Pattern.compile(
             "\\bcard\\s*(?:no\\.?|number)?\\s*(?:ending|ends)?\\s*(?:with|in)?\\s*[:\\-]?\\s*[x*.\\s]*([0-9]{4})\\b", CI);
-    private static final Pattern VPA = Pattern.compile("([a-zA-Z0-9][a-zA-Z0-9._-]{1,60}@[a-zA-Z][a-zA-Z0-9]{1,20})(?![.a-zA-Z0-9])");
+    private static final Pattern VPA = Pattern.compile("([a-zA-Z0-9][a-zA-Z0-9._-]{1,60}@[a-zA-Z][a-zA-Z0-9]{1,20})(?![a-zA-Z0-9])(?!\\.(?:com|in|net|org|co|io|me)\\b)");
     private static final Pattern[] REF = {
             Pattern.compile("UPI/(?:P2[MAP]|DR|CR)/([0-9]{9,16})", CI),
+            Pattern.compile("\\bUPI[/-]([0-9]{12})\\b", CI),
             Pattern.compile("\\b(?:upi\\s*ref(?:erence)?|ref(?:erence)?|refno|utr|rrn|txn\\s*id|upi(?:\\s*transaction)?\\s*reference)\\s*(?:no\\.?|number|id)?\\s*(?:is\\s*)?[:.#-]?\\s*([0-9]{9,16})\\b", CI),
     };
 
@@ -238,7 +257,7 @@ public final class SmsParser {
         while (vm.find()) {
             String v = vm.group(1);
             if (v.toLowerCase(Locale.ROOT).matches(".*@(gmail|yahoo|outlook|hotmail|rediff)")) continue;
-            r.vpa = v;
+            r.vpa = v.replaceFirst("(?i)^(?:upi|vpa)[-/]", "");
             break;
         }
         for (Pattern p : REF) {
