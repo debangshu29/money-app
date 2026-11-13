@@ -271,7 +271,7 @@ public class BudgetActivity extends Activity {
         ar.addView(rupee);
         EditText amt = new EditText(this);
         amt.setInputType(InputType.TYPE_CLASS_NUMBER);
-        amt.setHint("30000");
+        amt.setHint(Lang.t("30000"));
         amt.setText(fAmount);
         amt.setTextSize(26);
         amt.setTypeface(Ui.face(this, Ui.EXTRABOLD));
@@ -348,7 +348,7 @@ public class BudgetActivity extends Activity {
         c.addView(kh);
 
         // repeat
-        Switch rep = new Switch(this);
+        Switch rep = new Ui.LSwitch(this);
         rep.setText("Start the next one by itself when this ends");
         rep.setChecked(fRepeat);
         rep.setTypeface(Ui.face(this, Ui.SEMIBOLD));

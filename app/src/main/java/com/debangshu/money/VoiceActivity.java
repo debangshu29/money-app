@@ -21,7 +21,7 @@ public class VoiceActivity extends Activity {
         if (b != null) return;
         Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN")
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, Lang.speech())
                 .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
                 .putExtra(RecognizerIntent.EXTRA_PROMPT, "Say a payment — “200 for chai” or “500 to Ramesh on Google Pay”");

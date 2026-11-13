@@ -48,7 +48,7 @@ public class Reasons extends BroadcastReceiver {
             Intent i = new Intent(c, Reasons.class).setAction(REASON).putExtra("txn", t.id).putExtra("nid", nid)
                     .putExtra("note", r[1]).putExtra("cat", r[2]).putExtra("label", r[0]);
             PendingIntent pi = PendingIntent.getBroadcast(c, nid * 4 + (k++), i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            b.addAction(new Notification.Action.Builder(icon(c), r[0], pi).build());
+            b.addAction(new Notification.Action.Builder(icon(c), Lang.t(r[0]), pi).build());
         }
         b.addAction(typeAction(c, new Intent(c, Reasons.class).setAction(TYPED).putExtra("txn", t.id).putExtra("nid", nid), nid * 4 + 3,
                 "✏️ Type", "What for? e.g. test, Puja chanda"));
@@ -70,7 +70,7 @@ public class Reasons extends BroadcastReceiver {
         Notification.Builder b = builder(c, "Paid anyone on " + app + "?",
                 "You had " + app + " open at " + Fmt.time(start) + " and no payment message came. If you paid, type it — e.g. “50 Ramesh for test”.", po);
         Intent no = new Intent(c, Reasons.class).setAction(NOPAY).putExtra("nid", nid);
-        b.addAction(new Notification.Action.Builder(icon(c), "No, just checking",
+        b.addAction(new Notification.Action.Builder(icon(c), Lang.t("No, just checking"),
                 PendingIntent.getBroadcast(c, nid * 4, no, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
         b.addAction(typeAction(c, new Intent(c, Reasons.class).setAction(PAID).putExtra("nid", nid).putExtra("pkg", pkg).putExtra("t", start),
                 nid * 4 + 1, "✏️ Yes — type it", "₹ who for what — e.g. 50 Ramesh for test"));
@@ -86,6 +86,8 @@ public class Reasons extends BroadcastReceiver {
     @SuppressWarnings("deprecation")
     private static Notification.Builder builder(Context c, String title, String text, PendingIntent open) {
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, Alerts.CH_ASK) : new Notification.Builder(c);
+        title = Lang.t(title);
+        text = Lang.t(text);
         b.setSmallIcon(R.drawable.ic_notify).setContentTitle(title).setContentText(text)
                 .setStyle(new Notification.BigTextStyle().bigText(text)).setContentIntent(open).setAutoCancel(true)
                 .setOnlyAlertOnce(true).setColor(c.getColor(R.color.accent));
@@ -97,7 +99,7 @@ public class Reasons extends BroadcastReceiver {
     private static Notification.Action typeAction(Context c, Intent i, int req, String label, String hint) {
         PendingIntent pi = PendingIntent.getBroadcast(c, req, i, PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
         RemoteInput ri = new RemoteInput.Builder(KEY).setLabel(hint).build();
-        return new Notification.Action.Builder(icon(c), label, pi).addRemoteInput(ri).build();
+        return new Notification.Action.Builder(icon(c), Lang.t(label), pi).addRemoteInput(ri).build();
     }
 
     // ------------------------------------------------------------------ answers
@@ -173,7 +175,7 @@ public class Reasons extends BroadcastReceiver {
             b.addAction(new Notification.Action.Builder(icon(c), Noted.fullLabel(c, others.get(i)),
                     PendingIntent.getBroadcast(c, nid * 4 + i, mv, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
         }
-        if (more) b.addAction(new Notification.Action.Builder(icon(c), "More…", openTxn(c, t, nid)).build());
+        if (more) b.addAction(new Notification.Action.Builder(icon(c), Lang.t("More…"), openTxn(c, t, nid)).build());
         nm.notify(nid, b.build());
     }
 

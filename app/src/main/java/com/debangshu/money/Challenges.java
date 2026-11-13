@@ -242,7 +242,7 @@ public class Challenges extends Activity {
                 b.setPadding(p, 0, p, 0);
                 EditText e = new EditText(this);
                 e.setInputType(InputType.TYPE_CLASS_NUMBER);
-                e.setHint("e.g. 500");
+                e.setHint(Lang.t("e.g. 500"));
                 e.setTypeface(Ui.face(this, Ui.BOLD));
                 b.addView(e);
                 new Ui.Popup(this).setTitle("Under how much a day? (₹)").setView(b)

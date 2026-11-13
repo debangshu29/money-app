@@ -174,7 +174,7 @@ public final class PayNote {
             b.addView(Ui.text(a, Fmt.plain(caught.amount) + (caught.unnamed() ? "" : " to " + caught.merchant), 20, Ui.EXTRABOLD));
             b.addView(Ui.sub(a, "Already caught from " + caught.sender + " · " + Fmt.time(caught.time)));
             if (caught.unnamed()) {
-                who.setHint("Who was it?");
+                who.setHint(Lang.t("Who was it?"));
                 who.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 who.setTypeface(Ui.face(a, Ui.REGULAR));
                 b.addView(who);
@@ -183,12 +183,12 @@ public final class PayNote {
             LinearLayout ar = Ui.hbox(a);
             ar.addView(Ui.text(a, "₹", 26, Ui.EXTRABOLD));
             amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            amt.setHint("amount");
+            amt.setHint(Lang.t("amount"));
             amt.setTextSize(26);
             amt.setTypeface(Ui.face(a, Ui.EXTRABOLD));
             ar.addView(amt, Ui.weight1());
             b.addView(ar);
-            who.setHint("To whom (e.g. Sharma Kirana, Ramesh)");
+            who.setHint(Lang.t("To whom (e.g. Sharma Kirana, Ramesh)"));
             who.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             who.setTypeface(Ui.face(a, Ui.REGULAR));
             b.addView(who);
@@ -237,7 +237,7 @@ public final class PayNote {
         hs.setHorizontalScrollBarEnabled(false);
         hs.addView(chips);
         b.addView(hs);
-        why.setHint("Or type: e.g. test, Puja chanda, Rahul's birthday");
+        why.setHint(Lang.t("Or type: e.g. test, Puja chanda, Rahul's birthday"));
         why.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         why.setTypeface(Ui.face(a, Ui.REGULAR));
         if (caught != null && !caught.note.isEmpty()) why.setText(caught.note);

@@ -90,8 +90,20 @@ public final class Ui {
 
     // ------------------------------------------------------------------ building blocks
 
+    /** A TextView that shows every text in the app's language. */
+    public static class LText extends TextView {
+        public LText(Context c) { super(c); }
+        @Override public void setText(CharSequence text, BufferType type) { super.setText(Lang.t(text), type); }
+    }
+
+    /** A Switch whose label is in the app's language. */
+    public static class LSwitch extends android.widget.Switch {
+        public LSwitch(Context c) { super(c); }
+        @Override public void setText(CharSequence text, BufferType type) { super.setText(Lang.t(text), type); }
+    }
+
     public static TextView text(Context c, CharSequence s, float sp, int color, int weight) {
-        TextView t = new TextView(c);
+        TextView t = new LText(c);
         t.setText(s);
         t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
         t.setTextColor(color);
@@ -372,14 +384,23 @@ public final class Ui {
 
         public Popup sheet() { forceSheet = true; return this; }
 
-        @Override public AlertDialog.Builder setTitle(CharSequence t) { title = t; return this; }
+        @Override public AlertDialog.Builder setTitle(CharSequence t) { title = Lang.t(t); return this; }
         @Override public AlertDialog.Builder setTitle(int id) { title = getContext().getText(id); return this; }
-        @Override public AlertDialog.Builder setMessage(CharSequence m) { message = m != null; return super.setMessage(m); }
+        @Override public AlertDialog.Builder setMessage(CharSequence m) { message = m != null; return super.setMessage(Lang.t(m)); }
+        @Override public AlertDialog.Builder setPositiveButton(CharSequence t, DialogInterface.OnClickListener l) { return super.setPositiveButton(Lang.t(t), l); }
+        @Override public AlertDialog.Builder setNegativeButton(CharSequence t, DialogInterface.OnClickListener l) { return super.setNegativeButton(Lang.t(t), l); }
+        @Override public AlertDialog.Builder setNeutralButton(CharSequence t, DialogInterface.OnClickListener l) { return super.setNeutralButton(Lang.t(t), l); }
         @Override public AlertDialog.Builder setView(View v) { view = true; return super.setView(v); }
-        @Override public AlertDialog.Builder setItems(CharSequence[] i, DialogInterface.OnClickListener l) { items = true; return super.setItems(i, l); }
+        @Override public AlertDialog.Builder setItems(CharSequence[] i, DialogInterface.OnClickListener l) { items = true; return super.setItems(tr(i), l); }
+        private static CharSequence[] tr(CharSequence[] i) {
+            if (i == null || Lang.english()) return i;
+            CharSequence[] o = new CharSequence[i.length];
+            for (int k = 0; k < i.length; k++) o[k] = Lang.t(i[k]);
+            return o;
+        }
         @Override public AlertDialog.Builder setAdapter(ListAdapter a, DialogInterface.OnClickListener l) { items = true; return super.setAdapter(a, l); }
         @Override public AlertDialog.Builder setSingleChoiceItems(CharSequence[] i, int c, DialogInterface.OnClickListener l) {
-            items = true; return super.setSingleChoiceItems(i, c, l);
+            items = true; return super.setSingleChoiceItems(tr(i), c, l);
         }
         @Override public AlertDialog.Builder setMultiChoiceItems(CharSequence[] i, boolean[] c, DialogInterface.OnMultiChoiceClickListener l) {
             items = true; return super.setMultiChoiceItems(i, c, l);
@@ -499,6 +520,6 @@ public final class Ui {
     }
 
     public static void toast(Context c, String s) {
-        android.widget.Toast.makeText(c, s, android.widget.Toast.LENGTH_LONG).show();
+        android.widget.Toast.makeText(c, Lang.t(s), android.widget.Toast.LENGTH_LONG).show();
     }
 }

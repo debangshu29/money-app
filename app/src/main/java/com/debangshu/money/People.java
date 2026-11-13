@@ -166,7 +166,7 @@ public class People extends Activity {
         info.setPadding(0, 0, 0, Ui.dp(a, 6));
         b.addView(info);
         EditText names = new EditText(a);
-        names.setHint("e.g. Rahul, Amit, Priya");
+        names.setHint(Lang.t("e.g. Rahul, Amit, Priya"));
         names.setTypeface(Ui.face(a, Ui.REGULAR));
         names.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         if (Cats.PEOPLE.equals(t.category) && !t.unnamed()) names.setText(t.merchant);
@@ -177,7 +177,7 @@ public class People extends Activity {
         me.setTypeface(Ui.face(a, Ui.REGULAR));
         b.addView(me);
         EditText note = new EditText(a);
-        note.setHint("What for? e.g. dinner");
+        note.setHint(Lang.t("What for? e.g. dinner"));
         note.setTypeface(Ui.face(a, Ui.REGULAR));
         note.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         b.addView(note);
@@ -328,7 +328,7 @@ public class People extends Activity {
             t.setPadding(0, 0, 0, Ui.dp(this, 6));
             b.addView(t);
             EditText e = new EditText(this);
-            e.setHint("e.g. debangshu@okaxis");
+            e.setHint(Lang.t("e.g. debangshu@okaxis"));
             e.setTypeface(Ui.face(this, Ui.REGULAR));
             b.addView(e);
             new Ui.Popup(this).setTitle("Your UPI ID").setView(b)
@@ -354,13 +354,13 @@ public class People extends Activity {
         int p = Ui.dp(this, 24);
         b.setPadding(p, 0, p, 0);
         EditText who = new EditText(this);
-        who.setHint("Name");
+        who.setHint(Lang.t("Name"));
         who.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         EditText amt = new EditText(this);
-        amt.setHint("Amount (₹)");
+        amt.setHint(Lang.t("Amount (₹)"));
         amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         EditText note = new EditText(this);
-        note.setHint("What for? (optional)");
+        note.setHint(Lang.t("What for? (optional)"));
         for (EditText e : new EditText[]{who, amt, note}) { e.setTypeface(Ui.face(this, Ui.REGULAR)); b.addView(e); }
         new Ui.Popup(this).setTitle("Add").setView(b)
                 .setPositiveButton("They owe me", (d, w) -> manual(who, amt, note, "owed"))

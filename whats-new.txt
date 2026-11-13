@@ -1,3 +1,11 @@
+Money 2.6 — English · हिंदी · বাংলা 🌐
+• Pick your language on the first welcome page, or any time in Settings → 🌐 Language · भाषा · ভাষা
+• Translated now: the 5 tabs, Home, Grow (goals, 50/30/20, money health, leaks, wait-list, habit price, future you, salary split, challenges) and all 20 calculators with their simple explanations
+• Notifications and pop-ups use your language too
+• Say it: voice entry listens in Hindi or Bengali (“50 रुपये चाय”, “50 টাকা চা”) — still basic, tell us what it misses
+• Some screens (Activity, Insights, Plan, parts of Settings) are still in English — they come in 2.6.1
+• Please tell us any word that sounds odd — translations are new
+
 Money 2.5 — calculators & play tools 🧮
 • 20 tools in Grow → Calculators & play. Move the sliders and the numbers, graph and bars change as you drag
 • Grow your money: SIP (with yearly step-up) · one-time investment · FD (with tax) · RD · PPF (7.1%, tax-free) · NPS (pension, with the new 80% lump-sum rule) · gold (coins vs jewellery) · Compare all side by side

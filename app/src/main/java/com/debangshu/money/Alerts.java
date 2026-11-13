@@ -78,6 +78,8 @@ public final class Alerts {
         PendingIntent pi = PendingIntent.getActivity(c, id, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, channel) : new Notification.Builder(c);
+        title = Lang.t(title);
+        text = Lang.t(text);
         b.setSmallIcon(R.drawable.ic_notify)
                 .setContentTitle(title)
                 .setContentText(text)

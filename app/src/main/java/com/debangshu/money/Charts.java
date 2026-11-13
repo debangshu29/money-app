@@ -65,11 +65,11 @@ public final class Charts {
             tp.setColor(Ui.col(getContext(), R.color.text));
             tp.setTypeface(Ui.face(getContext(), Ui.EXTRABOLD));
             tp.setTextSize(Ui.dp(getContext(), 22));
-            c.drawText(center, w / 2, h / 2 + Ui.dp(getContext(), 4), tp);
+            c.drawText(Lang.t(center), w / 2, h / 2 + Ui.dp(getContext(), 4), tp);
             tp.setColor(Ui.col(getContext(), R.color.text2));
             tp.setTypeface(Ui.face(getContext(), Ui.REGULAR));
             tp.setTextSize(Ui.dp(getContext(), 12));
-            c.drawText(centerSub, w / 2, h / 2 + Ui.dp(getContext(), 22), tp);
+            c.drawText(Lang.t(centerSub), w / 2, h / 2 + Ui.dp(getContext(), 22), tp);
         }
     }
 
@@ -283,9 +283,9 @@ public final class Charts {
             }
             if (xLabels.length > 0) {
                 tp.setTextAlign(Paint.Align.LEFT);
-                c.drawText(xLabels[0], left, getHeight() - Ui.dp(ctx, 4), tp);
+                c.drawText(Lang.t(xLabels[0]), left, getHeight() - Ui.dp(ctx, 4), tp);
                 tp.setTextAlign(Paint.Align.RIGHT);
-                c.drawText(xLabels[xLabels.length - 1], right, getHeight() - Ui.dp(ctx, 4), tp);
+                c.drawText(Lang.t(xLabels[xLabels.length - 1]), right, getHeight() - Ui.dp(ctx, 4), tp);
             }
             if (target > 0) {
                 float y = bottom - (bottom - top) * target / mx;

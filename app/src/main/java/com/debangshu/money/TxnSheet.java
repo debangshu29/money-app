@@ -193,7 +193,7 @@ public final class TxnSheet {
 
         // ---- note
         EditText note = new EditText(a);
-        note.setHint("Add a note");
+        note.setHint(Lang.t("Add a note"));
         note.setText(t.note);
         note.setTypeface(Ui.face(a, Ui.REGULAR));
         note.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -263,7 +263,7 @@ public final class TxnSheet {
     }
 
     private static Switch sw(Activity a, String label, boolean on) {
-        Switch s = new Switch(a);
+        Switch s = new Ui.LSwitch(a);
         s.setText(label);
         s.setChecked(on);
         s.setTextSize(14);
@@ -344,12 +344,12 @@ public final class TxnSheet {
         int p = Ui.dp(a, 24);
         box.setPadding(p, 0, p, 0);
         EditText amt = new EditText(a);
-        amt.setHint("Amount (₹)");
+        amt.setHint(Lang.t("Amount (₹)"));
         amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         amt.setTextSize(22);
         amt.setTypeface(Ui.face(a, Ui.BOLD));
         EditText what = new EditText(a);
-        what.setHint("For what / to whom (e.g. chips, Ramesh)");
+        what.setHint(Lang.t("For what / to whom (e.g. chips, Ramesh)"));
         what.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         what.setTypeface(Ui.face(a, Ui.REGULAR));
         box.addView(amt);

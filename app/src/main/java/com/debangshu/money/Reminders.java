@@ -181,7 +181,7 @@ public class Reminders extends Screen {
         int p = Ui.dp(a, 24);
         b.setPadding(p, 0, p, 0);
         EditText name = new EditText(a);
-        name.setHint("What did you buy? (e.g. headphones)");
+        name.setHint(Lang.t("What did you buy? (e.g. headphones)"));
         name.setTypeface(Ui.face(a, Ui.REGULAR));
         JSONObject all = items(a);
         JSONObject r0 = all.optJSONObject(Notices.RETURN + ":" + t.id), w0 = all.optJSONObject(Notices.WARRANTY + ":" + t.id);

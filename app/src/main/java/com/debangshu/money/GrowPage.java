@@ -257,7 +257,7 @@ final class GrowPage {
         b.addView(new Slider(a, "Try a price", 100, 100000, 100, price[0], Slider::rs, v -> { price[0] = v; upd.run(); }).view);
         b.addView(res);
         b.addView(perHour);
-        android.widget.Switch sw = new android.widget.Switch(a);
+        android.widget.Switch sw = new Ui.LSwitch(a);
         sw.setText("Show hours on payments and the wait-list");
         sw.setTypeface(Ui.face(a, Ui.SEMIBOLD));
         sw.setChecked(MoneyFacts.showHours(a));

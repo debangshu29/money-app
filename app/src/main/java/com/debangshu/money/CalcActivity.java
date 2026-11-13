@@ -74,7 +74,7 @@ public class CalcActivity extends Screen {
         c.addView(Ui.text(this, "Play with the numbers", 15, Ui.BOLD), Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 10));
         for (Calcs.P p : calc.params) {
             if (p.kind == Calcs.SWITCH) {
-                Switch sw = new Switch(this);
+                Switch sw = new Ui.LSwitch(this);
                 sw.setText(p.label);
                 sw.setTypeface(Ui.face(this, Ui.SEMIBOLD));
                 sw.setTextSize(14.5f);

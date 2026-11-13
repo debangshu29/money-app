@@ -129,7 +129,7 @@ public final class Cash {
             d.setLineSpacing(Ui.dp(a, 2), 1f);
             box.addView(d);
         }
-        Switch sw = new Switch(a);
+        Switch sw = new Ui.LSwitch(a);
         sw.setText("Track cash in a wallet");
         sw.setChecked(on);
         sw.setTypeface(Ui.face(a, Ui.SEMIBOLD));
@@ -156,7 +156,7 @@ public final class Cash {
         b.addView(info);
         EditText e = new EditText(a);
         e.setInputType(InputType.TYPE_CLASS_NUMBER);
-        e.setHint("₹");
+        e.setHint(Lang.t("₹"));
         e.setTextSize(22);
         e.setTypeface(Ui.face(a, Ui.BOLD));
         b.addView(e);

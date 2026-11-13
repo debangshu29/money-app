@@ -60,7 +60,7 @@ final class ActivityPage {
         calPart.addView(calBox);
 
         search = new EditText(a);
-        search.setHint("Search name, amount, note…");
+        search.setHint(Lang.t("Search name, amount, note…"));
         search.setSingleLine(true);
         search.setInputType(InputType.TYPE_CLASS_TEXT);
         search.setTypeface(Ui.face(a, Ui.REGULAR));

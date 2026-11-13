@@ -140,7 +140,7 @@ public class GoalSetup extends Activity {
         TextView or = Ui.text(this, "Or give it your own name", 13, Ui.col(this, R.color.text2), Ui.BOLD);
         or.setPadding(Ui.dp(this, 6), Ui.dp(this, 18), 0, Ui.dp(this, 4));
         body.addView(or);
-        nm.setHint("e.g. Puja shopping, Goa trip, new guitar");
+        nm.setHint(Lang.t("e.g. Puja shopping, Goa trip, new guitar"));
         nm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         nm.setTypeface(Ui.face(this, Ui.SEMIBOLD));
         nm.setText(name);
@@ -153,7 +153,7 @@ public class GoalSetup extends Activity {
     private void howMuch() {
         heading(emoji.isEmpty() ? name : name + " — how much?");
         EditText amt = new EditText(this);
-        amt.setHint("₹ amount");
+        amt.setHint(Lang.t("₹ amount"));
         amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         amt.setTextSize(28);
         amt.setTypeface(Ui.face(this, Ui.EXTRABOLD));
@@ -262,7 +262,7 @@ public class GoalSetup extends Activity {
                 + "if you're ahead, on track or behind — all by itself.");
         why.setPadding(Ui.dp(this, 4), 0, 0, Ui.dp(this, 12));
         body.addView(why);
-        Switch ex = new Switch(this);
+        Switch ex = new Ui.LSwitch(this);
         TextView manualCard = Ui.text(this, "", 15, Ui.SEMIBOLD);
         Runnable paintManual = () -> {
             manualCard.setBackground(Ui.rippleRound(this, manual ? Ui.col(this, R.color.accent) : Ui.col(this, R.color.surface2), 16));

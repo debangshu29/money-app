@@ -114,7 +114,7 @@ public class BalanceCheck extends BroadcastReceiver {
         int p = Ui.dp(a, 24);
         b.setPadding(p, 0, p, 0);
         EditText e = new EditText(a);
-        e.setHint("Balance now ₹ (from your bank / UPI app)");
+        e.setHint(Lang.t("Balance now ₹ (from your bank / UPI app)"));
         e.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         e.setTypeface(Ui.face(a, Ui.BOLD));
         e.setTextSize(20);

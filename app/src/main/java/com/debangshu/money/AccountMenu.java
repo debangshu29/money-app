@@ -58,7 +58,7 @@ public final class AccountMenu {
         b.addView(info);
         android.widget.EditText e = new android.widget.EditText(a);
         e.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        e.setHint("₹");
+        e.setHint(Lang.t("₹"));
         e.setTypeface(Ui.face(a, Ui.BOLD));
         e.setTextSize(22);
         b.addView(e);

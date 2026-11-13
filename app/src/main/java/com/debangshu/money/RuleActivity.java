@@ -334,7 +334,7 @@ public class RuleActivity extends Screen {
         b.setPadding(p, 0, p, 0);
         EditText e = new EditText(a);
         e.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        e.setHint("₹ a month, after tax");
+        e.setHint(Lang.t("₹ a month, after tax"));
         e.setTypeface(Ui.face(a, Ui.BOLD));
         long cur = Store.get(a).prefs().getLong("myIncome", 0);
         if (cur > 0) e.setText(String.valueOf(cur / 100));

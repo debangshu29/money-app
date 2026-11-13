@@ -54,7 +54,7 @@ final class AskPage {
         LinearLayout bar = Ui.hbox(a);
         bar.setPadding(Ui.dp(a, 12), Ui.dp(a, 4), Ui.dp(a, 8), Ui.dp(a, 10));
         input = new EditText(a);
-        input.setHint("Ask about your spending…");
+        input.setHint(Lang.t("Ask about your spending…"));
         input.setSingleLine(true);
         input.setImeOptions(EditorInfo.IME_ACTION_SEND);
         input.setTypeface(Ui.face(a, Ui.REGULAR));

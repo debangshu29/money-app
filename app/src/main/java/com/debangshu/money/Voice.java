@@ -90,9 +90,32 @@ public final class Voice {
         return new String[]{bank, last4, s.replaceAll("\\s+", " ").trim()};
     }
 
+    /** Hindi / Bengali speech → the words the parser knows (digits, rupees, from, cash, bank names). */
+    static String local(String s) {
+        StringBuilder b = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            if (ch >= '\u0966' && ch <= '\u096F') b.append((char) ('0' + ch - '\u0966'));        // ०–९
+            else if (ch >= '\u09E6' && ch <= '\u09EF') b.append((char) ('0' + ch - '\u09E6'));   // ০–৯
+            else b.append(ch);
+        }
+        String t = b.toString();
+        String[][] w = {
+                {"रुपये|रुपए|रुपया|रूपये|টাকা|টাকার", " rupees "}, {"नकद|कैश|ক্যাশ|নগদ|ক্যাশে", " cash "},
+                {"से पे|से|থেকে", " from "}, {"के लिए|के लिये|জন্য|এর জন্য", " for "}, {"और|আর|এবং", " and "},
+                {"एसबीआई|স্টেট ব্যাংক|এসবিআই", " sbi "}, {"फेडरल|ফেডারেল", " federal "}, {"जुपिटर|জুপিটার", " jupiter "},
+                {"यूनियन बैंक|यूनियन|ইউনিয়ন ব্যাংক|ইউনিয়ন", " union bank "}, {"कोटक|কোটাক|কোটক", " kotak "},
+                {"इंडसइंड|ইন্ডাসইন্ড", " indusind "}, {"एचडीएफसी|এইচডিএফসি", " hdfc "}, {"आईसीआईसीआई|আইসিআইসিআই", " icici "},
+                {"एक्सिस|অ্যাক্সিস", " axis "}, {"गूगल पे|গুগল পে", " google pay "}, {"फोनपे|ফোনপে", " phonepe "},
+                {"हज़ार|हजार|হাজার", " thousand "}, {"सौ|শো", " hundred "},
+        };
+        for (String[] x : w) t = t.replaceAll(x[0], x[1]);
+        return t;
+    }
+
     public static List<Item> parse(String said) {
         List<Item> out = new ArrayList<>();
         if (said == null) return out;
+        said = local(said);
         String s = said.toLowerCase(Locale.ROOT).replace("₹", " rs ").replaceAll("[^a-z0-9.,'\\s]", " ").replaceAll("(?<=[0-9]),(?=[0-9]{3})", "")
                 .replaceAll("(?<=[0-9])(rs|k)\\b", " $1").replaceAll("\\s+", " ").trim();
         s = digits(s);

@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.5 — 20 calculators & play tools with live sliders and graphs, each explained simply, shareable as a picture.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.6 — the app in English, हिंदी and বাংলা (tabs, Home, Grow and all calculators; the rest in 2.6.1).** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -259,3 +259,10 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - `CalcMath` (plain Java, tested by T19): SIP/step-up, lump sum, FD (quarterly), RD, PPF, NPS, real return, fees, cost of waiting, EMI, card minimum-due trap (with 18% GST), no-cost EMI, prepay vs invest, rent vs buy, crash index/SIP, race paths.
 - `Calcs`: the 20 tools as data (inputs `P` + function → `Out`: headline, tiles, chart, bars, simple lines). Add a tool = add one `Calc` entry + an `Explain` topic `c_<id>`.
 - `CalcActivity` draws any tool (sliders/switches/choices, chart with touch + race animation via `Charts.Line.reveal`, share as PNG via `Report.save`). `CalcHub` lists them; `CalcHub.featured` shows 8 on the Grow tab.
+
+## Version 2.6 — three languages
+- `Lang`: English / Hindi / Bengali. Words live in `app/src/main/assets/lang/strings.tsv` (English ⇥ Hindi ⇥ Bengali, `\n` = new line, `{}` = a number or name, `{0}`/`{1}` to reorder). English text in the code stays as it is: `Lang.t()` looks it up when shown.
+- Lookup order: exact text → trimmed → templates with `{}` (the filled-in parts are translated too) → split on new lines / " · " / " — " and translate each piece. Unknown text stays English, so nothing breaks.
+- Hooked in: `Ui.text` (LText), `Ui.LSwitch`, toasts, `Popup` (title, message, buttons, lists), `Alerts`, `Reasons` notifications, chart labels, hints, month/day names (`Lang.dates`).
+- Picker: `Lang.choose` (Settings) and `Lang.chips` (first tour page); the app restarts in the new language. Voice uses `Lang.speech()` (hi-IN / bn-IN) and `Voice.local()` turns Hindi/Bengali digits and money words into the forms the parser knows.
+- Add a translation = add one line to strings.tsv. 2.6.1 adds the remaining screens.

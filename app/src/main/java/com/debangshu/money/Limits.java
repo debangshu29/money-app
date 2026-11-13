@@ -73,7 +73,7 @@ public final class Limits {
             EditText e = new EditText(a);
             e.setInputType(InputType.TYPE_CLASS_NUMBER);
             e.setTypeface(Ui.face(a, Ui.REGULAR));
-            e.setHint("—");
+            e.setHint(Lang.t("—"));
             e.setGravity(Gravity.END);
             Long have = cur.get(c);
             long suggest = avg.containsKey(c) ? avg.get(c) / 3 : 0;

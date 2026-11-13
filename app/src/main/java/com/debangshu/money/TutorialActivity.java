@@ -129,6 +129,9 @@ public class TutorialActivity extends Activity {
     private void show(int dir) {
         Object[] pg = PAGES[page];
         content.removeAllViews();
+        if (page == 0) {
+            content.addView(Lang.chips(this, this::recreate), Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 28));
+        }
         View icon = Ui.iconBadge(this, (String) pg[0], (Integer) pg[1], 112);
         content.addView(icon);
         TextView t = Ui.text(this, (String) pg[2], 26, Ui.EXTRABOLD);

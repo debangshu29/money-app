@@ -119,6 +119,12 @@ public class SettingsActivity extends Activity {
         }
         box.addView(st, Ui.margins(Ui.matchWrap(), this, 0, 4, 0, 14));
 
+        LinearLayout lc = Ui.card(this);
+        lc.setPadding(Ui.dp(this, 10), Ui.dp(this, 2), Ui.dp(this, 10), Ui.dp(this, 2));
+        String cur = Lang.NAMES[java.util.Arrays.asList(Lang.CODES).indexOf(Lang.code())];
+        lc.addView(Ui.navRow(this, "🌐", 0xFF0EA5E9, "Language · भाषा · ভাষা", cur, v -> Lang.choose(this)));
+        box.addView(lc, Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
+
         LinearLayout c = Ui.card(this);
         c.setPadding(Ui.dp(this, 10), Ui.dp(this, 6), Ui.dp(this, 10), Ui.dp(this, 6));
         for (String[] p : PAGES) c.addView(Ui.navRow(this, p[1], android.graphics.Color.parseColor(p[2]), p[3], p[4], v -> open(p[0])));
@@ -288,7 +294,7 @@ public class SettingsActivity extends Activity {
         col.addView(Ui.text(this, title, 15, Ui.SEMIBOLD));
         col.addView(Ui.text(this, sub, 12.5f, Ui.col(this, R.color.text2), Ui.REGULAR));
         r.addView(col, Ui.weight1());
-        Switch s = new Switch(this);
+        Switch s = new Ui.LSwitch(this);
         s.setChecked(Store.get(this).flag(key));
         s.setOnCheckedChangeListener((b, on) -> {
             if (key.equals(Store.S_LOCK) && on && !Lock.deviceSecure(this)) {
