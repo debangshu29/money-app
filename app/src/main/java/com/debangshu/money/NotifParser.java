@@ -60,19 +60,33 @@ public final class NotifParser {
 
     private static final int CI = Pattern.CASE_INSENSITIVE;
     private static final Pattern AMOUNT = Pattern.compile("(?:₹|\\brs\\.?|\\binr\\b)\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)", CI);
+    /** Never a finished payment. */
     private static final Pattern SKIP = Pattern.compile(
-            "request|reminder|pending|processing|failed|declined|unsuccessful|offer|cashback|scratch|reward|won\\b|\\bwin\\b|"
-            + "\\bdue\\b|pay now|pay ₹|bill (?:is )?due|bill generated|new bill|recharge now|expir|is waiting|collect|\\brefer|invite|coupon|voucher|\\bloan\\b|"
+            "request|reminder|pending|processing|failed|declined|unsuccessful|"
+            + "\\bdue\\b|pay now|pay ₹|bill (?:is )?due|bill generated|new bill|recharge now|expir|is waiting|collect|"
             + "\\blimit (?:increase|available|enhance)|kyc|update your|verify|\\botp\\b|split|remind|autopay (?:set|scheduled|upcoming)|will be", CI);
+    /** Promotions — skipped unless the notification clearly says money moved ("₹1 paid to Ramesh · you won a reward"). */
+    private static final Pattern PROMO = Pattern.compile(
+            "offer|cashback|scratch|reward|won\\b|\\bwin\\b|\\brefer|invite|coupon|voucher|\\bloan\\b", CI);
+    private static final Pattern STRONG = Pattern.compile(
+            "(?:paid|sent|transferred)\\s+(?:(?:₹|rs\\.?)\\s*[0-9,.]+\\s+)?(?:successfully\\s+)?to\\s|"
+            + "(?:₹|rs\\.?)\\s*[0-9,.]+\\s+(?:paid|sent)\\b|payment (?:of [^ ]+ )?(?:to [^|]+ )?(?:successful|done|completed|complete)|"
+            + "(?:paid|sent) you|received (?:(?:₹|rs\\.?)\\s*[0-9,.]+ )?from|\\bdebited\\b|\\bcredited\\b", CI);
+    /** Looks like it's about a payment (for the "couldn't read" list). */
+    public static final Pattern MONEYISH = Pattern.compile(
+            "\\bpaid\\b|\\bsent\\b|payment|\\bdebited\\b|\\bcredited\\b|\\breceived\\b|successful|transferred|\\bspent\\b", CI);
     private static final Pattern CREDIT = Pattern.compile(
             "\\breceived\\b|\\bcredited\\b|paid you|sent you|\\badded to\\b|money in|you got", CI);
     private static final Pattern DEBIT = Pattern.compile(
-            "\\bpaid\\b|\\bsent\\b|\\bdebited\\b|payment (?:of [^ ]+ )?(?:successful|done|completed|complete)|\\btransferred\\b|money out|\\bspent\\b", CI);
+            "\\bpaid\\b|\\bsent\\b|\\bdebited\\b|payment (?:of [^ ]+ )?(?:to [^|]+? )?(?:is |was |has been )?(?:successful|done|completed|complete)|\\btransferred\\b|money out|\\bspent\\b", CI);
 
     private static final Pattern[] PAID_TO = {
             Pattern.compile("(?:paid|sent|transferred)\\s+(?:(?:₹|rs\\.?)\\s*[0-9,.]+\\s+)?(?:successfully\\s+)?to\\s+(.+?)(?:\\s+(?:using|from|via|on|successfully|with)\\b|[.!|\\n]|$)", CI),
             Pattern.compile("payment (?:of (?:₹|rs\\.?)\\s*[0-9,.]+ )?to\\s+(.+?)(?:\\s+(?:is|was|has|successful|using|from|via)\\b|[.!|\\n]|$)", CI),
             Pattern.compile("(?:₹|rs\\.?)\\s*[0-9,.]+\\s+(?:paid|sent)\\s+to\\s+(.+?)(?:\\s+(?:using|from|via|on)\\b|[.!|\\n]|$)", CI),
+            Pattern.compile("(?:₹|rs\\.?)\\s*[0-9,.]+\\s+to\\s+(.+?)(?:\\s+(?:using|from|via|on|successfully|is|was)\\b|[.!|\\n]|$)", CI),
+            // Google Pay style: title "₹1 paid" / "Payment successful", text "To Ramesh Kumar"
+            Pattern.compile("(?:^|\\|\\s*)to\\s+([A-Za-z][^|.!\\n]{1,40}?)(?:\\s+(?:using|from|via|on|successfully)\\b|[.!|\\n]|$)", CI),
     };
     private static final Pattern[] FROM = {
             Pattern.compile("^(.+?)\\s+(?:paid|sent)\\s+you", CI),
@@ -89,6 +103,7 @@ public final class NotifParser {
         String all = (t + " | " + x).replace(' ', ' ');
         String lo = all.toLowerCase(Locale.ROOT);
         if (SKIP.matcher(lo).find()) return null;
+        if (PROMO.matcher(lo).find() && !STRONG.matcher(lo).find()) return null;
         Matcher am = AMOUNT.matcher(all);
         if (!am.find()) return null;
         long amt = SmsParser.paise(am.group(1));

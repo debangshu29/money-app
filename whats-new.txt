@@ -1,8 +1,7 @@
-Money 1.9 — takes care of the boring stuff ✨
-• ↩️ Refunds: a failed payment that took your money is kept out of spending, watched until it comes back, and you're reminded (with the RBI rule) if it doesn't
-• 🔔 Renewals: mobile plan expiry, insurance renewal, PUC and FASTag balance — read from your SMS by themselves
-• ⏰ Return & warranty: add a bill photo (or open a payment) → “return by?” and “warranty till?” → reminded before the last day
-• 🏦 Loans & EMIs: found from EMI messages — months left, interest left, and what a prepayment saves
-• ⭐ Cashback & rewards: all cashback this year + each card's points
-• 🎤 Say a cash spend: “200 for chai” (also “auto 50 and samosa 30”)
-• Scan & Pay without opening the app: new home-screen widget + quick-settings tiles (pull down → edit tiles)
+Money 1.9.1 — fixes
+• Scan & Pay: your UPI app now gets the shop's QR exactly as printed (no more “limit crossed” / “security reasons” from a rebuilt QR)
+• Pick your UPI app once — Money remembers it
+• If an app still refuses: “Scan in Google Pay” — scan the same QR there and Money still names the payment
+• Amount is optional — type it in your UPI app if you like
+• Small payments with no bank SMS (many banks skip SMS under ₹100): Money now reads payment-app notifications still showing when you open it, and understands more Google Pay / PhonePe wordings
+• Settings → “Couldn't read” now also lists payment-app notifications it didn't understand — share them so the next version learns them

@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.9 — refund tracker, renewals, return & warranty reminders, loans & EMIs, cashback & rewards, say a cash spend, Scan & Pay widget.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.9.1 — Scan & Pay passes the shop's QR untouched; small payments without a bank SMS are caught from app notifications.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -19,6 +19,18 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 **Safe to spend today** = (budget left at the start of today − repeating bills still to come) ÷ days left − what you've spent today.
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
+
+## How quickly Money catches a payment (version 1.9.1)
+
+| Source | When |
+|---|---|
+| Bank SMS | the moment it arrives; the inbox is also re-checked every time you open Money and every 3 hours in the background |
+| Payment-app notification (Google Pay, PhonePe, Paytm, super.money…) | the moment it's posted — needs **notification access** on. When you open Money it also re-reads payment notifications still in the shade |
+| Neither came | the next bank SMS with a balance shows a gap → an **Unrecorded** entry you can name |
+
+Some banks don't text small UPI payments (HDFC: no SMS for UPI payments up to ₹100 or money received up to ₹500 — e-mail only). For those, the payment app's notification is the only signal, so keep notification access on and don't swipe the notification away before Money has read it.
+
+**Scan & Pay** hands the shop's QR to your UPI app exactly as printed (only the amount is added if you typed one). UPI apps sometimes still refuse payments that start in another app — especially to a person's UPI ID. Then tap **Scan in Google Pay** (or your app): scan the same QR there and Money still gives the payment the name and category you picked (it watches for 30 minutes).
 
 ## The boring stuff, handled (version 1.9)
 

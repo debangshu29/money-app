@@ -98,6 +98,7 @@ public class MainActivity extends Activity {
         refresh();
         // a quick catch-up in case an SMS slipped past while the app was asleep
         new Thread(() -> { try { Engine.catchUp(getApplicationContext()); } catch (Exception ignored) { } }).start();
+        PayListener.refresh(getApplicationContext());
         Updater.maybePrompt(this, false);
         if (pendingAction != null && !Lock.needed(this)) {
             String p = pendingAction;

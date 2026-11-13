@@ -119,10 +119,17 @@ public final class Engine {
         SmsParser.Result r = NotifParser.parseApp(pkg, title, text);
         if (r == null) {
             // "Payment failed" from a UPI app: only counts if a debit for it already came
+            String both = ((title == null ? "" : title.trim()) + " | " + (text == null ? "" : text.trim())).trim();
+            boolean failedNote = false;
             try {
                 Notices.Failed f = Notices.failed(pkg, (title == null ? "" : title + ". ") + (text == null ? "" : text));
-                if (f != null) Refunds.onFailedNotice(ctx, f, time);
+                if (f != null) { failedNote = true; Refunds.onFailedNotice(ctx, f, time); }
             } catch (Exception ignored) { }
+            // has an amount and talks about a payment, but the wording is new → keep it in "Couldn't read" so it can be learned
+            String name = NotifParser.appName(pkg);
+            if (!failedNote && name != null && both.matches("(?s).*(₹|(?i:rs\\.?|inr))\\s*[0-9].*") && NotifParser.MONEYISH.matcher(both).find()
+                    && !both.toLowerCase(java.util.Locale.ROOT).matches("(?s).*(offer|cashback|scratch|reward|coupon|voucher|win |won |request|reminder|due|pay now|collect).*"))
+                Store.get(ctx).addUnread(time, name + " (app)", both);
             return null;
         }
         Txn t = new Txn();

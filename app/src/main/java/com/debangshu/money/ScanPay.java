@@ -45,6 +45,8 @@ public final class ScanPay {
     static final class Upi {
         String pa = "", pn = "", am = "", tn = "", mc = "", tr = "", raw = "";
         boolean fixedAmount;
+        /** A person's QR (no merchant code) — UPI apps often block these when the payment starts in another app. */
+        boolean person() { return mc.isEmpty() || mc.equals("0000"); }
     }
 
     // ------------------------------------------------------------------ scan
@@ -195,6 +197,7 @@ public final class ScanPay {
         ar.addView(amt, Ui.weight1());
         box.addView(ar);
         if (u.fixedAmount) box.addView(Ui.sub(a, "Amount set by the shop's QR"));
+        else box.addView(Ui.sub(a, "Optional — leave it empty to type it in your UPI app"));
 
         box.addView(label(a, "Category"));
         LinearLayout chips = Ui.hbox(a);
@@ -232,31 +235,42 @@ public final class ScanPay {
         note.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         box.addView(note);
 
-        TextView how = Ui.text(a, "Your UPI app opens with everything filled in — you enter your UPI PIN there as usual. "
+        String app = appLabel(a, preferred(a));
+        TextView with = Ui.chip(a, "Pay with: " + (app == null ? "choose your UPI app" : app) + "  ▾", false);
+        with.setOnClickListener(v -> pickApp(a, pkg -> with.setText("Pay with: " + appLabel(a, pkg) + "  ▾")));
+        box.addView(with, Ui.margins(Ui.lp(-2, -2), a, 0, 6, 0, 0));
+
+        TextView how = Ui.text(a, (u.person()
+                ? "Paying a person: some UPI apps refuse payments that start in another app (“limit”, “security reasons”). "
+                  + "If that happens, tap “Scan in my app” and scan the same QR there — Money still names it.\n\n"
+                : "Your UPI app opens with the shop's QR exactly as printed — you enter your UPI PIN there as usual. ")
                 + "Money never sees your PIN or touches your money.", 12, Ui.col(a, R.color.hint), Ui.REGULAR);
         how.setPadding(0, Ui.dp(a, 12), 0, 0);
         box.addView(how);
 
         AlertDialog d = new Ui.Popup(a).sheet().setTitle("Scan & Pay").setView(Ui.capHeight(sv, 0.72f))
                 .setPositiveButton("Pay", null)
-                .setNeutralButton("Pay in my app", null)
+                .setNeutralButton("Scan in my app", null)
                 .setNegativeButton("Cancel", null).create();
         d.setOnShowListener(x -> {
             Ui.style(d, true);
             d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 long paise = SmsParser.paise(amt.getText().toString().trim());
-                if (paise <= 0) { amt.setError("Enter the amount"); return; }
+                if (paise < 0) paise = 0;
                 String nm = name.getText().toString().trim();
                 remember(a, u, nm, cat[0], paise, note.getText().toString().trim());
                 d.dismiss();
-                pay(a, u, nm, paise, note.getText().toString().trim());
+                long pp = paise;
+                if (preferred(a) == null) pickApp(a, pkg -> pay(a, u, pp));
+                else pay(a, u, pp);
             });
             d.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-                long paise = SmsParser.paise(amt.getText().toString().trim());
+                long paise = Math.max(0, SmsParser.paise(amt.getText().toString().trim()));
                 String nm = name.getText().toString().trim();
                 remember(a, u, nm, cat[0], paise, note.getText().toString().trim());
                 d.dismiss();
                 openApp(a);
+                Ui.toast(a, "Scan the same QR there — Money will name the payment " + (nm.isEmpty() ? "" : "“" + nm + "”"));
             });
         });
         d.show();
@@ -270,46 +284,109 @@ public final class ScanPay {
 
     // ------------------------------------------------------------------ handing over to the UPI app
 
-    private static void pay(Activity a, Upi u, String name, long paise, String note) {
-        Uri uri;
-        if (!u.raw.isEmpty() && u.fixedAmount) {
-            uri = Uri.parse(u.raw.replace(" ", "%20"));          // the shop's own signed QR, untouched
-        } else {
-            Uri.Builder b = new Uri.Builder().scheme("upi").authority("pay")
-                    .appendQueryParameter("pa", u.pa)
-                    .appendQueryParameter("pn", name.isEmpty() ? (u.pn.isEmpty() ? u.pa : u.pn) : name)
-                    .appendQueryParameter("am", String.format(Locale.ROOT, "%d.%02d", paise / 100, paise % 100))
-                    .appendQueryParameter("cu", "INR");
-            if (!u.mc.isEmpty()) b.appendQueryParameter("mc", u.mc);
-            if (!u.tr.isEmpty()) b.appendQueryParameter("tr", u.tr);
-            if (!note.isEmpty()) b.appendQueryParameter("tn", note);
-            uri = b.build();
+    /**
+     * The QR exactly as the shop printed it (signature, merchant code and all — rebuilding it is what makes UPI apps refuse);
+     * only the amount is added when the QR has none and you typed one.
+     */
+    static String payUri(Upi u, long paise) {
+        String am = String.format(Locale.ROOT, "%d.%02d", paise / 100, paise % 100);
+        if (!u.raw.isEmpty()) {
+            String r = u.raw.replace(" ", "%20");
+            if (!u.fixedAmount && paise > 0) {
+                r = r.replaceAll("(?i)([?&])am=[^&]*&?", "$1").replaceAll("[?&]$", "");
+                r += (r.contains("?") ? "&" : "?") + "am=" + am;
+                if (!r.toLowerCase(Locale.ROOT).contains("cu=")) r += "&cu=INR";
+            }
+            return r;
         }
-        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-        List<ResolveInfo> apps = a.getPackageManager().queryIntentActivities(i, 0);
-        if (apps.isEmpty()) {
-            Ui.toast(a, "No UPI app found — install Google Pay, PhonePe or Paytm");
-            return;
-        }
+        // Bharat QR (EMV) — no upi:// text to pass on, so the minimum the UPI app needs
+        Uri.Builder b = new Uri.Builder().scheme("upi").authority("pay").appendQueryParameter("pa", u.pa);
+        if (!u.pn.isEmpty()) b.appendQueryParameter("pn", u.pn);
+        if (!u.mc.isEmpty()) b.appendQueryParameter("mc", u.mc);
+        if (paise > 0) b.appendQueryParameter("am", am);
+        b.appendQueryParameter("cu", "INR");
+        return b.build().toString();
+    }
+
+    private static void pay(Activity a, Upi u, long paise) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(payUri(u, paise)));
+        String pkg = preferred(a);
+        if (pkg != null) i.setPackage(pkg);
         try {
-            a.startActivityForResult(Intent.createChooser(i, "Pay with"), REQ_PAY);
+            lastPay = u;
+            a.startActivityForResult(i, REQ_PAY);
         } catch (Exception e) {
-            openApp(a);
+            a.getSharedPreferences("scanpay", 0).edit().remove("app").apply();
+            try { a.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_VIEW, Uri.parse(payUri(u, paise))), "Pay with"), REQ_PAY); }
+            catch (Exception e2) { openApp(a); }
         }
     }
 
-    /** "Pay in my app": just opens a UPI app — scan there; Money still knows who it was. */
-    private static void openApp(Activity a) {
+    private static Upi lastPay;
+
+    /** UPI apps on this phone (anything that opens upi://pay). */
+    static List<ResolveInfo> upiApps(Context c) {
+        List<ResolveInfo> out = new ArrayList<>();
+        List<String> seen = new ArrayList<>();
+        try {
+            for (ResolveInfo r : c.getPackageManager().queryIntentActivities(new Intent(Intent.ACTION_VIEW, Uri.parse("upi://pay?pa=a@b")), 0)) {
+                if (r.activityInfo == null || seen.contains(r.activityInfo.packageName)) continue;
+                seen.add(r.activityInfo.packageName);
+                out.add(r);
+            }
+        } catch (Exception ignored) { }
+        return out;
+    }
+
+    /** The UPI app you picked last time (if it's still installed). */
+    static String preferred(Context c) {
+        String p = c.getSharedPreferences("scanpay", 0).getString("app", null);
+        if (p == null) return null;
+        for (ResolveInfo r : upiApps(c)) if (r.activityInfo.packageName.equals(p)) return p;
+        return null;
+    }
+
+    static String appLabel(Context c, String pkg) {
+        if (pkg == null) return null;
+        String n = NotifParser.appName(pkg);
+        if (n != null) return n;
+        try { return c.getPackageManager().getApplicationLabel(c.getPackageManager().getApplicationInfo(pkg, 0)).toString(); }
+        catch (Exception e) { return pkg; }
+    }
+
+    interface Picked { void on(String pkg); }
+
+    static void pickApp(Activity a, Picked then) {
+        List<ResolveInfo> apps = upiApps(a);
+        if (apps.isEmpty()) { Ui.toast(a, "No UPI app found — install Google Pay, PhonePe or Paytm"); return; }
+        String[] names = new String[apps.size()];
+        for (int k = 0; k < apps.size(); k++) names[k] = appLabel(a, apps.get(k).activityInfo.packageName);
+        new Ui.Popup(a).setTitle("Pay with").setItems(names, (d, w) -> {
+            String pkg = apps.get(w).activityInfo.packageName;
+            a.getSharedPreferences("scanpay", 0).edit().putString("app", pkg).apply();
+            then.on(pkg);
+        }).show();
+    }
+
+    /** "Scan in my app": opens your UPI app — scan there; Money still knows who it was. */
+    static void openApp(Activity a) {
         PackageManager pm = a.getPackageManager();
-        List<String> names = new ArrayList<>();
-        List<Intent> intents = new ArrayList<>();
-        for (String[] app : NotifParser.PAY_APPS) {
-            Intent l = pm.getLaunchIntentForPackage(app[0]);
-            if (l != null && !names.contains(app[1])) { names.add(app[1]); intents.add(l); }
+        String pref = preferred(a);
+        if (pref != null) {
+            Intent l = pm.getLaunchIntentForPackage(pref);
+            if (l != null) { a.startActivity(l); return; }
         }
-        if (intents.isEmpty()) { Ui.toast(a, "Open your UPI app and pay — Money will match it"); return; }
-        if (intents.size() == 1) { a.startActivity(intents.get(0)); return; }
-        new Ui.Popup(a).setTitle("Open").setItems(names.toArray(new String[0]), (d, w) -> a.startActivity(intents.get(w))).show();
+        List<String> names = new ArrayList<>(), pkgs = new ArrayList<>();
+        for (ResolveInfo r : upiApps(a)) {
+            String p = r.activityInfo.packageName;
+            if (pm.getLaunchIntentForPackage(p) != null) { pkgs.add(p); names.add(appLabel(a, p)); }
+        }
+        if (pkgs.isEmpty()) { Ui.toast(a, "Open your UPI app and pay — Money will match it"); return; }
+        if (pkgs.size() == 1) { a.startActivity(pm.getLaunchIntentForPackage(pkgs.get(0))); return; }
+        new Ui.Popup(a).setTitle("Open").setItems(names.toArray(new String[0]), (d, w) -> {
+            a.getSharedPreferences("scanpay", 0).edit().putString("app", pkgs.get(w)).apply();
+            a.startActivity(pm.getLaunchIntentForPackage(pkgs.get(w)));
+        }).show();
     }
 
     public static void onResult(Activity a, int req, int res, Intent data) {
@@ -317,14 +394,28 @@ public final class ScanPay {
         String resp = data == null ? null : data.getStringExtra("response");
         if (resp == null && data != null) resp = data.getStringExtra("Status");
         String lo = resp == null ? "" : resp.toLowerCase(Locale.ROOT);
-        if (lo.contains("status=failure") || lo.equals("failure")) {
-            clearPending(a);
-            Ui.toast(a, "Payment didn't go through — nothing was paid");
-        } else if (lo.contains("status=success") || lo.equals("success")) {
-            Ui.toast(a, "Paid ✓ — it appears when your bank's message arrives");
-        } else {
-            Ui.toast(a, "If you paid, it appears when your bank's message arrives");
+        if (lo.contains("status=success") || lo.equals("success")) {
+            Ui.toast(a, "Paid ✓ — it appears when your bank's message or the app's notification arrives");
+            return;
         }
+        // failed, refused ("limit", "security reasons") or just closed: offer the way that always works
+        String app = appLabel(a, preferred(a));
+        boolean failed = lo.contains("status=failure") || lo.equals("failure");
+        new Ui.Popup(a).setTitle(failed ? "The payment didn't go through" : "Did the payment go through?")
+                .setMessage((failed ? "Nothing was paid. " : "")
+                        + "Some UPI apps refuse payments that start in another app, even small ones. Scanning the same QR inside "
+                        + (app == null ? "your UPI app" : app) + " always works — and Money will still give the payment the name and category you chose.")
+                .setPositiveButton("Scan in " + (app == null ? "my app" : app), (d, w) -> openApp(a))
+                .setNeutralButton(failed ? "Try another app" : "Yes, it's paid", (d, w) -> {
+                    if (!failed) { Ui.toast(a, "It appears when your bank's message or the app's notification arrives"); return; }
+                    Upi u = lastPay;
+                    if (u == null) return;
+                    long amt = 0;
+                    try { amt = new JSONObject(Store.get(a).prefs().getString("pendingPay", "{}")).optLong("amt"); } catch (Exception ignored) { }
+                    long fa = amt;
+                    pickApp(a, pkg -> pay(a, u, fa));
+                })
+                .setNegativeButton("Cancel payment", (d, w) -> clearPending(a)).show();
     }
 
     // ------------------------------------------------------------------ remembering who it was

@@ -21,10 +21,40 @@ public class PayListener extends NotificationListenerService {
     };
 
     public static volatile boolean connected = false;
+    private static volatile PayListener instance;
 
-    @Override public void onListenerConnected() { connected = true; }
+    @Override public void onListenerConnected() {
+        connected = true;
+        instance = this;
+        readShowing();   // anything posted while Money wasn't listening (phone restart, battery saver…)
+    }
 
-    @Override public void onListenerDisconnected() { connected = false; }
+    @Override public void onListenerDisconnected() {
+        connected = false;
+        instance = null;
+    }
+
+    /** App opened: re-read payment notifications still in the shade, or ask Android to reconnect the listener. */
+    public static void refresh(android.content.Context c) {
+        PayListener l = instance;
+        if (l != null && connected) { l.readShowing(); return; }
+        try {
+            if (Setup.listenerOn(c) && android.os.Build.VERSION.SDK_INT >= 24)
+                requestRebind(new android.content.ComponentName(c, PayListener.class));
+        } catch (Exception ignored) { }
+    }
+
+    private void readShowing() {
+        new Thread(() -> {
+            try {
+                StatusBarNotification[] all = getActiveNotifications();
+                if (all == null) return;
+                for (StatusBarNotification n : all) {
+                    try { onNotificationPosted(n); } catch (Exception ignored) { }
+                }
+            } catch (Exception ignored) { }
+        }).start();
+    }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
