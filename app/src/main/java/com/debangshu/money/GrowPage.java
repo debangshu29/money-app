@@ -123,7 +123,9 @@ final class GrowPage {
                 Ui.action(a, "🔀", 0xFF3B82F6, "Split saving", v -> split(a)),
                 Ui.action(a, "🔥", 0xFFF59E0B, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class)))));
         body.addView(gc, gap());
-        TextView more = Ui.text(a, "Coming next in Grow: calculators with live graphs, then money lessons.", 12.5f,
+        body.addView(Ui.label(a, "Calculators & play"));
+        body.addView(CalcHub.featured(a), gap());
+        TextView more = Ui.text(a, "Coming next in Grow: Hindi & Bengali, then 1-minute money lessons.", 12.5f,
                 Ui.col(a, R.color.hint), Ui.SEMIBOLD);
         more.setGravity(Gravity.CENTER);
         more.setPadding(Ui.dp(a, 16), Ui.dp(a, 6), Ui.dp(a, 16), 0);

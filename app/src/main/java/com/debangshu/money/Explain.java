@@ -79,6 +79,68 @@ final class Explain {
             {"split", "How does “Split my saving” work?",
                     "You have one pot of saving and many goals 🍕\n\n"
                             + "Money cuts the pot like a pizza: goals with a closer date get their slice first, then the rest is shared fairly. Slide the amount and see when each goal would be done."},
+            // ---- calculators (2.5)
+            {"c_sip", "What is a SIP?",
+                    "SIP means putting a small, fixed amount into an investment every month — like feeding a piggy bank on the same day each month 🐷\n\n"
+                            + "Because you keep adding, and what's inside keeps growing, the pile gets bigger and bigger. You don't need a lot of money to start — ₹500 is enough."},
+            {"c_lump", "What is a one-time investment?",
+                    "You put a big amount in once — say, a bonus or a gift — and then just leave it alone to grow 🌳\n\n"
+                            + "Like planting one big tree instead of many seeds. The longer you leave it, the bigger it gets."},
+            {"c_fd", "What is an FD?",
+                    "A Fixed Deposit is like lending your money to the bank for a fixed time 🏦\n\n"
+                            + "The bank keeps it safe and pays you a little extra (interest) as a thank-you. When the time is over, you get it all back with the extra. Very safe — but it grows slowly."},
+            {"c_rd", "What is an RD?",
+                    "A Recurring Deposit is a piggy bank at the bank 🐷\n\n"
+                            + "Every month you drop in the same amount. At the end, the bank gives it all back, with interest on top. Perfect for saving up for something in 6 months to 2 years."},
+            {"c_ppf", "What is PPF?",
+                    "PPF is a savings box made by the government 🛡️\n\n"
+                            + "It's super safe, and the interest is not taxed. But the box stays locked for 15 years, so it's for far-away dreams — like your child's studies or your own future."},
+            {"c_nps", "What is NPS?",
+                    "NPS is a box you fill while you work, for when you're old 🧓\n\n"
+                            + "At 60, you take out most of it, and the rest buys you a small monthly “salary” (a pension) for the rest of your life. Like planting a tree that gives fruit every month in old age."},
+            {"c_gold", "Is gold a good saving?",
+                    "Indian families love gold 🪙 — and it does protect you when other things fall.\n\n"
+                            + "But gold can stay flat or fall for years too. And jewellery has making charges you never get back. For saving, gold coins, gold funds or gold ETFs work better than jewellery."},
+            {"c_compare", "Why compare?",
+                    "Different money boxes are like different vehicles 🚲🚗🚆\n\n"
+                            + "A cycle is safe but slow (savings, FD). A car is faster (gold, debt funds). A train is fastest over long trips but has bumps on the way (shares). Pick the vehicle for how far you're going."},
+            {"c_snowball", "What is the snowball?",
+                    "Roll a small snowball down a hill ⛄ — it picks up snow, gets bigger, and then picks up even MORE snow.\n\n"
+                            + "Money does the same: interest earns more interest. Switch it off and on below to see how much of your money comes from the snowball alone."},
+            {"c_race", "What is the investment race?",
+                    "Four runners race with your money 🏁 — a savings account, an FD, gold and shares.\n\n"
+                            + "The FD walks steadily. Shares run fast but trip and fall sometimes. Press play and watch who wins a short race and who wins a long one."},
+            {"c_crash", "What happens when markets fall?",
+                    "Sometimes share prices fall a lot — 20%, 30% or more 📉. It feels scary, and many people panic and sell.\n\n"
+                            + "But when prices fall, your monthly SIP buys MORE for the same money — like buying mangoes on sale. When prices come back up, those cheap mangoes become valuable."},
+            {"c_time", "What is inflation?",
+                    "Things get a little costlier every year ⏰ — your grandparents bought tea for a few paise!\n\n"
+                            + "That's inflation. It means ₹100 kept in a drawer buys less and less each year. To stay ahead, your money has to grow faster than prices rise."},
+            {"c_wait", "Why start early?",
+                    "Two friends plant mango trees 🥭. One plants today, one waits 5 years.\n\n"
+                            + "When they're old, the first tree is much bigger and gives far more mangoes — even though the second friend saved the same water. Time is the magic ingredient."},
+            {"c_taxinf", "What do tax and inflation eat?",
+                    "The bank gives you a pizza of interest 🍕\n\n"
+                            + "Then tax takes a slice. Then rising prices eat a few more slices. Whatever is left is how much richer you really got. Sometimes it's very little!"},
+            {"c_fees", "Why do fees matter?",
+                    "Imagine someone takes one small spoon of rice from your sack every year 🍚\n\n"
+                            + "One spoon is nothing. But over 20 years, from a growing sack, it adds up to a lot. Investment fees work the same way — so lower fees mean more for you."},
+            {"c_card", "What is the minimum-due trap?",
+                    "Your card bill says “minimum due: ₹1,000” on a ₹20,000 bill 💳. Paying just that feels easy…\n\n"
+                            + "But the rest keeps growing with very high interest — around 40% a year! You can end up paying for years. Always pay the full bill."},
+            {"c_nocost", "Is “no-cost EMI” free?",
+                    "“No-cost EMI” sounds like magic: buy now, pay later, no extra! 🏷️\n\n"
+                            + "But the bank still charges GST on the hidden interest and a processing fee. And you may lose the discount for paying full. Small costs — but not zero."},
+            {"c_prepay", "Prepay a loan or invest?",
+                    "You have extra money. You can pay off your loan faster, or invest it 🤔\n\n"
+                            + "Paying the loan is like earning the loan's interest rate — for sure. Investing might earn more, but it's not sure. Compare them here."},
+            {"c_rentbuy", "Rent or buy a home?",
+                    "Buying: you pay a big EMI, and slowly the house becomes yours 🏠\n"
+                            + "Renting: you pay less each month and can invest the rest.\n\n"
+                            + "Which leaves you richer depends on prices, rent and time. And a home is about feelings too, not just money."},
+            {"c_lockin", "What is a lock-in?",
+                    "Some money boxes have a lock 🔒 — you can't open them for years.\n\n"
+                            + "That's good for far-away dreams (you can't spend it by mistake), but bad for money you might need soon. Check the lock before you put money in."},
             {"goals", "How do goals work?",
                     "A goal is a jar with a name on it — “Laptop”, “Puja”, “Trip” 🏺\n\n"
                             + "Tell Money how much and by when. If the money sits in a bank account, Money watches that balance and tells you if you're ahead, on track or behind — all by itself."},

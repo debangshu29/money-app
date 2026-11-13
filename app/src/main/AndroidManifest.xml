@@ -100,6 +100,8 @@
         <activity android:name=".BillsActivity" android:exported="false" />
         <activity android:name=".People" android:exported="false" />
         <activity android:name=".GoalActivity" android:exported="false" />
+        <activity android:name=".CalcActivity" android:exported="false" />
+        <activity android:name=".CalcHub" android:exported="false" />
         <activity android:name=".RuleActivity" android:exported="false" />
         <activity android:name=".LeaksActivity" android:exported="false" />
         <activity android:name=".HabitActivity" android:exported="false" />

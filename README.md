@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.4.1 — every Grow tool explained like you're 5, and rules you can learn (with your own numbers) before you pick one.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.5 — 20 calculators & play tools with live sliders and graphs, each explained simply, shareable as a picture.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -254,3 +254,8 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 ## Version 2.4.1 — explained simply
 - `Explain`: all Grow knowledge in kid-simple words (`TOPICS`), shown as a "What is this?" box on each Grow screen (`Explain.box`) or in sheets (`GrowPage.kid`). `RULE_STORY` holds each rule's story / good for / hard part.
 - `RuleActivity.explainRule`: tap a rule → story, your numbers, now vs rule, what changes (month / year / 5 / 10 years), then "Use this rule". `suggested()` picks the rule that fits your needs %.
+
+## Version 2.5 — calculators & play tools
+- `CalcMath` (plain Java, tested by T19): SIP/step-up, lump sum, FD (quarterly), RD, PPF, NPS, real return, fees, cost of waiting, EMI, card minimum-due trap (with 18% GST), no-cost EMI, prepay vs invest, rent vs buy, crash index/SIP, race paths.
+- `Calcs`: the 20 tools as data (inputs `P` + function → `Out`: headline, tiles, chart, bars, simple lines). Add a tool = add one `Calc` entry + an `Explain` topic `c_<id>`.
+- `CalcActivity` draws any tool (sliders/switches/choices, chart with touch + race animation via `Charts.Line.reveal`, share as PNG via `Report.save`). `CalcHub` lists them; `CalcHub.featured` shows 8 on the Grow tab.

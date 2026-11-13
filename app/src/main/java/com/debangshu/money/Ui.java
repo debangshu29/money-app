@@ -217,7 +217,10 @@ public final class Ui {
                 {"🎄", R.drawable.ln_gift}, {"🎨", R.drawable.ln_sparkles}, {"🌙", R.drawable.ln_star}, {"🚀", R.drawable.ln_rocket}, {"✨", R.drawable.ln_sparkles},
                 {"☕", R.drawable.ln_coffee}, {"🛵", R.drawable.ln_scooter}, {"⏳", R.drawable.ln_hourglass}, {"❤️", R.drawable.ln_heart_pulse},
                 {"🕒", R.drawable.ln_clock}, {"💼", R.drawable.ln_briefcase}, {"🌅", R.drawable.ln_sunrise}, {"🫙", R.drawable.ln_amphora},
-                {"📆", R.drawable.ln_calendar_clock}, {"🧭", R.drawable.ln_gauge}, {"🛍️", R.drawable.ln_tag}, {"🌴", R.drawable.ln_tree_palm}, {"🌱", R.drawable.ln_sprout}, {"🎯", R.drawable.ln_target}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
+                {"📆", R.drawable.ln_calendar_clock}, {"🧭", R.drawable.ln_gauge}, {"🛍️", R.drawable.ln_tag}, {"🌴", R.drawable.ln_tree_palm},
+                {"💰", R.drawable.ln_coins}, {"🪙", R.drawable.ln_coins}, {"🧓", R.drawable.ln_armchair}, {"⚖️", R.drawable.ln_scale},
+                {"⛄", R.drawable.ln_snowflake}, {"🏁", R.drawable.ln_flag}, {"📉", R.drawable.ln_trending_down}, {"⏰", R.drawable.ln_alarm_clock},
+                {"⌛", R.drawable.ln_hourglass}, {"✂️", R.drawable.ln_scissors}, {"🏷️", R.drawable.ln_tag}, {"🔑", R.drawable.ln_key_round}, {"🌱", R.drawable.ln_sprout}, {"🎯", R.drawable.ln_target}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
         };
         for (Object[] x : m) ICONS.put((String) x[0], (Integer) x[1]);
     }

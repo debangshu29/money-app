@@ -210,14 +210,17 @@ public final class Charts {
         private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG), tp = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final android.graphics.Path path = new android.graphics.Path();
         private int heightDp = 200;
+        private int reveal = -1;          // draw only the first N points (for the race animation); -1 = all
         public interface OnTouchPoint { void at(int index); }
+
+        public void reveal(int n) { reveal = n; invalidate(); }
         private OnTouchPoint listener;
 
         public Line(Context c) { super(c); }
 
         /** values are rupees (floats), all series the same length. */
         public void set(float[][] s, int[] col, boolean[] dash, boolean[] fill, String[] x, float targetLine) {
-            series = s; colors = col; dashed = dash; filled = fill; xLabels = x; target = targetLine; touch = -1;
+            series = s; colors = col; dashed = dash; filled = fill; xLabels = x; target = targetLine; touch = -1; reveal = -1;
             invalidate();
         }
 
@@ -291,16 +294,17 @@ public final class Charts {
                 c.drawLine(left, y, right, y, p);
                 p.setPathEffect(null);
             }
+            int upto = reveal < 0 ? n : Math.max(1, Math.min(n, reveal));
             for (int k = 0; k < series.length; k++) {
                 path.reset();
-                for (int i = 0; i < n; i++) {
+                for (int i = 0; i < upto; i++) {
                     float x = left + (right - left) * i / (float) (n - 1);
                     float y = bottom - (bottom - top) * Math.max(0, series[k][i]) / mx;
                     if (i == 0) path.moveTo(x, y); else path.lineTo(x, y);
                 }
                 if (filled.length > k && filled[k]) {
                     android.graphics.Path f = new android.graphics.Path(path);
-                    f.lineTo(right, bottom);
+                    f.lineTo(left + (right - left) * (upto - 1) / (float) (n - 1), bottom);
                     f.lineTo(left, bottom);
                     f.close();
                     p.setStyle(Paint.Style.FILL);

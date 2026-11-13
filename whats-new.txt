@@ -1,3 +1,11 @@
+Money 2.5 — calculators & play tools 🧮
+• 20 tools in Grow → Calculators & play. Move the sliders and the numbers, graph and bars change as you drag
+• Grow your money: SIP (with yearly step-up) · one-time investment · FD (with tax) · RD · PPF (7.1%, tax-free) · NPS (pension, with the new 80% lump-sum rule) · gold (coins vs jewellery) · Compare all side by side
+• See how money works: Snowball switch (turn interest-on-interest on/off) · Investment race (press ▶ and watch) · Market crash test (keep going vs pause vs panic-sell) · Money time machine (your own spends in the future) · Cost of waiting · What tax & inflation eat · Fees matter
+• Loans & big buys: Credit card minimum-due trap · “No-cost” EMI check · Prepay loan or invest · Rent or buy a home · Lock-in timeline (when can you take money out)
+• Every tool starts with a “like you're 5” explanation and ends with “What this means” in simple words
+• Share any result as a picture — great for explaining to family on WhatsApp
+
 Money 2.4.1 — explained simply 💡
 • Tap any rule (50/30/20, 60/20/20, 70/20/10, Pay yourself first) to learn it first: a simple story, what it means for YOUR salary, “you now vs with this rule”, and what changes — how much more you'd save in a month, a year, 5 and 10 years
 • ⭐ Money suggests the rule that fits how you spend today. Choose only after you understand it
