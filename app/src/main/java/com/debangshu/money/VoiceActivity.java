@@ -118,7 +118,7 @@ public class VoiceActivity extends Activity {
             String nm = it.what.equals("Cash spend") ? (Cash.ACCOUNT.equals(from) ? it.what : "") : it.what;
             saved.add(Noted.save(this, from, it.paise, nm, it.category, ""));
         }
-        String where = Noted.label(this, from);
+        String where = Noted.fullLabel(this, from);
         String left = Cash.ACCOUNT.equals(from)
                 ? (Cash.on(this) ? Fmt.plain(Cash.balance(this)) + " left in cash" : "")
                 : balanceText(from);

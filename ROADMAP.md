@@ -36,6 +36,7 @@ Built one version at a time; each version is checked on the phone before the nex
 | **2.0.1** | Your banks | statement layouts: SBI, Union (Vyom), Kotak, IndusInd, Jupiter/Federal + HDFC, ICICI, Axis, Canara, PNB · Jupiter credits/debits on one account · IndusInd / Federal SMS fixes · 18 more banks for friends & family | ✅ built (13 Nov 2026) |
 | **2.1** | Tidy & calm | Settings → 6 groups + status card · Plan → budget card, “Needs you”, round icons in Money / Life / Grow / Tools · Home quick actions · Insights “More insights” list | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.1.1** | Right account | “Paid from” Cash / exact account (••last4) for added, spoken and noted payments · live balance in Money · delete/hide restores balance & cash wallet · move between accounts · voice “from Federal ending 1234”, asks when two match | ✅ built (13 Nov 2026) — waiting for your check |
+| **2.1.2** | Tap your bank | “Paid from” as a 2-column grid of account buttons (bank · ••number · balance) everywhere · account buttons on the “Paid anyone?” follow-up notification · voice “paid/cut from SBI” | ✅ built (13 Nov 2026) — waiting for your check |
 
 ## Ideas for later
 

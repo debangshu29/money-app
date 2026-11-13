@@ -273,7 +273,7 @@ public final class PayNote {
                 Noted.add(a, paise, name, cat[0].isEmpty() ? null : cat[0], note, "", acc[0]);
                 if (acc[0] != null) Noted.rememberFrom(a, acc[0]);
                 d.dismiss();
-                Ui.toast(a, "Saved ✓ " + Fmt.plain(paise) + (name.isEmpty() ? "" : " to " + name) + (acc[0] == null ? "" : " · from " + Noted.label(a, acc[0])));
+                Ui.toast(a, "Saved ✓ " + Fmt.plain(paise) + (name.isEmpty() ? "" : " to " + name) + (acc[0] == null ? "" : " · from " + Noted.fullLabel(a, acc[0])));
             });
         });
         d.show();

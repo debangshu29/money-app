@@ -19,7 +19,7 @@ import java.util.List;
 public class Reasons extends BroadcastReceiver {
 
     static final String REASON = "com.debangshu.money.REASON", TYPED = "com.debangshu.money.REASON_TYPED",
-            NOPAY = "com.debangshu.money.NOPAY", PAID = "com.debangshu.money.PAID_TYPED";
+            NOPAY = "com.debangshu.money.NOPAY", PAID = "com.debangshu.money.PAID_TYPED", MOVE = "com.debangshu.money.MOVE_ACCOUNT";
     static final String KEY = "reason";
 
     static int nid(String txnId) { return 30000 + (txnId.hashCode() & 0x7FFF); }
@@ -128,12 +128,18 @@ public class Reasons extends BroadcastReceiver {
                 return;
             }
             Txn t = Noted.add(c, (Long) p[0], (String) p[1], null, (String) p[2], "", acc);
-            done(c, nm, nid, "Saved ✓ " + Fmt.plain(t.amount) + (t.merchant.isEmpty() ? "" : " to " + t.merchant) + " · " + Noted.label(c, acc),
+            if (h[0].isEmpty() && h[1].isEmpty() && Noted.bankAccounts(c).size() > 1) { whichAccount(c, nm, nid, t); return; }
+            done(c, nm, nid, "Saved ✓ " + Fmt.plain(t.amount) + (t.merchant.isEmpty() ? "" : " to " + t.merchant) + " · " + Noted.fullLabel(c, acc),
                     (t.note.isEmpty() ? "" : t.note + " · ") + "the bank's message joins it if one comes", t.id);
             return;
         }
         Txn t = s.byId(intent.getStringExtra("txn"));
         if (t == null) { if (nm != null) nm.cancel(nid); return; }
+        if (MOVE.equals(a)) {
+            Noted.move(c, t, intent.getStringExtra("to"));
+            done(c, nm, nid, "Saved ✓ " + Fmt.plain(t.amount) + " · from " + Noted.fullLabel(c, t.account), "Balance updated", t.id);
+            return;
+        }
         if (REASON.equals(a)) {
             String note = intent.getStringExtra("note"), cat = intent.getStringExtra("cat");
             if (note != null && !note.isEmpty()) t.note = note;
@@ -146,6 +152,28 @@ public class Reasons extends BroadcastReceiver {
             s.update(t);
             done(c, nm, nid, "Saved ✓ " + typed, Fmt.plain(t.amount) + " to " + t.merchant, t.id);
         }
+    }
+
+    /** Saved from your usual account — tap another account's button if it came from somewhere else (no typing bank names). */
+    private static void whichAccount(Context c, NotificationManager nm, int nid, Txn t) {
+        if (nm == null) return;
+        List<String> others = new java.util.ArrayList<>();
+        for (String k : Noted.bankAccounts(c)) if (!k.equals(t.account)) others.add(k);
+        // most used first
+        java.util.Map<String, Long> used = new java.util.HashMap<>();
+        for (Account x : Store.get(c).accounts()) used.put(x.key, x.lastUsed);
+        java.util.Collections.sort(others, (x, y) -> Long.compare(used.containsKey(y) ? used.get(y) : 0, used.containsKey(x) ? used.get(x) : 0));
+        boolean more = others.size() > 3;
+        Notification.Builder b = builder(c, "Saved ✓ " + Fmt.plain(t.amount) + (t.merchant.isEmpty() ? "" : " to " + t.merchant),
+                "Paid from " + Noted.fullLabel(c, t.account) + ". Another account? Tap it below" + (more ? " (or More… for the rest)." : "."), openTxn(c, t, nid));
+        int shown = more ? 2 : others.size();
+        for (int i = 0; i < shown; i++) {
+            Intent mv = new Intent(c, Reasons.class).setAction(MOVE).putExtra("txn", t.id).putExtra("nid", nid).putExtra("to", others.get(i));
+            b.addAction(new Notification.Action.Builder(icon(c), Noted.fullLabel(c, others.get(i)),
+                    PendingIntent.getBroadcast(c, nid * 4 + i, mv, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
+        }
+        if (more) b.addAction(new Notification.Action.Builder(icon(c), "More…", openTxn(c, t, nid)).build());
+        nm.notify(nid, b.build());
     }
 
     private static void done(Context c, NotificationManager nm, int nid, String title, String text, String txnId) {

@@ -1,3 +1,10 @@
+Money 2.1.2 — tap your bank, don't type it 👆
+• “Paid from” is now big buttons, two per row — each shows the bank, the account number and its balance (like Balance): 💵 Cash · 🏦 Union Bank ••1234 · 🏦 Federal ••5678 …
+• Tap one and that account's balance goes down; delete the entry and it comes back
+• Saying it works the natural way: “50 rupees for Lays, paid from Union Bank” or “cut from SBI”
+• Replied to “Paid anyone?” by typing just “50 Ramesh”? The next notification has buttons with your other accounts — tap the right one, no bank names to type
+• On any payment you added, the same buttons let you move it to another account
+
 Money 2.1.1 — every rupee from the right account 🏦
 • Adding a payment yourself now asks “Paid from”: 💵 Cash or the exact bank account — two Federal accounts show as Federal ••1234 and Federal ••5678, each with its balance
 • That account's balance in Money changes right away (marked “+1 you added” until the bank confirms). Delete or hide the entry and the money goes back — cash wallet too

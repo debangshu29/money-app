@@ -76,7 +76,7 @@ public final class Voice {
     private static final Pattern AMOUNT = Pattern.compile("(?<![a-z])([0-9][0-9,]*(?:\\.[0-9]{1,2})?)\\s*(k|thousand|lakh|lac)?(?![0-9])");
     private static final String FILLER = "\\b(?:i|i've|have|has|just|spent|spend|paid|pay|gave|give|given|bought|buy|for|on|at|to|the|a|an|in|of|cash|by|rupees?|rs|inr|bucks|"
             + "today|now|some|my|ka|ke|ki|ko|me|mein|diya|diye|kharcha|kharch|liye|taka|takar|via|using|through|with|"
-            + "wallet|upi|gpay|g pay|google ?pay|google|phone ?pe|phonepay|paytm|bhim|cred|super ?money|online|bank|transfer|transferred|net ?banking|card|debit|scan|scanned)\\b";
+            + "wallet|upi|gpay|g pay|google ?pay|google|phone ?pe|phonepay|paytm|bhim|cred|super ?money|online|bank|transfer|transferred|net ?banking|card|debit|debited|cut|deducted|taken|from|scan|scanned)\\b";
 
     /** Typed text like "50 Ramesh for test from federal ending 1234" → {bank, last4, text without the bank words}. Keeps the original case. */
     public static String[] hint(String typed) {

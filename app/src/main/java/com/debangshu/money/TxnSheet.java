@@ -197,30 +197,14 @@ public final class TxnSheet {
 
         // ---- paid from (entries you added yourself): move it to the right account — its balance follows
         if ((t.sources & (Txn.SRC_SMS | Txn.SRC_APP | Txn.SRC_STMT | Txn.SRC_GAP)) == 0 && t.kind != Txn.SNAPSHOT && !t.credit) {
-            TextView pf = Ui.chip(a, "Paid from: " + Noted.label(a, t.account.isEmpty() ? Cash.ACCOUNT : t.account) + "  ▾", false);
-            pf.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
-            pf.setOnClickListener(v -> {
-                List<String> keys = new ArrayList<>();
-                keys.add(Cash.ACCOUNT);
-                keys.addAll(Noted.bankAccounts(a));
-                String[] names = new String[keys.size()];
-                for (int i = 0; i < keys.size(); i++) names[i] = Noted.label(a, keys.get(i));
-                new Ui.Popup(a).setTitle("Paid from").setItems(names, (x, w) -> {
-                    String to = keys.get(w), was = t.account;
-                    if (to.equals(was)) return;
-                    if (t.kind != Txn.IGNORED && Cash.on(a)) {
-                        if (Cash.ACCOUNT.equals(was)) Cash.refund(a, t.amount);       // back into the wallet
-                        if (Cash.ACCOUNT.equals(to)) Cash.refund(a, -t.amount);       // out of the wallet
-                    }
-                    t.account = to;
-                    t.sources = Cash.ACCOUNT.equals(to) ? Txn.SRC_MANUAL : Txn.SRC_NOTE;
-                    s.update(t);
-                    Noted.rememberFrom(a, to);
-                    pf.setText("Paid from: " + names[w] + "  ▾");
-                    Ui.toast(a, "Moved to " + names[w] + " — its balance is updated");
-                }).show();
-            });
-            box.addView(pf, Ui.margins(Ui.lp(-2, -2), a, 0, 10, 0, 0));
+            TextView pf = Ui.text(a, "Paid from — tap to change", 13, Ui.col(a, R.color.text2), Ui.BOLD);
+            String[] from = {t.account.isEmpty() ? Cash.ACCOUNT : t.account};
+            box.addView(pf, Ui.margins(Ui.lp(-1, -2), a, 0, 14, 0, 8));
+            box.addView(Noted.fromPicker(a, from, true, () -> {
+                Noted.move(a, t, from[0]);
+                Ui.toast(a, "Moved to " + Noted.fullLabel(a, from[0]) + " — balance updated");
+            }));
+
         }
 
         // ---- switches
@@ -374,7 +358,7 @@ public final class TxnSheet {
         TextView info = Ui.sub(a, "The balance in Money changes right away. If the bank's SMS comes later, it joins this — no double entry.");
         info.setPadding(0, Ui.dp(a, 10), 0, 0);
         box.addView(info);
-        TextView mic = Ui.chip(a, "🎤  Say it instead — “20 for chips from Federal”", false);
+        TextView mic = Ui.chip(a, "🎤  Say it instead — “50 for Lays, paid from Union Bank”", false);
         box.addView(mic, Ui.margins(Ui.lp(-2, -2), a, 0, 12, 0, 0));
         android.app.AlertDialog[] cd = new android.app.AlertDialog[1];
         mic.setOnClickListener(v -> { if (cd[0] != null) cd[0].dismiss(); VoiceActivity.start(a); });
@@ -386,7 +370,7 @@ public final class TxnSheet {
                     long paise = SmsParser.paise(amt.getText().toString());
                     if (paise <= 0) { Ui.toast(a, "Enter an amount"); return; }
                     Txn t = Noted.save(a, from[0], paise, what.getText().toString().trim(), null, "");
-                    Ui.toast(a, "Added ✓ " + Fmt.plain(paise) + " from " + Noted.label(a, from[0]));
+                    Ui.toast(a, "Added ✓ " + Fmt.plain(paise) + " from " + Noted.fullLabel(a, from[0]));
                     if (Cats.OTHER.equals(t.category) || t.category.isEmpty()) pickCategory(a, t, null);
                 })
                 .setNegativeButton("Cancel", null);
