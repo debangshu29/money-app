@@ -10,8 +10,8 @@ android {
         applicationId 'com.debangshu.money'
         minSdk 24          // Android 7.0 and newer
         targetSdk 34
-        versionCode 24
-        versionName '2.6.1'
+        versionCode 25
+        versionName '2.7'
     }
 
     // One fixed key for this app, so every new APK installs as an update and keeps your data.

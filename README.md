@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.6.1 — the whole app in English, हिंदी and বাংলা.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.7 — Learn: 61 one-minute money lessons in English, हिंदी and বাংলা, each with proof and sources, plus quiz, myths, scam alerts and a 7-day course.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -271,3 +271,9 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - strings.tsv now has ~2,270 lines: every screen, notification channel, notification text and button, RemoteInput label and the widget (`Lang.t` added where Android shows text directly).
 - Ask: `Ask.Answer.tpl/args` hold each answer as a sentence pattern ({0}, {1}…) plus pieces; `Lang.answer` says it in Hindi/Bengali (word order changes per language). Pieces use internal keys `ask:at {}`, `ask:on {}`, `ask:day {}`, `ask:in {}`. English text is unchanged. Typed questions are still understood in English only.
 - Same-word clashes split: People section "Open" → "Still to settle"; goal template "Home" → "A home"; Plan section "Money" → "Your money".
+
+## Version 2.7 — Learn
+- Content: `app/src/main/assets/learn/learn.json` (groups, course, lessons, myths, scams, quiz, words). Every text is {"en","hi","bn"}. Lessons: `id, g (group), emoji, calc (calculator id or @screen), title, story, ex (uses {vars} from Learn.vars: inc, spend, save10, sip10, em6, cardY…), proof [{t, src, url}], tip, yt (YouTube search)`.
+- `Learn`: loads the JSON, progress (`store obj "learn"`: done, quizBest, courseStart, nudged), your-numbers vars, 7-day course + daily nudge (BgJob), Try it / videos / links, and `Learn.link(activity, textView)` which underlines money words (also used in Explain boxes and calculator explanations).
+- Screens: `LearnActivity` (hub; modes myths / scams / words), `LessonActivity`, `QuizActivity` (quiz or flashcards). Grow tab shows “Learn in 1 minute” + the course card.
+- Facts were checked on 14 Nov 2026 (rates: PPF 7.1%, SSY/SCSS 8.2%, NSC 7.7%, KVP 7.5%, PO savings 4%, EPF 8.25%; CPI Sep 2026 5.54%; DICGC ₹5 lakh; new regime ₹12 lakh + ₹75,000; SEBI F&O FY26 87.7% lost; NPCI P2P collect stopped 1 Oct 2025; SEBI digital gold caution 8 Nov 2025). Update learn.json when rates change.

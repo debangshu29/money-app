@@ -202,6 +202,7 @@ public class CalcActivity extends Screen {
                 TextView t = Ui.text(this, line, 14, Ui.REGULAR);
                 t.setLineSpacing(Ui.dp(this, 2), 1f);
                 t.setPadding(0, Ui.dp(this, 8), 0, 0);
+                Learn.link(this, t);
                 box.addView(t);
             }
             result.addView(box, Ui.margins(Ui.matchWrap(), this, 0, 14, 0, 0));

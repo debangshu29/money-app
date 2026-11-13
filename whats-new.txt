@@ -1,3 +1,14 @@
+Money 2.7 — Learn 🎓
+• Grow → Learn in 1 minute: 61 short lessons in English, हिंदी and বাংলা — money basics, banks and safe savings, shares and mutual funds, gold and home, loans and cards, insurance, tax, and staying safe from fraud
+• Every lesson: a simple story, the maths with YOUR own salary and spending, “Why this is true” with the official source (RBI, SEBI, NPCI, IRDAI, Income Tax, MoSPI…), one line to remember
+• ▶ Try it opens the matching calculator or tool; 📺 Watch videos searches YouTube in your language
+• 7-day money basics course: two lessons a day with a gentle reminder
+• Money quiz (10 questions, each answer explained) and flashcards
+• Myth busters: 13 common money myths, with the facts
+• Scam alerts: 10 frauds (KYC links, “scan to receive”, digital arrest, job tasks, fake trading apps, loan apps…) with what to do — and a 1930 button
+• Money words: tap underlined words like SIP, NAV or lock-in in lessons and explanations to see what they mean
+• 3 new badges: Money basics, Quiz whiz, Bookworm
+
 Money 2.6.1 — the whole app in हिंदी and বাংলা 🌐
 • Every screen is now translated: Activity, Insights, Plan (budget, accounts, cards, loans, bills, people, reminders, refunds, tax, statements, reports), Settings, the payment sheet, setup, app lock and updates
 • Notifications too: “Paid anyone?”, “Who was it?”, budget warnings, bills, refunds, cash and balance checks, the evening summary — and the home-screen widget

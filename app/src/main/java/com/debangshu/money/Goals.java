@@ -305,6 +305,9 @@ final class Goals {
             {"jar", "🫙", "Spare change", "Start the round-up jar"},
             {"payday", "💼", "Payday pro", "Split a salary the day it comes"},
             {"rule", "📊", "Balanced", "Keep needs, wants and saving within your rule for a month"},
+            {"learner", "🎓", "Money basics", "Finish the 7-day money basics course"},
+            {"quiz", "🧠", "Quiz whiz", "Score 8 or more in the money quiz"},
+            {"reader", "📚", "Bookworm", "Learn 20 lessons"},
     };
 
     static boolean has(Context c, String id) { return Store.get(c).obj(BADGES).has(id); }

@@ -125,14 +125,40 @@ final class GrowPage {
         body.addView(gc, gap());
         body.addView(Ui.label(a, "Calculators & play"));
         body.addView(CalcHub.featured(a), gap());
-        TextView more = Ui.text(a, "Coming next in Grow: Hindi & Bengali, then 1-minute money lessons.", 12.5f,
-                Ui.col(a, R.color.hint), Ui.SEMIBOLD);
-        more.setGravity(Gravity.CENTER);
-        more.setPadding(Ui.dp(a, 16), Ui.dp(a, 6), Ui.dp(a, 16), 0);
-        body.addView(more);
+        body.addView(Ui.label(a, "Learn in 1 minute"));
+        body.addView(learnCard(), gap());
+        body.addView(LearnActivity.course(a), gap());
 
         scroll.post(() -> scroll.scrollTo(0, y));
         showCelebrations(a);
+    }
+
+    /** Lesson to read now + quiz, myths, scam alerts and all lessons. */
+    private View learnCard() {
+        LinearLayout c = Ui.card(a);
+        org.json.JSONObject next = Learn.next(a);
+        if (next != null) {
+            LinearLayout r = Ui.hbox(a);
+            r.setGravity(Gravity.CENTER_VERTICAL);
+            r.addView(Ui.iconBadge(a, next.optString("emoji", "📘"), 0xFF0E9F6E, 44));
+            LinearLayout t = Ui.vbox(a);
+            t.setPadding(Ui.dp(a, 12), 0, 0, 0);
+            t.addView(Ui.text(a, Learn.doneCount(a) == 0 ? "Your first lesson" : "Next lesson", 12.5f, Ui.col(a, R.color.text2), Ui.BOLD));
+            t.addView(Ui.text(a, new android.text.SpannableString(Learn.s(next, "title")), 16, Ui.col(a, R.color.text), Ui.EXTRABOLD));
+            r.addView(t, Ui.weight1());
+            r.addView(Ui.chevron(a));
+            r.setOnClickListener(v -> LearnActivity.lesson(a, next.optString("id")));
+            c.addView(r);
+        }
+        LinearLayout g = Ui.vbox(a);
+        g.setPadding(0, Ui.dp(a, 10), 0, 0);
+        g.addView(Ui.grid(a,
+                Ui.action(a, "📚", 0xFF0B6F86, "All lessons", v -> a.startActivity(new Intent(a, LearnActivity.class))),
+                Ui.action(a, "🧠", 0xFF8B5CF6, "Quiz", v -> QuizActivity.open(a, false)),
+                Ui.action(a, "💥", 0xFFF97316, "Myth busters", v -> LearnActivity.open(a, "myths")),
+                Ui.action(a, "🚨", 0xFFDC2626, "Scam alerts", v -> LearnActivity.open(a, "scams"))));
+        c.addView(g);
+        return c;
     }
 
     private LinearLayout.LayoutParams gap() { return Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 12); }

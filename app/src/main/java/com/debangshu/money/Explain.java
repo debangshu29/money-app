@@ -187,6 +187,7 @@ final class Explain {
         TextView body = Ui.text(c, t[2], 14.5f, Ui.col(c, R.color.text), Ui.REGULAR);
         body.setLineSpacing(Ui.dp(c, 3), 1f);
         body.setPadding(0, Ui.dp(c, 10), 0, 0);
+        if (c instanceof android.app.Activity) Learn.link((android.app.Activity) c, body);
         card.addView(body);
         TextView got = Ui.text(c, "Got it — hide", 13, Ui.col(c, R.color.accent), Ui.BOLD);
         got.setGravity(Gravity.END);
@@ -204,6 +205,7 @@ final class Explain {
         body.setLineSpacing(Ui.dp(a, 3), 1f);
         int p = Ui.dp(a, 22);
         body.setPadding(p, 0, p, Ui.dp(a, 8));
+        Learn.link(a, body);
         android.widget.ScrollView sv = new android.widget.ScrollView(a);
         sv.addView(body);
         Ui.Popup pop = new Ui.Popup(a);
