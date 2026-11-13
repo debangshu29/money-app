@@ -210,6 +210,9 @@ public final class Engine {
         if (!s.inBatch() && !saved.account.isEmpty()) {
             try { Goals.check(ctx, true); } catch (Exception ignored) { }   // a goal's account moved: milestone?
         }
+        if (isNew[0] && !s.inBatch() && saved.credit) {
+            try { MoneyFacts.maybeSalary(ctx, saved); } catch (Exception ignored) { }   // salary day: offer to split it
+        }
         if (!s.inBatch() && !saved.account.isEmpty()) {
             for (Txn g : s.txns()) {
                 if ((g.sources & Txn.SRC_GAP) != 0 && g.review && saved.account.equals(g.account)

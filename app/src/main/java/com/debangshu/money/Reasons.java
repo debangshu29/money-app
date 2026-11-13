@@ -40,7 +40,8 @@ public class Reasons extends BroadcastReceiver {
         Alerts.channels(c);
         int nid = nid(t.id);
         String title = Fmt.plain(t.amount) + " to " + t.merchant + " — what for?";
-        String text = "Tap a reason or type one — so you still know in a month.";
+        String impact = MoneyFacts.goalImpact(c, t.amount);     // "= 13% of your Laptop goal"
+        String text = (impact.isEmpty() ? "" : "That's " + impact.substring(2) + ". ") + "Tap a reason or type one — so you still know in a month.";
         Notification.Builder b = builder(c, title, text, openTxn(c, t, nid));
         int k = 0;
         for (String[] r : ReasonLogic.suggest(all, t, 2)) {

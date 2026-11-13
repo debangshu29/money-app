@@ -39,6 +39,11 @@ public final class TxnSheet {
         TextView name = Ui.text(a, (t.merchant.isEmpty() ? "Add a name" : t.merchant) + "  ✎", 16, Ui.SEMIBOLD);
         name.setOnClickListener(v -> rename(a, t, () -> { if (dlg[0] != null) dlg[0].dismiss(); show(a, t); }));
         hc.addView(name);
+        if (t.isSpend()) {   // what it really costs: hours of work, and the goal it would have gone to
+            String hrs = MoneyFacts.hoursFor(a, t.amount), gi = MoneyFacts.goalImpact(a, t.amount);
+            String extra = hrs.isEmpty() ? gi : gi.isEmpty() ? "≈ " + hrs : "≈ " + hrs + "  ·  " + gi;
+            if (!extra.isEmpty()) hc.addView(Ui.text(a, extra, 12.5f, Ui.col(a, R.color.text2), Ui.SEMIBOLD));
+        }
         head.addView(hc, Ui.weight1());
         box.addView(head);
 

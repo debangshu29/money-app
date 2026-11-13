@@ -300,6 +300,11 @@ final class Goals {
             {"festival_ready", "🪔", "Festival ready", "Plan ahead for a festival"},
             {"saver", "🐷", "Saver", "Put last month's leftover into a goal"},
             {"dreamer", "✨", "Dreamer", "Have 3 goals going"},
+            {"patient", "⏳", "Patient", "Skip something on your wait-list"},
+            {"healthy", "❤️", "In shape", "Reach a money health score of 65+"},
+            {"jar", "🫙", "Spare change", "Start the round-up jar"},
+            {"payday", "💼", "Payday pro", "Split a salary the day it comes"},
+            {"rule", "📊", "Balanced", "Keep needs, wants and saving within your rule for a month"},
     };
 
     static boolean has(Context c, String id) { return Store.get(c).obj(BADGES).has(id); }

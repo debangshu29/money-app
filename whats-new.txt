@@ -1,3 +1,17 @@
+Money 2.4 — Save more 🐷
+• Grow → Your money: your 50/30/20 split this month, Money health score, what's left at month end, how long your money lasts if income stopped, and the round-up jar
+• 50/30/20: Needs · Wants · Saved against the rule you pick (50/30/20, 60/20/20, 70/20/10 or Pay yourself first). Tap any category to move it between needs and wants
+• Money health: one score out of 100 from saving, emergency fund, EMIs, budget and goals — tap a part to see why, with one tip each
+• Leak finder: subscriptions (mark the ones to cancel), bank charges, food delivery, small daily spends — what each costs in a year and in 10 years
+• Wait-list: park something you want for 7 or 30 days. Money asks again when time's up — skip it and it counts as saved
+• True price of a habit: pick a repeat spend, slide “cut by”, see a year's saving and what it becomes in 10 years (with a graph)
+• Hours of work: see any price as hours of your work — optionally on every payment and the wait-list
+• Future you: what monthly investing becomes at 30, 40, 50, and when you reach your freedom number
+• Salary-day split: the moment your salary SMS arrives, one notification → save first, set the budget, fill your goals
+• Round-up jar: every payment rounded up to ₹10 / ₹50 / ₹100, the spare change saved for a goal
+• Big payments now say “That's 13% of your Laptop goal”
+• New challenges: No-spend weekends and the 52-week saving challenge (₹13,780 in a year). 5 new badges
+
 Money 2.3 — Grow 🌱
 • New Grow tab (Home · Activity · Insights · Plan · Grow). Pay & note is now the first button on Home
 • Goals 2.0 in 3 taps: pick what for (emergency fund, phone, trip, festival…), how much and by when, then tap the bank account the money is in

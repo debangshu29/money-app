@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.3 — the Grow tab: goals linked to your real accounts (ahead / on track / behind), what-if sliders, split my saving, festival planner, badges.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.4 — Save more: 50/30/20, money health score, leak finder, wait-list, habit price, hours of work, future you, salary-day split, round-up jar.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -245,3 +245,8 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - `GoalMath` (plain Java, tested by T17): status (ahead / on track / behind / not moving), pace from daily snapshots, finish date, split, milestones, festival table, where-to-keep buckets.
 - `Goals` (data): goals in Store list "goals"; linked goals use the account's live balance; badges in Store obj "badges".
 - `GoalSetup` (3 steps) and `GoalActivity` (detail, projection graph `Charts.Line`, what-if sliders, photo, pause).
+
+## Version 2.4 — Save more
+- `SaveMath` (plain Java, tested by T18): 50/30/20 buckets, health score parts, runway, forecast, SIP/lump sum, freedom number, habit price, round-up, hours of work, salary detection.
+- `MoneyFacts`: income (set or detected), savings, buckets with your own moves, health, forecast, jar, wait-list check (BgJob), salary-day notification (Engine).
+- Screens: `RuleActivity`, `HealthActivity`, `LeaksActivity`, `WaitListActivity`, `HabitActivity`, `FutureActivity`, `SalarySplitActivity`; sheets in `GrowPage` (hours of work, round-up jar); `Slider` helper.

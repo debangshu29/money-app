@@ -28,6 +28,8 @@ public class Challenges extends Activity {
             {"delivery", "🛵", "No food delivery", "No Swiggy, Zomato, EatSure, Domino's…"},
             {"shopping", "🛍️", "No online shopping", "No Amazon, Flipkart, Myntra, Ajio, Meesho, Nykaa…"},
             {"daily", "🎯", "Under ₹… a day", "Keep each day's spending under an amount you choose"},
+            {"weekend", "🌴", "No-spend weekends", "Saturdays and Sundays without spending (bills don't count)"},
+            {"week52", "📈", "52-week saving", "Week 1 save ₹10, week 2 ₹20 … week 52 ₹520 — ₹13,780 in a year"},
     };
     private static final Pattern DELIVERY = Pattern.compile("swiggy|zomato|eatsure|domino|pizza hut|faasos|box8|behrouz|magicpin|zepto cafe");
     private static final Pattern SHOPPING = Pattern.compile("amazon|flipkart|myntra|ajio|meesho|nykaa|tata cliq|snapdeal|shopsy|firstcry|purplle");
@@ -43,6 +45,12 @@ public class Challenges extends Activity {
     static boolean dayOk(JSONObject ch, List<Txn> all, long day) {
         long end = Fmt.addDays(day, 1);
         String t = ch.optString("type");
+        if ("week52".equals(t)) return true;
+        if ("weekend".equals(t)) {
+            int dow = Fmt.cal(day).get(java.util.Calendar.DAY_OF_WEEK);
+            if (dow != java.util.Calendar.SATURDAY && dow != java.util.Calendar.SUNDAY) return true;
+            t = "nospend";
+        }
         long sum = 0;
         for (Txn x : all) {
             if (!x.isSpend() || x.time < day || x.time >= end) continue;
@@ -120,12 +128,61 @@ public class Challenges extends Activity {
         box.addView(add);
     }
 
+    /** 52-week challenge: week n puts aside ₹10 × n. */
+    private View week52(JSONObject ch) {
+        int done = ch.optInt("ticks");
+        long start = Fmt.startOfDay(ch.optLong("start"));
+        int week = (int) Math.min(52, (System.currentTimeMillis() - start) / (7 * GoalMath.DAY) + 1);
+        long saved = 1000L * done * (done + 1) / 2;
+        LinearLayout c = Ui.card(this);
+        LinearLayout h = Ui.hbox(this);
+        h.addView(Ui.iconBadge(this, "📈", 0xFF0E9F6E, 44));
+        LinearLayout col = Ui.vbox(this);
+        col.setPadding(Ui.dp(this, 12), 0, 0, 0);
+        col.addView(Ui.text(this, "52-week saving", 16, Ui.BOLD));
+        col.addView(Ui.sub(this, "Week " + week + " of 52 · " + done + " done · " + Fmt.rs(saved) + " saved"));
+        h.addView(col, Ui.weight1());
+        c.addView(h);
+        Charts.Progress pr = new Charts.Progress(this);
+        pr.set(done / 52f, 0xFF0E9F6E);
+        c.addView(pr, Ui.margins(Ui.matchWrap(), this, 0, 12, 0, 10));
+        if (done < 52) {
+            long next = 1000L * (done + 1);
+            boolean behind = done + 1 < week;
+            TextView b = Ui.chip(this, "I put aside " + Fmt.rs(next) + " (week " + (done + 1) + ")", true);
+            b.setOnClickListener(v -> {
+                JSONArray a = list(this);
+                for (int i = 0; i < a.length(); i++) if (ch.optString("id").equals(a.optJSONObject(i).optString("id"))) {
+                    try { a.optJSONObject(i).put("ticks", done + 1); } catch (Exception ignored) { }
+                }
+                Store.get(this).putList(KEY, a);
+                Ui.toast(this, done + 1 == 52 ? "52 weeks done — " + Fmt.rs(1378000) + " saved! 🏆" : "Week " + (done + 1) + " done ✓");
+                build();
+            });
+            LinearLayout r = Ui.hbox(this);
+            r.addView(b);
+            c.addView(r);
+            if (behind) { TextView n = Ui.sub(this, "You're a few weeks behind — catch up any time."); n.setPadding(0, Ui.dp(this, 6), 0, 0); c.addView(n); }
+        } else c.addView(Ui.text(this, "🏆 Done — ₹13,780 saved", 15, Ui.col(this, R.color.success), Ui.BOLD));
+        c.setOnLongClickListener(v -> {
+            new Ui.Popup(this).setTitle("Stop the 52-week challenge?").setPositiveButton("Remove", (d, w) -> {
+                JSONArray a = list(this), out = new JSONArray();
+                for (int i = 0; i < a.length(); i++) if (!ch.optString("id").equals(a.optJSONObject(i).optString("id"))) out.put(a.optJSONObject(i));
+                Store.get(this).putList(KEY, out);
+                build();
+            }).setNegativeButton("Keep going", null).show();
+            return true;
+        });
+        return c;
+    }
+
     private View card(JSONObject ch, List<Txn> all) {
+        if ("week52".equals(ch.optString("type"))) return week52(ch);
         String[] t = type(ch.optString("type"));
         int[] st = streak(ch, all);
         LinearLayout c = Ui.card(this);
         LinearLayout h = Ui.hbox(this);
-        h.addView(Ui.badge(this, t[1], 0xFFF97316, 44));
+        h.addView(Ui.iconBadge(this, t[1], 0xFFF97316, 44));
         LinearLayout col = Ui.vbox(this);
         col.setPadding(Ui.dp(this, 12), 0, 0, 0);
         String title = "daily".equals(ch.optString("type")) ? "Under " + Fmt.plain(ch.optLong("limit")) + " a day" : t[2];
@@ -198,13 +255,20 @@ public class Challenges extends Activity {
     }
 
     private void start(String type, long limit) {
-        JSONArray a = list(this);
+        begin(this, type, limit);
+        Ui.toast(this, "Started — good luck! 🔥");
+        build();
+    }
+
+    /** Start a challenge from anywhere (e.g. the Leak finder). Returns false if it's already running. */
+    static boolean begin(Context c, String type, long limit) {
+        JSONArray a = list(c);
+        for (int i = 0; i < a.length(); i++) if (type.equals(a.optJSONObject(i).optString("type")) && !"daily".equals(type)) return false;
         try {
             a.put(new JSONObject().put("id", java.util.UUID.randomUUID().toString()).put("type", type).put("limit", limit)
                     .put("start", Fmt.startOfDay(System.currentTimeMillis())).put("best", 0));
         } catch (Exception ignored) { }
-        Store.get(this).putList(KEY, a);
-        Ui.toast(this, "Started — good luck! 🔥");
-        build();
+        Store.get(c).putList(KEY, a);
+        return true;
     }
 }

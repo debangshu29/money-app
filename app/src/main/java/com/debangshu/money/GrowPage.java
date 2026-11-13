@@ -58,6 +58,31 @@ final class GrowPage {
         View left = leftover(goals);
         if (left != null) body.addView(left, gap());
 
+        // ---- your money at a glance
+        body.addView(Ui.label(a, "Your money"));
+        body.addView(ruleCard(), gap());
+        LinearLayout tiles = Ui.hbox(a);
+        tiles.setBaselineAligned(false);
+        double[] f = new double[6];
+        int score = 0;
+        for (int p : MoneyFacts.health(a, f)) score += p;
+        tiles.addView(tile("❤️", HealthActivity.color(score), "Money health", score + " · " + SaveMath.grade(score),
+                v -> a.startActivity(new Intent(a, HealthActivity.class))), new LinearLayout.LayoutParams(0, -2, 1));
+        long[] fc = MoneyFacts.forecast(a);
+        tiles.addView(tile("📆", fc[0] >= 0 ? 0xFF0B6F86 : 0xFFDC2626, "Month end",
+                (fc[0] >= 0 ? "~" + Fmt.rs(fc[0]) : Fmt.rs(-fc[0]) + " short") + " left",
+                v -> a.startActivity(new Intent(a, HealthActivity.class))), Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, 10, 0, 0, 0));
+        body.addView(tiles, gap());
+        LinearLayout tiles2 = Ui.hbox(a);
+        tiles2.setBaselineAligned(false);
+        String run = f[1] >= 24 ? "2+ years" : String.format(java.util.Locale.ROOT, "%.1f", f[1]).replace(".0", "") + " months";
+        tiles2.addView(tile("☂️", 0xFF6366F1, "If income stopped", "Lasts " + run,
+                v -> a.startActivity(new Intent(a, HealthActivity.class))), new LinearLayout.LayoutParams(0, -2, 1));
+        boolean jarOn = MoneyFacts.jar(a).optBoolean("on");
+        tiles2.addView(tile("🫙", 0xFF0E9F6E, "Round-up jar", jarOn ? Fmt.rs(MoneyFacts.jarAmount(a)) + " inside" : "Start saving spare change",
+                v -> jarSheet(a)), Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, 10, 0, 0, 0));
+        body.addView(tiles2, gap());
+
         // ---- goals
         LinearLayout gh = Ui.hbox(a);
         gh.addView(Ui.label(a, "My goals"), Ui.weight1());
@@ -69,7 +94,15 @@ final class GrowPage {
         }
         body.addView(gh);
         if (goals.isEmpty()) body.addView(emptyGoals(), gap());
-        else for (JSONObject g : goals) body.addView(goalCard(g), gap());
+        else {
+            for (JSONObject g : goals) body.addView(goalCard(g), gap());
+            TextView wk = Ui.chip(a, "💡  Where should goal money sit?", false);
+            wk.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 18));
+            wk.setOnClickListener(v -> whereSheet(a));
+            LinearLayout wr = Ui.hbox(a);
+            wr.addView(wk);
+            body.addView(wr, gap());
+        }
 
         View fest = festivals(goals);
         if (fest != null) { body.addView(Ui.label(a, "Festivals coming up")); body.addView(fest, gap()); }
@@ -81,12 +114,16 @@ final class GrowPage {
         LinearLayout gc = Ui.card(a);
         gc.setPadding(Ui.dp(a, 6), Ui.dp(a, 10), Ui.dp(a, 6), Ui.dp(a, 10));
         gc.addView(Ui.grid(a,
-                Ui.action(a, "🔀", 0xFF6366F1, "Split my saving", v -> split(a)),
-                Ui.action(a, "🔥", 0xFFEF4444, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class))),
-                Ui.action(a, "💡", 0xFFF59E0B, "Where to keep it", v -> whereSheet(a)),
-                Ui.action(a, "🎯", 0xFF0E9F6E, "New goal", v -> GoalSetup.start(a))));
+                Ui.action(a, "🧭", 0xFFEF4444, "Leak finder", v -> a.startActivity(new Intent(a, LeaksActivity.class))),
+                Ui.action(a, "⏳", 0xFF6366F1, "Wait-list", v -> a.startActivity(new Intent(a, WaitListActivity.class))),
+                Ui.action(a, "☕", 0xFFF97316, "Habit price", v -> a.startActivity(new Intent(a, HabitActivity.class))),
+                Ui.action(a, "🕒", 0xFF0EA5E9, "Hours of work", v -> hoursSheet(a)),
+                Ui.action(a, "🌅", 0xFF0E9F6E, "Future you", v -> a.startActivity(new Intent(a, FutureActivity.class))),
+                Ui.action(a, "💼", 0xFF8B5CF6, "Salary split", v -> a.startActivity(new Intent(a, SalarySplitActivity.class))),
+                Ui.action(a, "🔀", 0xFF3B82F6, "Split saving", v -> split(a)),
+                Ui.action(a, "🔥", 0xFFF59E0B, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class)))));
         body.addView(gc, gap());
-        TextView more = Ui.text(a, "Coming soon in Grow: calculators with live graphs, 50/30/20, money lessons and more.", 12.5f,
+        TextView more = Ui.text(a, "Coming next in Grow: calculators with live graphs, then money lessons.", 12.5f,
                 Ui.col(a, R.color.hint), Ui.SEMIBOLD);
         more.setGravity(Gravity.CENTER);
         more.setPadding(Ui.dp(a, 16), Ui.dp(a, 6), Ui.dp(a, 16), 0);
@@ -130,6 +167,204 @@ final class GrowPage {
             c.addView(r, Ui.margins(Ui.matchWrap(), a, 0, 12, 0, 0));
         }
         return c;
+    }
+
+    // ------------------------------------------------------------------ 50/30/20 card and small tiles
+
+    private View ruleCard() {
+        LinearLayout c = Ui.card(a);
+        c.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 22));
+        long[] m = RuleActivity.month(a, 0, null);
+        Object[] rule = SaveMath.RULES[MoneyFacts.rule(a)];
+        LinearLayout h = Ui.hbox(a);
+        h.addView(Ui.text(a, "This month · " + rule[0], 13, Ui.col(a, R.color.text2), Ui.BOLD), Ui.weight1());
+        h.addView(Ui.chevron(a));
+        c.addView(h);
+        if (m[0] <= 0) {
+            c.addView(Ui.text(a, "See how your money splits into needs, wants and saving", 14.5f, Ui.SEMIBOLD));
+        } else {
+            int[] pct = SaveMath.percents(m[0], m[1], m[2]);
+            LinearLayout nums = Ui.hbox(a);
+            nums.setPadding(0, Ui.dp(a, 6), 0, Ui.dp(a, 8));
+            for (int k = 0; k < 3; k++) {
+                TextView t = Ui.text(a, RuleActivity.NAMES[k] + " " + pct[k] + "%", 14.5f, RuleActivity.COL[k], Ui.EXTRABOLD);
+                nums.addView(t, Ui.weight1());
+            }
+            c.addView(nums);
+            c.addView(RuleActivity.bar(a, pct, 10));
+            int[] t = {(Integer) rule[1], (Integer) rule[2], (Integer) rule[3]};
+            boolean ok = pct[2] >= t[2] && (t[1] < 0 ? pct[0] + pct[1] <= t[0] : pct[0] <= t[0] && pct[1] <= t[1]);
+            TextView line = Ui.text(a, ok ? "✓ Within your rule so far" : pct[2] < t[2] ? "Saving " + pct[2] + "% — aim for " + t[2] + "%" : "A bit over on spending — tap to see where",
+                    12.5f, ok ? Ui.col(a, R.color.success) : 0xFFD97706, Ui.SEMIBOLD);
+            line.setPadding(0, Ui.dp(a, 8), 0, 0);
+            c.addView(line);
+        }
+        c.setOnClickListener(v -> a.startActivity(new Intent(a, RuleActivity.class)));
+        if (!Goals.has(a, "rule")) {   // last month within the rule → badge
+            long[] lm = RuleActivity.month(a, 1, null);
+            if (lm[0] > 0 && lm[1] + lm[2] > 0) {
+                int[] lp = SaveMath.percents(lm[0], lm[1], lm[2]);
+                int[] t = {(Integer) rule[1], (Integer) rule[2], (Integer) rule[3]};
+                boolean ok = lp[2] >= t[2] && (t[1] < 0 ? lp[0] + lp[1] <= t[0] : lp[0] <= t[0] && lp[1] <= t[1]);
+                if (ok) Goals.award(a, "rule");
+            }
+        }
+        return c;
+    }
+
+    private View tile(String emoji, int color, String label, String value, View.OnClickListener l) {
+        LinearLayout t = Ui.vbox(a);
+        t.setPadding(Ui.dp(a, 14), Ui.dp(a, 12), Ui.dp(a, 12), Ui.dp(a, 12));
+        t.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 20));
+        t.addView(Ui.iconBadge(a, emoji, color, 34));
+        TextView lt = Ui.oneLine(Ui.text(a, label, 12.5f, Ui.col(a, R.color.text2), Ui.BOLD));
+        lt.setPadding(0, Ui.dp(a, 8), 0, 0);
+        t.addView(lt);
+        t.addView(Ui.oneLine(Ui.text(a, value, 15.5f, Ui.EXTRABOLD)));
+        t.setOnClickListener(l);
+        return t;
+    }
+
+    // ------------------------------------------------------------------ hours of work
+
+    static void hoursSheet(Activity a) {
+        LinearLayout b = Ui.vbox(a);
+        int p = Ui.dp(a, 22);
+        b.setPadding(p, 0, p, Ui.dp(a, 8));
+        TextView intro = Ui.sub(a, "Every price is really a piece of your time. Seeing it in hours makes it easier to decide if it's worth it.");
+        intro.setPadding(0, 0, 0, Ui.dp(a, 10));
+        b.addView(intro);
+        long inc = MoneyFacts.income(a);
+        TextView incT = Ui.text(a, inc > 0 ? "Income: " + Fmt.rs(inc) + " a month — change" : "Set your monthly income", 14, Ui.col(a, R.color.accent), Ui.BOLD);
+        b.addView(incT);
+        TextView res = Ui.text(a, "", 24, Ui.EXTRABOLD);
+        TextView perHour = Ui.sub(a, "");
+        long[] price = {3000};
+        Runnable upd = () -> {
+            long i2 = MoneyFacts.income(a);
+            double h = SaveMath.hours(price[0] * 100, i2, MoneyFacts.hoursPerWeek(a));
+            res.setText(i2 <= 0 ? "—" : Slider.rs(price[0]) + " = " + SaveMath.hoursText(h));
+            perHour.setText(i2 <= 0 ? "Money needs your income for this." : "You earn about " + Fmt.rs(Math.round(i2 / (MoneyFacts.hoursPerWeek(a) * 52 / 12.0))) + " an hour.");
+        };
+        incT.setOnClickListener(v -> RuleActivity.askIncome(a, () -> {
+            incT.setText("Income: " + Fmt.rs(MoneyFacts.income(a)) + " a month — change");
+            upd.run();
+        }));
+        b.addView(new Slider(a, "Hours you work a week", 10, 80, 1, (long) MoneyFacts.hoursPerWeek(a), v -> v + " h", v -> {
+            Store.get(a).prefs().edit().putFloat("hoursWeek", v).apply();
+            upd.run();
+        }).view, Ui.margins(Ui.matchWrap(), a, 0, 14, 0, 0));
+        b.addView(new Slider(a, "Try a price", 100, 100000, 100, price[0], Slider::rs, v -> { price[0] = v; upd.run(); }).view);
+        b.addView(res);
+        b.addView(perHour);
+        android.widget.Switch sw = new android.widget.Switch(a);
+        sw.setText("Show hours on payments and the wait-list");
+        sw.setTypeface(Ui.face(a, Ui.SEMIBOLD));
+        sw.setChecked(MoneyFacts.showHours(a));
+        sw.setOnCheckedChangeListener((x, on) -> Store.get(a).prefs().edit().putBoolean("showHours", on).apply());
+        b.addView(sw, Ui.margins(Ui.matchWrap(), a, 0, 16, 0, 0));
+        upd.run();
+        ScrollView sv = new ScrollView(a);
+        sv.addView(b);
+        Ui.Popup pop = new Ui.Popup(a);
+        pop.setTitle("Hours of work");
+        pop.setView(sv).setPositiveButton("Done", null);
+        pop.sheet().show();
+    }
+
+    // ------------------------------------------------------------------ round-up jar
+
+    static void jarSheet(Activity a) {
+        JSONObject j = MoneyFacts.jar(a);
+        LinearLayout b = Ui.vbox(a);
+        int p = Ui.dp(a, 22);
+        b.setPadding(p, 0, p, Ui.dp(a, 8));
+        TextView intro = Ui.sub(a, "Every payment is rounded up — ₹47 becomes ₹50 and ₹3 goes in the jar. You won't feel it, but it adds up. "
+                + "When the jar is worth it, move it to a goal.");
+        b.addView(intro);
+        boolean on = j.optBoolean("on");
+        long amount = MoneyFacts.jarAmount(a);
+        if (on) {
+            TextView big = Ui.text(a, Fmt.rs(amount), 30, Ui.EXTRABOLD);
+            big.setPadding(0, Ui.dp(a, 12), 0, 0);
+            b.addView(big);
+            b.addView(Ui.sub(a, "in the jar since " + Fmt.date(j.optLong("since")) + " · rounding to " + Fmt.rs(j.optLong("step", 1000))));
+        }
+        TextView sl = Ui.text(a, "Round up to", 13, Ui.col(a, R.color.text2), Ui.BOLD);
+        sl.setPadding(0, Ui.dp(a, 14), 0, Ui.dp(a, 6));
+        b.addView(sl);
+        LinearLayout r = Ui.hbox(a);
+        long[] steps = {1000, 5000, 10000};
+        List<TextView> chips = new ArrayList<>();
+        long cur = j.optLong("step", 1000);
+        for (long st : steps) {
+            TextView ch = Ui.chip(a, "Next " + Fmt.rs(st), st == cur);
+            if (st != cur) ch.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+            ch.setOnClickListener(v -> {
+                try { JSONObject o = MoneyFacts.jar(a); o.put("step", st); Store.get(a).putObj("jar", o); } catch (Exception ignored) { }
+                for (TextView t : chips) {
+                    boolean x = t == v;
+                    t.setBackground(Ui.rippleRound(a, x ? Ui.col(a, R.color.accent) : Ui.col(a, R.color.surface2), 18));
+                    t.setTextColor(x ? Ui.col(a, R.color.on_accent) : Ui.col(a, R.color.text));
+                }
+            });
+            chips.add(ch);
+            r.addView(ch, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
+        }
+        b.addView(r);
+        ScrollView sv = new ScrollView(a);
+        sv.addView(b);
+        Ui.Popup pop = new Ui.Popup(a);
+        pop.setTitle("Round-up jar");
+        pop.setView(sv);
+        if (!on) pop.setPositiveButton("Start the jar", (d, w) -> {
+            try {
+                JSONObject o = MoneyFacts.jar(a);
+                o.put("on", true).put("since", System.currentTimeMillis()).put("moved", 0L);
+                if (!o.has("step")) o.put("step", 1000L);
+                Store.get(a).putObj("jar", o);
+            } catch (Exception ignored) { }
+            Goals.award(a, "jar");
+            Ui.toast(a, "Jar started — round-ups from now on");
+            if (a instanceof MainActivity) ((MainActivity) a).refresh();
+            showCelebrations(a);
+        });
+        else {
+            pop.setPositiveButton(amount > 0 ? "Move to a goal" : "OK", (d, w) -> { if (amount > 0) moveJar(a, amount); });
+            pop.setNeutralButton("Stop jar", (d, w) -> {
+                try { JSONObject o = MoneyFacts.jar(a); o.put("on", false); Store.get(a).putObj("jar", o); } catch (Exception ignored) { }
+                if (a instanceof MainActivity) ((MainActivity) a).refresh();
+            });
+        }
+        pop.sheet().show();
+    }
+
+    private static void moveJar(Activity a, long amount) {
+        List<JSONObject> open = Goals.active(a);
+        if (open.isEmpty()) { Ui.toast(a, "Add a goal first"); return; }
+        String[] names = new String[open.size()];
+        for (int i = 0; i < open.size(); i++) names[i] = open.get(i).optString("name");
+        new Ui.Popup(a).setTitle("Move " + Fmt.rs(amount) + " to…").setItems(names, (d, w) -> {
+            JSONObject g = open.get(w);
+            try {
+                JSONObject o = MoneyFacts.jar(a);
+                o.put("moved", o.optLong("moved") + amount);
+                Store.get(a).putObj("jar", o);
+                if (g.optString("account").isEmpty()) {
+                    g.put("saved", g.optLong("saved") + amount);
+                    org.json.JSONArray log = g.optJSONArray("log");
+                    if (log == null) { log = new org.json.JSONArray(); g.put("log", log); }
+                    log.put(new org.json.JSONArray().put(System.currentTimeMillis()).put(amount).put("Round-up jar"));
+                    Goals.put(a, g);
+                    Ui.toast(a, "Moved to " + g.optString("name"));
+                } else {
+                    new Ui.Popup(a).setTitle("Move it in your bank app")
+                            .setMessage("Send " + Fmt.rs(amount) + " to " + Noted.fullLabel(a, g.optString("account")) + ". Money sees it from the SMS.")
+                            .setPositiveButton("OK", null).show();
+                }
+            } catch (Exception ignored) { }
+            if (a instanceof MainActivity) ((MainActivity) a).refresh();
+        }).show();
     }
 
     // ------------------------------------------------------------------ goal cards

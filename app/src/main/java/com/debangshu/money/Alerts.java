@@ -67,6 +67,13 @@ public final class Alerts {
         show(c, channel, id, title, text, new Intent(c, screen).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
+    /** Same, with your own intent (extras included). */
+    static void postIntent(Context c, String channel, int id, String title, String text, Intent open) {
+        if (!canNotify(c)) return;
+        channels(c);
+        show(c, channel, id, title, text, open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
     private static void show(Context c, String channel, int id, String title, String text, Intent open) {
         PendingIntent pi = PendingIntent.getActivity(c, id, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         @SuppressWarnings("deprecation")
