@@ -2,6 +2,7 @@ package com.debangshu.money;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Tap a transaction: see everything, fix the name or category (and teach the app), add a note. */
@@ -193,6 +195,34 @@ public final class TxnSheet {
         note.setTextSize(15);
         box.addView(note, Ui.margins(Ui.matchWrap(), a, 0, 6, 0, 0));
 
+        // ---- paid from (entries you added yourself): move it to the right account — its balance follows
+        if ((t.sources & (Txn.SRC_SMS | Txn.SRC_APP | Txn.SRC_STMT | Txn.SRC_GAP)) == 0 && t.kind != Txn.SNAPSHOT && !t.credit) {
+            TextView pf = Ui.chip(a, "Paid from: " + Noted.label(a, t.account.isEmpty() ? Cash.ACCOUNT : t.account) + "  ▾", false);
+            pf.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface2), 18));
+            pf.setOnClickListener(v -> {
+                List<String> keys = new ArrayList<>();
+                keys.add(Cash.ACCOUNT);
+                keys.addAll(Noted.bankAccounts(a));
+                String[] names = new String[keys.size()];
+                for (int i = 0; i < keys.size(); i++) names[i] = Noted.label(a, keys.get(i));
+                new Ui.Popup(a).setTitle("Paid from").setItems(names, (x, w) -> {
+                    String to = keys.get(w), was = t.account;
+                    if (to.equals(was)) return;
+                    if (t.kind != Txn.IGNORED && Cash.on(a)) {
+                        if (Cash.ACCOUNT.equals(was)) Cash.refund(a, t.amount);       // back into the wallet
+                        if (Cash.ACCOUNT.equals(to)) Cash.refund(a, -t.amount);       // out of the wallet
+                    }
+                    t.account = to;
+                    t.sources = Cash.ACCOUNT.equals(to) ? Txn.SRC_MANUAL : Txn.SRC_NOTE;
+                    s.update(t);
+                    Noted.rememberFrom(a, to);
+                    pf.setText("Paid from: " + names[w] + "  ▾");
+                    Ui.toast(a, "Moved to " + names[w] + " — its balance is updated");
+                }).show();
+            });
+            box.addView(pf, Ui.margins(Ui.lp(-2, -2), a, 0, 10, 0, 0));
+        }
+
         // ---- switches
         if ((t.sources & Txn.SRC_GAP) == 0) {
             Switch transfer = sw(a, t.credit ? "Not income (money from my own account, a refund I'm tracking elsewhere…)"
@@ -201,7 +231,7 @@ public final class TxnSheet {
             box.addView(transfer);
         }
         Switch hide = sw(a, "Hide this (not mine, or counted twice)", t.kind == Txn.IGNORED);
-        hide.setOnCheckedChangeListener((b, on) -> { t.kind = on ? Txn.IGNORED : Txn.NORMAL; s.update(t); });
+        hide.setOnCheckedChangeListener((b, on) -> { gone(a, t, on); t.kind = on ? Txn.IGNORED : Txn.NORMAL; s.update(t); });
         box.addView(hide);
 
         // ---- original message
@@ -219,8 +249,8 @@ public final class TxnSheet {
         AlertDialog d = new Ui.Popup(a).sheet().setView(Ui.capHeight(sv, 0.72f))
                 .setPositiveButton("Done", null)
                 .setNeutralButton("Delete", (x, w) -> new Ui.Popup(a).setTitle("Delete this?")
-                        .setMessage("It's removed from your totals. (If the same SMS is read again later, it won't come back.)")
-                        .setPositiveButton("Delete", (y, z) -> { t.kind = Txn.IGNORED; t.review = false; s.update(t); })
+                        .setMessage("It's removed from your totals and the balance goes back. (If the same SMS is read again later, it won't come back.)")
+                        .setPositiveButton("Delete", (y, z) -> { gone(a, t, true); t.kind = Txn.IGNORED; t.review = false; s.update(t); })
                         .setNegativeButton("Cancel", null).show())
                 .setOnDismissListener(x -> {
                     String n = note.getText().toString().trim();
@@ -324,58 +354,51 @@ public final class TxnSheet {
         LinearLayout box = Ui.vbox(a);
         int p = Ui.dp(a, 24);
         box.setPadding(p, 0, p, 0);
-        boolean[] upi = {false};
-        String[] acc = {Noted.defaultAccount(a)};
-        LinearLayout kind = Ui.hbox(a);
-        TextView cashC = Ui.chip(a, "💵  Cash", true), upiC = Ui.chip(a, "📱  UPI / bank", false);
-        kind.addView(cashC, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
-        kind.addView(upiC);
-        box.addView(kind, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 8));
-        TextView info = Ui.sub(a, "");
-        info.setPadding(0, 0, 0, Ui.dp(a, 4));
-        box.addView(info);
-        TextView mic = Ui.chip(a, "🎤  Say it instead — “200 for chai”", false);
-        box.addView(mic, Ui.margins(Ui.lp(-2, -2), a, 0, 4, 0, 6));
         EditText amt = new EditText(a);
         amt.setHint("Amount (₹)");
         amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        amt.setTextSize(22);
+        amt.setTypeface(Ui.face(a, Ui.BOLD));
         EditText what = new EditText(a);
-        what.setHint("What for (e.g. vegetables)");
+        what.setHint("For what / to whom (e.g. chips, Ramesh)");
         what.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        amt.setTypeface(Ui.face(a, Ui.REGULAR));
         what.setTypeface(Ui.face(a, Ui.REGULAR));
         box.addView(amt);
         box.addView(what);
-        TextView from = Noted.accountChip(a, acc);
-        box.addView(from, Ui.margins(Ui.lp(-2, -2), a, 0, 8, 0, 0));
-        Runnable paint = () -> {
-            boolean u = upi[0];
-            for (TextView c : new TextView[]{cashC, upiC}) {
-                boolean on = (c == upiC) == u;
-                c.setBackground(Ui.rippleRound(a, on ? Ui.col(a, R.color.accent) : Ui.col(a, R.color.surface2), 18));
-                c.setTextColor(on ? 0xFFFFFFFF : Ui.col(a, R.color.text));
-            }
-            from.setVisibility(u ? View.VISIBLE : View.GONE);
-            what.setHint(u ? "Paid to / what for (e.g. Ramesh — test)" : "What for (e.g. vegetables)");
-            info.setText(u ? "For a UPI or bank payment that sent no SMS or notification. If the bank's message comes later, it joins this one."
-                    : "Cash you spent." + (Cash.on(a) ? " Taken from your cash wallet (" + Fmt.plain(Cash.balance(a)) + ")." : ""));
-        };
-        cashC.setOnClickListener(v -> { upi[0] = false; paint.run(); });
-        upiC.setOnClickListener(v -> { upi[0] = true; paint.run(); });
-        paint.run();
+        TextView fl = Ui.text(a, "Paid from", 13, Ui.col(a, R.color.text2), Ui.BOLD);
+        fl.setPadding(0, Ui.dp(a, 14), 0, Ui.dp(a, 6));
+        box.addView(fl);
+        String[] from = {Noted.lastFrom(a)};
+        if (!Cash.ACCOUNT.equals(from[0]) && !Noted.bankAccounts(a).contains(from[0])) from[0] = Cash.ACCOUNT;
+        box.addView(Noted.fromPicker(a, from, true, null));
+        TextView info = Ui.sub(a, "The balance in Money changes right away. If the bank's SMS comes later, it joins this — no double entry.");
+        info.setPadding(0, Ui.dp(a, 10), 0, 0);
+        box.addView(info);
+        TextView mic = Ui.chip(a, "🎤  Say it instead — “20 for chips from Federal”", false);
+        box.addView(mic, Ui.margins(Ui.lp(-2, -2), a, 0, 12, 0, 0));
         android.app.AlertDialog[] cd = new android.app.AlertDialog[1];
         mic.setOnClickListener(v -> { if (cd[0] != null) cd[0].dismiss(); VoiceActivity.start(a); });
+        android.widget.ScrollView sv = new android.widget.ScrollView(a);
+        sv.addView(box);
         Ui.Popup pop = new Ui.Popup(a);
-        pop.setTitle("Add a payment").setView(box)
+        pop.setTitle("Add a payment").setView(sv)
                 .setPositiveButton("Add", (d, w) -> {
                     long paise = SmsParser.paise(amt.getText().toString());
                     if (paise <= 0) { Ui.toast(a, "Enter an amount"); return; }
-                    String wh = what.getText().toString().trim();
-                    Txn t = upi[0] ? Noted.add(a, paise, wh, null, "", "", acc[0]) : Cash.spend(a, paise, wh, null);
+                    Txn t = Noted.save(a, from[0], paise, what.getText().toString().trim(), null, "");
+                    Ui.toast(a, "Added ✓ " + Fmt.plain(paise) + " from " + Noted.label(a, from[0]));
                     if (Cats.OTHER.equals(t.category) || t.category.isEmpty()) pickCategory(a, t, null);
                 })
                 .setNegativeButton("Cancel", null);
         cd[0] = pop.show();
+    }
+
+    /** Deleting / hiding a cash spend puts the money back in the cash wallet (and un-hiding takes it out again). Bank balances follow by themselves. */
+    static void gone(Context c, Txn t, boolean gone) {
+        if (!Cash.ACCOUNT.equals(t.account) || t.credit || !Cash.on(c)) return;
+        boolean was = t.kind == Txn.IGNORED;
+        if (gone && !was) Cash.refund(c, t.amount);
+        else if (!gone && was) Cash.refund(c, -t.amount);
     }
 
     static List<Txn> sortedNewest(List<Txn> l) {

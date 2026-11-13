@@ -28,7 +28,7 @@ public class Widget extends AppWidgetProvider {
             long month = Ledger.spent(all, Fmt.startOfMonth(now), now + 1);
             long bal = 0;
             boolean any = false;
-            for (Account a : s.accounts()) if (!a.card && !a.hidden && a.balance >= 0) { bal += a.balance; any = true; }
+            for (Account a : s.accounts()) if (!a.card && !a.hidden && a.balance >= 0) { bal += s.liveBalance(a); any = true; }
             boolean hide = s.flag(Store.S_HIDE) || s.flag(Store.S_LOCK);
             RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
             v.setTextViewText(R.id.w_today, hide ? "₹ ••••" : Fmt.plain(today));

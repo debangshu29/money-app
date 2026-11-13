@@ -47,7 +47,7 @@ public class AccountsActivity extends Activity {
         Store s = Store.get(this);
         List<Account> accs = s.accounts();
         long total = 0;
-        for (Account ac : accs) if (!ac.card && !ac.hidden && ac.balance >= 0) total += ac.balance;
+        for (Account ac : accs) if (!ac.card && !ac.hidden && ac.balance >= 0) total += s.liveBalance(ac);
         if (Cash.on(this)) total += Cash.balance(this);
 
         LinearLayout hero = Ui.card(this);
@@ -60,10 +60,11 @@ public class AccountsActivity extends Activity {
         if (accs.isEmpty() && !Cash.on(this)) c.addView(Ui.sub(this, "No accounts yet — they appear after a bank SMS that shows a balance."));
         for (Account ac : accs) {
             boolean card = ac.card && ac.limit >= 0;
-            long v = card ? ac.limit : ac.balance;
+            long[] lv = s.live(ac);
+            long v = card ? ac.limit : lv[0];
             long when = card ? ac.limitTime : ac.balanceTime;
             String sub = (card ? "Card limit left · " : "") + (ac.hidden ? "not in total · " : "")
-                    + (v < 0 ? "no balance seen yet" : "updated " + HomePage.ago(when));
+                    + (v < 0 ? "no balance seen yet" : "bank: " + HomePage.ago(when) + (lv[1] > 0 ? " · +" + lv[1] + " you added" : ""));
             View row = Rows.amountRow(this, ac.card ? "💳" : ac.wallet ? "👛" : "🏦", ac.card ? 0xFF8B5CF6 : 0xFF0E9F6E, ac.display(), sub, Math.max(0, v), -1);
             row.setOnClickListener(x -> AccountMenu.show(this, ac));
             row.setOnLongClickListener(x -> { AccountMenu.show(this, ac); return true; });

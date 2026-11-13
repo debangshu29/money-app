@@ -39,7 +39,7 @@ public class NetWorthActivity extends Screen {
         int nb = 0;
         for (Account a : s.accounts()) {
             if (a.card || a.hidden || a.balance < 0) continue;
-            bank += a.balance;
+            bank += s.liveBalance(a);
             nb++;
         }
         if (nb > 0) { h += bank; if (have != null) have.add(new Line("🏦", "Bank balances", nb + (nb == 1 ? " account" : " accounts"), bank, null)); }

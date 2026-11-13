@@ -301,7 +301,7 @@ final class HomePage {
         LinearLayout c = Ui.card(a);
         LinearLayout h = header(c, "Balances", H_BAL);
         long total = 0;
-        for (Account ac : accs) if (!ac.card && !ac.hidden && ac.balance >= 0) total += ac.balance;
+        for (Account ac : accs) if (!ac.card && !ac.hidden && ac.balance >= 0) total += s.liveBalance(ac);
         if (Cash.on(a)) total += Cash.balance(a);
         TextView tt = Ui.text(a, Fmt.rs(total), 17, Ui.EXTRABOLD);
         h.addView(tt, 1);
@@ -314,7 +314,7 @@ final class HomePage {
             r.setBackground(Ui.rippleRound(a, 0x00000000, 12));
             r.addView(Ui.oneLine(Ui.text(a, (ac.card ? "💳  " : "🏦  ") + ac.display() + (card ? "  (limit left)" : ""), 14,
                     ac.hidden ? Ui.col(a, R.color.text2) : Ui.col(a, R.color.text), Ui.SEMIBOLD)), Ui.weight1());
-            r.addView(Ui.text(a, Fmt.rs(card ? ac.limit : ac.balance), 14, Ui.BOLD));
+            r.addView(Ui.text(a, Fmt.rs(card ? ac.limit : s.liveBalance(ac)), 14, Ui.BOLD));
             r.setOnClickListener(v -> AccountMenu.show(a, ac));
             r.setOnLongClickListener(v -> { AccountMenu.show(a, ac); return true; });
             c.addView(r);

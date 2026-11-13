@@ -242,7 +242,11 @@ public final class PayNote {
         why.setTypeface(Ui.face(a, Ui.REGULAR));
         if (caught != null && !caught.note.isEmpty()) why.setText(caught.note);
         b.addView(why);
-        if (caught == null) b.addView(Noted.accountChip(a, acc), Ui.margins(Ui.lp(-2, -2), a, 0, 8, 0, 0));
+        if (caught == null) {
+            if (!Noted.bankAccounts(a).contains(acc[0])) acc[0] = null;
+            b.addView(Ui.text(a, "Paid from", 13, Ui.col(a, R.color.text2), Ui.BOLD), Ui.margins(Ui.lp(-1, -2), a, 0, 12, 0, 6));
+            b.addView(Noted.fromPicker(a, acc, false, null));
+        }
         android.widget.ScrollView sv = new android.widget.ScrollView(a);
         sv.addView(b);
         String app = pkg == null ? null : label(a, pkg);
@@ -265,9 +269,11 @@ public final class PayNote {
                 }
                 long paise = SmsParser.paise(amt.getText().toString().trim());
                 if (paise <= 0) { amt.setError("How much?"); return; }
+                if (acc[0] == null && !Noted.bankAccounts(a).isEmpty()) { Ui.toast(a, "Pick the account it was paid from"); return; }
                 Noted.add(a, paise, name, cat[0].isEmpty() ? null : cat[0], note, "", acc[0]);
+                if (acc[0] != null) Noted.rememberFrom(a, acc[0]);
                 d.dismiss();
-                Ui.toast(a, "Saved ✓ " + Fmt.plain(paise) + (name.isEmpty() ? "" : " to " + name));
+                Ui.toast(a, "Saved ✓ " + Fmt.plain(paise) + (name.isEmpty() ? "" : " to " + name) + (acc[0] == null ? "" : " · from " + Noted.label(a, acc[0])));
             });
         });
         d.show();

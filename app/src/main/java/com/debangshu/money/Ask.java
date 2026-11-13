@@ -90,9 +90,10 @@ public final class Ask {
             a.table = new LinkedHashMap<>();
             for (Account ac : accounts) {
                 if (ac.balance < 0 || ac.card) continue;
-                total += ac.balance;
+                long lb = live(ac, all);
+                total += lb;
                 n++;
-                a.table.put(ac.display() + " · " + Fmt.day(ac.balanceTime), ac.balance);
+                a.table.put(ac.display(), lb);
             }
             if (n == 0) a.text = "I haven't seen a balance yet. It appears after your bank's next SMS that shows “Avl Bal”.";
             else b.append("You have ").append(Fmt.rs(total)).append(" across ").append(n).append(n == 1 ? " account" : " accounts")
@@ -213,6 +214,17 @@ public final class Ask {
     }
 
     /** A shop name you have paid, mentioned in the question. */
+    /** Same as Store.live: the bank's last balance plus every payment on the account since then. */
+    static long live(Account ac, List<Txn> all) {
+        long b = ac.balance;
+        for (Txn t : all) {
+            if (!ac.key.equals(t.account) || t.time <= ac.balanceTime || t.balance >= 0) continue;
+            if (t.kind == Txn.SNAPSHOT || t.kind == Txn.IGNORED || (t.sources & Txn.SRC_GAP) != 0) continue;
+            b += t.signed();
+        }
+        return b;
+    }
+
     static String merchant(String q, List<Txn> all) {
         String best = null;
         for (Txn t : all) {

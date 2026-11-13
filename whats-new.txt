@@ -1,3 +1,11 @@
+Money 2.1.1 — every rupee from the right account 🏦
+• Adding a payment yourself now asks “Paid from”: 💵 Cash or the exact bank account — two Federal accounts show as Federal ••1234 and Federal ••5678, each with its balance
+• That account's balance in Money changes right away (marked “+1 you added” until the bank confirms). Delete or hide the entry and the money goes back — cash wallet too
+• Say it: “20 for chips from Federal ending 1234” or “10 for chips in cash” picks the account for you. If you only say “Federal” and you have two, it asks which one before saving
+• Picked the wrong one? Open the payment → “Paid from ▾” → move it; both balances fix themselves
+• Pay & note and the “Paid anyone?” reply also save to the account you choose (type “50 Ramesh from SBI”)
+• A bank SMS that comes later joins your entry — never counted twice
+
 Money 2.1 — tidy & calm ✨
 • Settings: just 6 groups (Payment capture · Questions & reminders · Names & places · Privacy · Backup & data · Updates) and a status card that says “All set” or what to fix
 • Plan: your budget on top, “Needs you” only when something does, then every tool as a round icon — Money · Life · Grow · Tools (like Google Pay)

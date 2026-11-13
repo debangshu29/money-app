@@ -18,7 +18,22 @@ public final class Voice {
         public String what = "", category = "";
         /** said it was UPI / Google Pay / bank — not cash */
         public boolean upi;
+        /** "from Federal" / "Union Bank ending 1234" / "in cash" — which money it came from */
+        public String bank = "", last4 = "";
+        public boolean cash;
     }
+
+    /** Spoken bank names → the names Money uses for accounts. */
+    private static final String[][] BANKS = {
+            {"state bank(?: of india)?|sbi", "SBI"}, {"union(?: bank)?(?: of india)?", "Union Bank"}, {"federal(?: bank)?|jupiter", "Federal"},
+            {"kotak(?: mahindra)?(?: bank)?|kotak 811", "Kotak"}, {"indusind(?: bank)?|indus", "IndusInd"}, {"hdfc(?: bank)?", "HDFC"},
+            {"icici(?: bank)?", "ICICI"}, {"axis(?: bank)?", "Axis"}, {"pnb|punjab national(?: bank)?", "PNB"}, {"canara(?: bank)?", "Canara"},
+            {"bank of baroda|\\bbob\\b", "BOB"}, {"idfc(?: first)?(?: bank)?", "IDFC First"}, {"yes bank", "Yes Bank"}, {"au(?: small finance)? bank", "AU Bank"},
+            {"paytm(?: payments)? bank", "Paytm"}, {"airtel(?: payments)? bank", "Airtel Bank"}, {"bank of india", "BOI"}, {"indian bank", "Indian Bank"},
+            {"uco(?: bank)?", "UCO"}, {"central bank(?: of india)?", "Central Bank"}, {"bandhan(?: bank)?", "Bandhan"}, {"idbi(?: bank)?", "IDBI"},
+            {"rbl(?: bank)?", "RBL"}, {"bank of maharashtra", "Bank of Maharashtra"}, {"indian overseas(?: bank)?|\\biob\\b", "IOB"},
+    };
+    private static final Pattern DIGITS = Pattern.compile("\\b(?:account|a/c|ac|ending(?: with| in)?|last(?: four)?(?: digits?)?)\\s*([0-9]{4})\\b");
 
     private static final Pattern UPI = Pattern.compile(
             "\\b(?:upi|gpay|g pay|google ?pay|phone ?pe|phonepay|paytm|bhim|cred|super ?money|online|bank|transfer(?:red)?|net ?banking|by card|debit card|scan(?:ned)?)\\b");
@@ -61,7 +76,19 @@ public final class Voice {
     private static final Pattern AMOUNT = Pattern.compile("(?<![a-z])([0-9][0-9,]*(?:\\.[0-9]{1,2})?)\\s*(k|thousand|lakh|lac)?(?![0-9])");
     private static final String FILLER = "\\b(?:i|i've|have|has|just|spent|spend|paid|pay|gave|give|given|bought|buy|for|on|at|to|the|a|an|in|of|cash|by|rupees?|rs|inr|bucks|"
             + "today|now|some|my|ka|ke|ki|ko|me|mein|diya|diye|kharcha|kharch|liye|taka|takar|via|using|through|with|"
-            + "upi|gpay|g pay|google ?pay|google|phone ?pe|phonepay|paytm|bhim|cred|super ?money|online|bank|transfer|transferred|net ?banking|card|debit|scan|scanned)\\b";
+            + "wallet|upi|gpay|g pay|google ?pay|google|phone ?pe|phonepay|paytm|bhim|cred|super ?money|online|bank|transfer|transferred|net ?banking|card|debit|scan|scanned)\\b";
+
+    /** Typed text like "50 Ramesh for test from federal ending 1234" → {bank, last4, text without the bank words}. Keeps the original case. */
+    public static String[] hint(String typed) {
+        String bank = "", last4 = "", s = typed == null ? "" : typed;
+        Matcher dm = Pattern.compile("(?i)\\b(?:account|a/c|ac|ending(?: with| in)?|last(?: four)?(?: digits?)?)\\s*([0-9]{4})\\b").matcher(s);
+        if (dm.find()) { last4 = dm.group(1); s = s.substring(0, dm.start()) + " " + s.substring(dm.end()); }
+        for (String[] b : BANKS) {
+            Matcher bm = Pattern.compile("(?i)\\b(?:from|via|using|through|by|with)?\\s*(?:my\\s+)?(?:" + b[0] + ")\\b(?:\\s+(?:bank|account|a/c))?").matcher(s);
+            if (bm.find()) { bank = b[1]; s = s.substring(0, bm.start()) + " " + s.substring(bm.end()); break; }
+        }
+        return new String[]{bank, last4, s.replaceAll("\\s+", " ").trim()};
+    }
 
     public static List<Item> parse(String said) {
         List<Item> out = new ArrayList<>();
@@ -69,7 +96,16 @@ public final class Voice {
         String s = said.toLowerCase(Locale.ROOT).replace("₹", " rs ").replaceAll("[^a-z0-9.,'\\s]", " ").replaceAll("(?<=[0-9]),(?=[0-9]{3})", "")
                 .replaceAll("(?<=[0-9])(rs|k)\\b", " $1").replaceAll("\\s+", " ").trim();
         s = digits(s);
-        boolean upi = UPI.matcher(s).find();
+        // which money: "from federal bank ending 1234", "in cash"
+        String bank = "", last4 = "";
+        Matcher dm = DIGITS.matcher(s);
+        if (dm.find()) { last4 = dm.group(1); s = (s.substring(0, dm.start()) + " " + s.substring(dm.end())).trim(); }
+        for (String[] b : BANKS) {
+            Matcher bm = Pattern.compile("\\b(?:from|via|using|through|by|in|on|with)?\\s*(?:my\\s+)?(?:" + b[0] + ")\\b(?:\\s+(?:bank|account|a/c))?").matcher(s);
+            if (bm.find()) { bank = b[1]; s = (s.substring(0, bm.start()) + " " + s.substring(bm.end())).replaceAll("\\s+", " ").trim(); break; }
+        }
+        boolean cash = Pattern.compile("\\b(?:in |by |with |from )?(?:my )?cash\\b|\\bwallet\\b").matcher(s).find();
+        boolean upi = UPI.matcher(s).find() || !bank.isEmpty() || !last4.isEmpty();
         // split into items where both sides have an amount: "chai 20 and samosa 30", "20 chai, 30 auto"
         String[] parts = s.split("\\s*(?:,|\\band\\b|\\bplus\\b|\\bthen\\b|\\balso\\b)\\s*");
         List<String> chunks = new ArrayList<>();
@@ -100,7 +136,10 @@ public final class Voice {
             what = what.replaceAll("^(and|with)\\s+|\\s+(and|with)$", "").trim();
             it.what = what.isEmpty() ? "Cash spend" : Character.toUpperCase(what.charAt(0)) + what.substring(1);
             it.category = category(what);
-            it.upi = upi;
+            it.upi = upi && !cash;
+            it.bank = bank;
+            it.last4 = last4;
+            it.cash = cash;
             if (upi && Cats.CASH.equals(it.category)) it.category = "";   // let the name decide (person → People…)
             out.add(it);
         }

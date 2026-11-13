@@ -113,13 +113,22 @@ public class Reasons extends BroadcastReceiver {
         if (r != null && r.getCharSequence(KEY) != null) typed = r.getCharSequence(KEY).toString().trim();
         Store s = Store.get(c);
         if (PAID.equals(a)) {
+            // "50 Ramesh for test from federal ending 1234" → that exact account
+            String[] h = Voice.hint(typed);
+            String acc = Noted.defaultAccount(c);
+            if (!h[0].isEmpty() || !h[1].isEmpty()) {
+                List<String> m = Noted.match(c, h[0], h[1]);
+                if (m.size() == 1) acc = m.get(0);
+                else if (m.size() > 1 && !m.contains(acc)) acc = m.get(0);
+                typed = h[2];
+            }
             Object[] p = ReasonLogic.paidText(typed);
             if (p == null) {
                 Alerts.post(c, Alerts.CH_ASK, nid, "Didn't catch the amount", "Type it like “50 Ramesh for test”.", null);
                 return;
             }
-            Txn t = Noted.add(c, (Long) p[0], (String) p[1], null, (String) p[2], "", Noted.defaultAccount(c));
-            done(c, nm, nid, "Saved ✓ " + Fmt.plain(t.amount) + (t.merchant.isEmpty() ? "" : " to " + t.merchant),
+            Txn t = Noted.add(c, (Long) p[0], (String) p[1], null, (String) p[2], "", acc);
+            done(c, nm, nid, "Saved ✓ " + Fmt.plain(t.amount) + (t.merchant.isEmpty() ? "" : " to " + t.merchant) + " · " + Noted.label(c, acc),
                     (t.note.isEmpty() ? "" : t.note + " · ") + "the bank's message joins it if one comes", t.id);
             return;
         }

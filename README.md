@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.1 — a tidy, Google Pay-style layout: 6 settings groups, Plan as round icons, quick actions on Home.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.1.1 — payments you add yourself come from the exact account (Cash, Federal ••1234…), balances update right away, and deleting puts the money back.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -227,3 +227,9 @@ D:\money
 
 ## How the APK is built
 Every push to `main` → GitHub Actions builds and signs `Money.apk` → publishes it to **Releases** and the `updates` branch (the app checks there for new versions). The signing key is created by GitHub on the first build and locked with your repo Secret **`MONEY_KEY_PASSWORD`** (a password only you know); without it builds are test-only and not published.
+
+## Adding a payment yourself (version 2.1.1)
+- **Paid from**: pick 💵 Cash or a bank account. Accounts at the same bank show their last digits (Federal ••1234 / Federal ••5678).
+- The balance shown in Money for that account drops right away; the Accounts page says “+N you added” until the bank's own balance catches up.
+- Delete / hide the entry → the balance goes back. Move it with “Paid from ▾” on the payment.
+- Voice: “20 for chips from Federal ending 1234”, “10 for chips in cash”. With two matching accounts it asks which one.

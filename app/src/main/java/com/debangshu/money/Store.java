@@ -279,6 +279,25 @@ public final class Store {
         changed();
     }
 
+    /**
+     * The balance now: the last balance the bank told us, plus every payment on this account since then (including the
+     * ones you added yourself). {balance, how many of those you added}. Deleting an entry undoes it. -1 = never seen.
+     */
+    public synchronized long[] live(Account a) {
+        if (a.card || a.balance < 0) return new long[]{a.card ? a.limit : a.balance, 0};
+        long b = a.balance;
+        int added = 0;
+        for (Txn t : txns) {
+            if (!a.key.equals(t.account) || t.time <= a.balanceTime) continue;
+            if (t.kind == Txn.SNAPSHOT || t.kind == Txn.IGNORED || (t.sources & Txn.SRC_GAP) != 0 || t.balance >= 0) continue;
+            b += t.signed();
+            if ((t.sources & (Txn.SRC_NOTE | Txn.SRC_MANUAL)) != 0 && (t.sources & (Txn.SRC_SMS | Txn.SRC_APP)) == 0) added++;
+        }
+        return new long[]{b, added};
+    }
+
+    public long liveBalance(Account a) { return live(a)[0]; }
+
     public synchronized void renameAccount(Account a, String name) { a.name = name; changed(); }
 
     public synchronized void setAccountHidden(Account a, boolean h) { a.hidden = h; changed(); }
