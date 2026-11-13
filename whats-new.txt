@@ -1,3 +1,10 @@
+Money 2.2 — clean & precise ✨
+• New look: proper line icons everywhere (Home, Plan, Settings, insights) instead of emoji, and fewer words on every screen
+• Home is simpler: “Needs you” (only when something does) · This month (spent, budget bar, safe today, today, came in) · Add / Say it / Accounts / Ask · Money you have · Recent
+• Welcome tour: 8 short pages on what Money does — shown once now, and any time from Settings → Tutorials
+• Settings → Tutorials: the tour plus short how-tos (how payments are caught, adding cash, accounts, budget, reminders, refunds, statements, privacy) with a “Show me” button
+• Net worth and Rewards are gone; Plan is now Money · Life · Grow & tools (Grow gets much bigger in 2.3)
+
 Money 2.1.2 — tap your bank, don't type it 👆
 • “Paid from” is now big buttons, two per row — each shows the bank, the account number and its balance (like Balance): 💵 Cash · 🏦 Union Bank ••1234 · 🏦 Federal ••5678 …
 • Tap one and that account's balance goes down; delete the entry and it comes back

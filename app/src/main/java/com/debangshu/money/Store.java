@@ -304,7 +304,7 @@ public final class Store {
 
     public synchronized boolean isDeleted(String key) { return deletedAccounts.contains(key); }
 
-    // ------------------------------------------------------------------ lists for People, Goals, Challenges, Net worth…
+    // ------------------------------------------------------------------ lists for People, Goals, Challenges…
 
     /** A copy of a feature's list (empty if none). */
     public synchronized JSONArray list(String key) {

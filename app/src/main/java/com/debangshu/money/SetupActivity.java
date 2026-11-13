@@ -129,7 +129,7 @@ public class SetupActivity extends Activity {
         LinearLayout card = Ui.card(this);
         LinearLayout row = Ui.hbox(this);
         row.setGravity(Gravity.TOP);
-        TextView e = Ui.badge(this, emoji, on ? Ui.col(this, R.color.accent) : 0xFF94A3B8, 42);
+        View e = Ui.iconBadge(this, emoji, on ? Ui.col(this, R.color.accent) : 0xFF94A3B8, 42);
         row.addView(e);
         LinearLayout col = Ui.vbox(this);
         col.setPadding(Ui.dp(this, 14), 0, 0, 0);

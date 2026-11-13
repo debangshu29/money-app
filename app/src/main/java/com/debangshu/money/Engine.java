@@ -94,8 +94,6 @@ public final class Engine {
             if (rn != null) Reminders.onNotice(ctx, rn, time, live);
             Notices.Emi e = Notices.emi(sender, body);
             if (e != null) Loans.onEmi(ctx, e, saved, time);
-            Notices.Points p = Notices.points(sender, body);
-            if (p != null) Rewards.onPoints(ctx, p, time);
             if (saved != null && saved.kind != Txn.SNAPSHOT) Refunds.onTxn(ctx, saved, sender, body);
         } catch (Exception ignored) { }
     }

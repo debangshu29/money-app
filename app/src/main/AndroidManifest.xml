@@ -93,6 +93,7 @@
         </activity>
 
         <activity android:name=".SetupActivity" android:exported="false" />
+        <activity android:name=".TutorialActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".BudgetActivity" android:exported="false" />
         <activity android:name=".AccountsActivity" android:exported="false" />
@@ -100,13 +101,11 @@
         <activity android:name=".People" android:exported="false" />
         <activity android:name=".Goals" android:exported="false" />
         <activity android:name=".Challenges" android:exported="false" />
-        <activity android:name=".NetWorthActivity" android:exported="false" />
         <activity android:name=".TaxActivity" android:exported="false" />
         <activity android:name=".CardsActivity" android:exported="false" />
         <activity android:name=".Refunds" android:exported="false" />
         <activity android:name=".Reminders" android:exported="false" />
         <activity android:name=".Loans" android:exported="false" />
-        <activity android:name=".Rewards" android:exported="false" />
         <activity android:name=".VoiceActivity" android:exported="false" android:theme="@style/Translucent"
             android:excludeFromRecents="true" android:taskAffinity=".voice" android:launchMode="singleTask" />
         <activity android:name=".AskActivity" android:exported="false" android:windowSoftInputMode="adjustResize|stateHidden" />

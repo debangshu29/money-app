@@ -39,7 +39,9 @@ public class MainActivity extends Activity {
         super.onCreate(b);
         Ui.bars(this);
         if (!Store.get(this).flag(Store.S_SETUP)) {
-            startActivity(new Intent(this, SetupActivity.class));
+            // first time: the short tour, then the permission checklist
+            if (!TutorialActivity.seen(this)) TutorialActivity.start(this, true);
+            else startActivity(new Intent(this, SetupActivity.class));
             finish();
             return;
         }
@@ -53,7 +55,8 @@ public class MainActivity extends Activity {
         Store.get(this).listen(onChange);
         handle(getIntent());
         Updater.cleanUpAfterUpdate(this);
-        Updater.showWhatsNewOnce(this);
+        if (!TutorialActivity.seen(this) && b == null) TutorialActivity.start(this, false);   // once after updating, too
+        else Updater.showWhatsNewOnce(this);
     }
 
     @Override

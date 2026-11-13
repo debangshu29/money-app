@@ -37,6 +37,8 @@ Built one version at a time; each version is checked on the phone before the nex
 | **2.1** | Tidy & calm | Settings → 6 groups + status card · Plan → budget card, “Needs you”, round icons in Money / Life / Grow / Tools · Home quick actions · Insights “More insights” list | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.1.1** | Right account | “Paid from” Cash / exact account (••last4) for added, spoken and noted payments · live balance in Money · delete/hide restores balance & cash wallet · move between accounts · voice “from Federal ending 1234”, asks when two match | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.1.2** | Tap your bank | “Paid from” as a 2-column grid of account buttons (bank · ••number · balance) everywhere · account buttons on the “Paid anyone?” follow-up notification · voice “paid/cut from SBI” | ✅ built (13 Nov 2026) — waiting for your check |
+| **2.2** | Clean & precise | Line icons everywhere · simpler Home (Needs you, This month, actions, Money you have, Recent) · welcome tour + Settings → Tutorials with how-tos · Net worth & Rewards removed · Plan = Money / Life / Grow & tools | ✅ built (13 Nov 2026) — waiting for your check |
+| **2.3** | Grow: your money coach | 50/30/20 (and other rules) tracker · goals linked to accounts with on-track dates · emergency fund · money health check · leak finder · wait-list · short lessons with your numbers | 🔜 next |
 
 ## Ideas for later
 

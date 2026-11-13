@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.1.2 — tap the account a payment came from (bank, account number and balance on each button); say “paid from Union Bank” by voice.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.2 — clean & precise: line icons, a simpler Home, a welcome tour and Settings → Tutorials. Net worth and Rewards removed.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -233,3 +233,9 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - The balance shown in Money for that account drops right away; the Accounts page says “+N you added” until the bank's own balance catches up.
 - Delete / hide the entry → the balance goes back. Move it with “Paid from ▾” on the payment.
 - Voice: “20 for chips from Federal ending 1234”, “10 for chips in cash”. With two matching accounts it asks which one.
+
+## Version 2.2 — clean & precise
+- Line icons (Lucide, ISC licence) replace emoji in navigation; the drawables are `res/drawable/ln_*.xml`, picked by `Ui.iconFor(emoji)`.
+- Home: Needs you → This month → quick actions → Money you have → Recent.
+- `TutorialActivity`: the welcome tour (first run, and once after updating) and the Settings → Tutorials page.
+- Net worth and Rewards screens removed.

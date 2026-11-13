@@ -64,6 +64,7 @@ public class SettingsActivity extends Activity {
             {"names", "📍", "#0EA5E9", "Names & places", "Who you paid, and where"},
             {"privacy", "🔒", "#6366F1", "Privacy & security", "App lock, hide amounts"},
             {"data", "💾", "#8B5CF6", "Backup & data", "Backups, export, bank statements"},
+            {"learn", "🎓", "#0B6F86", "Tutorials", "Quick tour and how-tos"},
             {"about", "⬆️", "#64748B", "Updates & about", "Version, share with family"},
     };
 
@@ -80,6 +81,7 @@ public class SettingsActivity extends Activity {
             case "names": names(); break;
             case "privacy": privacy(); break;
             case "data": data(); break;
+            case "learn": TutorialActivity.fill(this, box); break;
             default: about(); break;
         }
     }
@@ -101,7 +103,7 @@ public class SettingsActivity extends Activity {
         st.setGravity(android.view.Gravity.CENTER_VERTICAL);
         boolean ok = fix.isEmpty();
         st.setBackground(Ui.round(Ui.col(this, ok ? R.color.accent_soft : R.color.warn_soft), Ui.dp(this, 22)));
-        st.addView(Ui.text(this, ok ? "✅" : "⚠️", 26, Ui.REGULAR));
+        st.addView(Ui.iconBadge(this, ok ? "🛡️" : "⚡", ok ? 0xFF0E9F6E : 0xFFD97706, 44));
         LinearLayout col = Ui.vbox(this);
         col.setPadding(Ui.dp(this, 14), 0, 0, 0);
         col.addView(Ui.text(this, ok ? "All set" : fix.size() == 1 ? "1 thing to fix" : fix.size() + " things to fix", 16, Ui.BOLD));
@@ -122,7 +124,7 @@ public class SettingsActivity extends Activity {
         for (String[] p : PAGES) c.addView(Ui.navRow(this, p[1], android.graphics.Color.parseColor(p[2]), p[3], p[4], v -> open(p[0])));
         box.addView(c);
 
-        TextView info = Ui.sub(this, "🔒 Everything stays on this phone. Nothing is uploaded — the internet is used only to check for app updates.");
+        TextView info = Ui.sub(this, "Everything stays on this phone. Nothing is uploaded — the internet is used only to check for app updates.");
         info.setGravity(android.view.Gravity.CENTER);
         info.setPadding(Ui.dp(this, 16), Ui.dp(this, 18), Ui.dp(this, 16), 0);
         box.addView(info);
@@ -270,7 +272,7 @@ public class SettingsActivity extends Activity {
         if (sub != null && !sub.isEmpty()) col.addView(Ui.text(this, sub, 12.5f, Ui.col(this, R.color.text2), Ui.REGULAR));
         r.addView(col, Ui.weight1());
         if (l != null) {
-            r.addView(Ui.text(this, "›", 22, Ui.col(this, R.color.hint), Ui.REGULAR));
+            r.addView(Ui.chevron(this));
             r.setBackground(Ui.rippleRound(this, 0x00000000, 14));
             r.setOnClickListener(l);
         }

@@ -194,11 +194,64 @@ public final class Ui {
         return t;
     }
 
+    // ------------------------------------------------------------------ line icons (Lucide, ISC licence)
+
+    private static final java.util.Map<String, Integer> ICONS = new java.util.HashMap<>();
+    static {
+        Object[][] m = {
+                {"🏦", R.drawable.ln_landmark}, {"💵", R.drawable.ln_banknote}, {"📅", R.drawable.ln_calendar_days}, {"💳", R.drawable.ln_credit_card},
+                {"👥", R.drawable.ln_users}, {"🔔", R.drawable.ln_bell}, {"↩️", R.drawable.ln_undo_2}, {"🏠", R.drawable.ln_house},
+                {"🏆", R.drawable.ln_target}, {"🎯", R.drawable.ln_target}, {"🔥", R.drawable.ln_flame}, {"🧾", R.drawable.ln_receipt_text},
+                {"📄", R.drawable.ln_file_text}, {"✏️", R.drawable.ln_plus}, {"➕", R.drawable.ln_plus}, {"⚙️", R.drawable.ln_settings},
+                {"🎤", R.drawable.ln_mic}, {"💬", R.drawable.ln_sparkles}, {"📥", R.drawable.ln_inbox}, {"📍", R.drawable.ln_map_pin},
+                {"🔒", R.drawable.ln_lock}, {"💾", R.drawable.ln_hard_drive}, {"⬆️", R.drawable.ln_circle_arrow_up}, {"🏪", R.drawable.ln_store},
+                {"📈", R.drawable.ln_trending_up}, {"📱", R.drawable.ln_smartphone}, {"🛡️", R.drawable.ln_shield_check}, {"🚗", R.drawable.ln_car},
+                {"🛣️", R.drawable.ln_route}, {"📦", R.drawable.ln_package}, {"🧰", R.drawable.ln_wrench}, {"🎓", R.drawable.ln_graduation_cap},
+                {"🐷", R.drawable.ln_piggy_bank}, {"📊", R.drawable.ln_chart_pie}, {"💡", R.drawable.ln_lightbulb}, {"👛", R.drawable.ln_wallet},
+                {"🧮", R.drawable.ln_calculator}, {"📩", R.drawable.ln_message_square_text}, {"⚠️", R.drawable.ln_triangle_alert},
+                {"🔋", R.drawable.ln_battery_charging}, {"🗂️", R.drawable.ln_folder_open}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
+        };
+        for (Object[] x : m) ICONS.put((String) x[0], (Integer) x[1]);
+    }
+
+    /** The line icon for a navigation emoji (0 = none, keep the emoji). */
+    public static int iconFor(String emoji) {
+        Integer r = emoji == null ? null : ICONS.get(emoji);
+        if (r == null && emoji != null) r = ICONS.get(emoji.replace("\uFE0F", ""));
+        if (r == null && emoji != null) r = ICONS.get(emoji + "\uFE0F");
+        return r == null ? 0 : r;
+    }
+
+    /** A soft round badge with a line icon in the colour (falls back to the emoji when there's no icon). */
+    public static View iconBadge(Context c, String emoji, int color, int sizeDp) {
+        int res = iconFor(emoji);
+        if (res == 0) return badge(c, emoji, color, sizeDp);
+        ImageView i = new ImageView(c);
+        i.setImageResource(res);
+        int tint = dark(c) ? mix(color, 0xFFFFFFFF, 0.35f) : color;
+        i.setColorFilter(tint);
+        i.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        int p = Math.round(dp(c, sizeDp) * 0.27f);
+        i.setPadding(p, p, p, p);
+        i.setBackground(round((color & 0x00FFFFFF) | (dark(c) ? 0x33000000 : 0x1F000000), dp(c, sizeDp / 2f)));
+        i.setLayoutParams(lp(dp(c, sizeDp), dp(c, sizeDp)));
+        return i;
+    }
+
+    /** A small grey chevron for rows you can open. */
+    public static ImageView chevron(Context c) {
+        ImageView i = new ImageView(c);
+        i.setImageResource(R.drawable.ln_chevron_right);
+        i.setColorFilter(col(c, R.color.hint));
+        i.setLayoutParams(lp(dp(c, 18), dp(c, 18)));
+        return i;
+    }
+
     /** A list row: round icon · title + one short grey line · ›  (Settings, Plan, More insights). */
     public static LinearLayout navRow(Context c, String emoji, int color, String title, String sub, View.OnClickListener l) {
         LinearLayout r = hbox(c);
         r.setPadding(dp(c, 6), dp(c, 11), dp(c, 6), dp(c, 11));
-        r.addView(badge(c, emoji, color, 40));
+        r.addView(iconBadge(c, emoji, color, 40));
         LinearLayout col = vbox(c);
         col.setPadding(dp(c, 14), 0, dp(c, 8), 0);
         TextView t = text(c, title, 15.5f, SEMIBOLD);
@@ -213,7 +266,7 @@ public final class Ui {
         }
         r.addView(col, weight1());
         if (l != null) {
-            r.addView(text(c, "›", 22, col(c, R.color.hint), REGULAR));
+            r.addView(chevron(c));
             r.setBackground(rippleRound(c, 0x00000000, 16));
             r.setOnClickListener(l);
         }
@@ -225,7 +278,7 @@ public final class Ui {
         LinearLayout v = vbox(c);
         v.setGravity(Gravity.CENTER_HORIZONTAL);
         v.setPadding(0, dp(c, 6), 0, dp(c, 6));
-        TextView b = badge(c, emoji, color, 54);
+        View b = iconBadge(c, emoji, color, 52);
         v.addView(b);
         TextView t = text(c, label, 12, col(c, R.color.text), SEMIBOLD);
         t.setGravity(Gravity.CENTER);
