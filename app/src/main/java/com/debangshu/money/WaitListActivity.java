@@ -22,10 +22,11 @@ public class WaitListActivity extends Screen {
             JSONObject w = a.optJSONObject(i);
             if ("skip".equals(w.optString("state"))) { savedTotal += w.optLong("price"); skipped++; }
         }
+        add(Explain.box(this, "wait"));
         LinearLayout hero = Ui.card(this);
         hero.addView(Ui.text(this, "Saved by waiting", 13, Ui.col(this, R.color.text2), Ui.BOLD));
         hero.addView(Ui.text(this, Fmt.rs(savedTotal), 30, Ui.EXTRABOLD));
-        hero.addView(Ui.sub(this, skipped == 0 ? "Most “must-haves” stop feeling urgent after a week. Try it with the next thing you want."
+        hero.addView(Ui.sub(this, skipped == 0 ? "Add the next thing you really want — and see if you still want it after the wait."
                 : skipped + (skipped == 1 ? " thing" : " things") + " you decided you didn't need after all."));
         TextView addB = Ui.button(this, "＋  Add something I want", true);
         addB.setOnClickListener(v -> addItem());
@@ -136,7 +137,7 @@ public class WaitListActivity extends Screen {
         r.addView(d7, Ui.margins(Ui.lp(-2, -2), this, 0, 0, 8, 0));
         r.addView(d30);
         b.addView(r);
-        TextView tip = Ui.sub(this, "Rule of thumb: 7 days for small things, 30 days for anything over a week's pay.");
+        TextView tip = Ui.sub(this, "Easy rule: wait 7 days for small things, 30 days for anything that costs more than a week's pay.");
         tip.setPadding(0, Ui.dp(this, 10), 0, 0);
         b.addView(tip);
         new Ui.Popup(this).setTitle("I want…").setView(b)

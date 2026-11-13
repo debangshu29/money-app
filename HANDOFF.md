@@ -1,7 +1,7 @@
 # Money — handoff for a new Claude chat
 
 **Read this file first, then README.md and ROADMAP.md.** It holds everything from earlier chats that isn't obvious from the code.
-Last updated: 13 Nov 2026, after version **2.4** (versionCode 20).
+Last updated: 13 Nov 2026, after version **2.4.1** (versionCode 21).
 
 ## Who and how we work
 - Owner: **Debangshu Ghosh**, Kolkata. Claude writes all the code; Debangshu supervises and tests on his phone.
@@ -10,6 +10,7 @@ Last updated: 13 Nov 2026, after version **2.4** (versionCode 20).
 - He talks in plain, non-technical language (often voice-typed). Answer simply; no jargon.
 
 ## What he wants from the app (standing preferences)
+- **Grow content must be explained like to a 5-year-old** (laddoos, piggy banks, money trees, umbrellas…), with clickable things that first TEACH (story + example with the user's own numbers + what changes if they follow it) and only then let them choose. Put new knowledge text in `Explain.TOPICS` and show it with `Explain.box(...)`. Lessons in 2.7 must follow this style.
 - **Fully automatic**: catch payments by itself; typing should be rare.
 - **Instant only**: notifications at the moment of payment. **No evening review**. Only ask "what for?" when a payment is **unusual**.
 - **Privacy**: everything stays on the phone. Backups go to internal storage, **not** Google Drive. No cloud, no ads. The internet is used only for update checks.

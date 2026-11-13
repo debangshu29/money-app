@@ -231,9 +231,7 @@ final class GrowPage {
         LinearLayout b = Ui.vbox(a);
         int p = Ui.dp(a, 22);
         b.setPadding(p, 0, p, Ui.dp(a, 8));
-        TextView intro = Ui.sub(a, "Every price is really a piece of your time. Seeing it in hours makes it easier to decide if it's worth it.");
-        intro.setPadding(0, 0, 0, Ui.dp(a, 10));
-        b.addView(intro);
+        b.addView(kid(a, "hours"));
         long inc = MoneyFacts.income(a);
         TextView incT = Ui.text(a, inc > 0 ? "Income: " + Fmt.rs(inc) + " a month — change" : "Set your monthly income", 14, Ui.col(a, R.color.accent), Ui.BOLD);
         b.addView(incT);
@@ -279,9 +277,7 @@ final class GrowPage {
         LinearLayout b = Ui.vbox(a);
         int p = Ui.dp(a, 22);
         b.setPadding(p, 0, p, Ui.dp(a, 8));
-        TextView intro = Ui.sub(a, "Every payment is rounded up — ₹47 becomes ₹50 and ₹3 goes in the jar. You won't feel it, but it adds up. "
-                + "When the jar is worth it, move it to a goal.");
-        b.addView(intro);
+        b.addView(kid(a, "jar"));
         boolean on = j.optBoolean("on");
         long amount = MoneyFacts.jarAmount(a);
         if (on) {
@@ -402,7 +398,7 @@ final class GrowPage {
     private View emptyGoals() {
         LinearLayout c = Ui.card(a);
         c.addView(Ui.text(a, "Save for something that matters", 16, Ui.BOLD));
-        TextView t = Ui.sub(a, "Pick a goal, link the bank account the money is in, and Money tells you if you're on track — by itself.");
+        TextView t = Ui.sub(a, "A goal is a jar with a name on it — “Laptop”, “Puja”, “Trip”. Pick one, tap the bank account the money sits in, and Money tells you if you're on track — by itself.");
         t.setPadding(0, Ui.dp(a, 4), 0, Ui.dp(a, 12));
         c.addView(t);
         View[] items = new View[4];
@@ -485,7 +481,10 @@ final class GrowPage {
         int p = Ui.dp(a, 22);
         b.setPadding(p, 0, p, Ui.dp(a, 8));
         TextView amt = Ui.text(a, "", 26, Ui.EXTRABOLD);
-        b.addView(Ui.text(a, "I can save every month", 13, Ui.col(a, R.color.text2), Ui.BOLD));
+        b.addView(kid(a, "split"));
+        TextView cs = Ui.text(a, "I can save every month", 13, Ui.col(a, R.color.text2), Ui.BOLD);
+        cs.setPadding(0, Ui.dp(a, 14), 0, 0);
+        b.addView(cs);
         b.addView(amt);
         SeekBar sb = new SeekBar(a);
         long max = Math.max(5000000, ((Math.max(usual, start) * 2) / 50000 + 1) * 50000);
@@ -628,9 +627,7 @@ final class GrowPage {
         LinearLayout b = Ui.vbox(a);
         int p = Ui.dp(a, 22);
         b.setPadding(p, 0, p, Ui.dp(a, 8));
-        TextView intro = Ui.sub(a, "How soon you need the money decides where it should sit. Shorter = safer.");
-        intro.setPadding(0, 0, 0, Ui.dp(a, 6));
-        b.addView(intro);
+        b.addView(kid(a, "where"));
         int[] at = {6, 24, 48, 80};
         String[] icon = {"🏦", "📅", "📊", "📈"};
         for (int k = 0; k < at.length; k++) {
@@ -658,6 +655,18 @@ final class GrowPage {
         pop.setTitle("Where to keep goal money");
         pop.setView(sv).setPositiveButton("Got it", null);
         pop.sheet().show();
+    }
+
+    /** The simple explanation for a sheet (always open). */
+    static View kid(Activity a, String key) {
+        String[] t = Explain.topic(key);
+        LinearLayout card = Ui.vbox(a);
+        card.setPadding(Ui.dp(a, 14), Ui.dp(a, 12), Ui.dp(a, 14), Ui.dp(a, 12));
+        card.setBackground(Ui.round(0x1FF59E0B, Ui.dp(a, 18)));
+        TextView body = Ui.text(a, t == null ? "" : t[2], 14, Ui.col(a, R.color.text), Ui.REGULAR);
+        body.setLineSpacing(Ui.dp(a, 3), 1f);
+        card.addView(body);
+        return card;
     }
 
     // ------------------------------------------------------------------ celebrations

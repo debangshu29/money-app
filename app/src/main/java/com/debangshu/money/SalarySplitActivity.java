@@ -27,6 +27,7 @@ public class SalarySplitActivity extends Screen {
         Object[] rule = SaveMath.RULES[MoneyFacts.rule(this)];
         if (savePct < 0) { savePct = (Integer) rule[3]; needPct = (Integer) rule[1] > 70 ? 50 : (Integer) rule[1]; }
 
+        add(Explain.box(this, "salary"));
         LinearLayout hero = Ui.card(this);
         hero.addView(Ui.text(this, "Salary", 13, Ui.col(this, R.color.text2), Ui.BOLD));
         TextView amt = Ui.text(this, Fmt.rs(salary), 28, Ui.EXTRABOLD);
@@ -72,7 +73,7 @@ public class SalarySplitActivity extends Screen {
             goalsBox.removeAllViews();
             LinearLayout gc = Ui.card(this);
             if (goals.isEmpty()) {
-                gc.addView(Ui.sub(this, "No goals yet — " + Fmt.rs(s) + " can simply go to savings. Add a goal in Grow to give it a job."));
+                gc.addView(Ui.sub(this, "No goals yet — " + Fmt.rs(s) + " can simply go to savings. Give it a job: add a goal in Grow."));
             } else {
                 long[] needs = new long[goals.size()], lefts = new long[goals.size()];
                 for (int i = 0; i < goals.size(); i++) {

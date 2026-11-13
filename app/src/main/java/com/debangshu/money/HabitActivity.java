@@ -41,6 +41,7 @@ public class HabitActivity extends Screen {
 
     @Override
     void build() {
+        add(Explain.box(this, "habit"));
         List<Object[]> hs = habits();
         if (!picked && !hs.isEmpty()) {
             each = Math.max(10, (Long) hs.get(0)[1] / 100);

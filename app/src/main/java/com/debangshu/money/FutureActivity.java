@@ -27,6 +27,7 @@ public class FutureActivity extends Screen {
             if (spend == 5000 && Goals.monthlySpend(this) == 0) spend = 25000;
             init = true;
         }
+        add(Explain.box(this, "future"));
         LinearLayout hero = Ui.card(this);
         TextView fl = Ui.text(this, "", 13, Ui.col(this, R.color.text2), Ui.BOLD);
         TextView fn = Ui.text(this, "", 28, Ui.EXTRABOLD);
@@ -42,7 +43,7 @@ public class FutureActivity extends Screen {
         Charts.Line chart = new Charts.Line(this);
         chart.height(180);
         hero.addView(chart, Ui.margins(Ui.matchWrap(), this, 0, 14, 0, 0));
-        TextView tl = Ui.text(this, "Line: your money (today's rupees) · dashed: freedom number", 11.5f, Ui.col(this, R.color.hint), Ui.SEMIBOLD);
+        TextView tl = Ui.text(this, "Green line: your money (in today's rupees) · dashed line: your freedom number", 11.5f, Ui.col(this, R.color.hint), Ui.SEMIBOLD);
         tl.setPadding(0, Ui.dp(this, 4), 0, 0);
         hero.addView(tl);
         add(hero);
@@ -94,13 +95,7 @@ public class FutureActivity extends Screen {
         c.addView(d);
         add(c);
 
-        LinearLayout how = Ui.card(this);
-        how.addView(Ui.text(this, "Why 25 years of spending?", 15, Ui.BOLD));
-        TextView ht = Ui.sub(this, "If your money earns a little more than prices rise, you can take out about 4% a year and it lasts for decades. "
-                + "4% of 25× your yearly spending = one year of spending. That's the idea behind the freedom number — a rule of thumb, not a guarantee.");
-        ht.setPadding(0, Ui.dp(this, 4), 0, 0);
-        how.addView(ht);
-        add(how);
+        add(Explain.box(this, "freedom"));
         upd.run();
     }
 }

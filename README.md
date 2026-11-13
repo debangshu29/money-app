@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.4 — Save more: 50/30/20, money health score, leak finder, wait-list, habit price, hours of work, future you, salary-day split, round-up jar.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.4.1 — every Grow tool explained like you're 5, and rules you can learn (with your own numbers) before you pick one.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -250,3 +250,7 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - `SaveMath` (plain Java, tested by T18): 50/30/20 buckets, health score parts, runway, forecast, SIP/lump sum, freedom number, habit price, round-up, hours of work, salary detection.
 - `MoneyFacts`: income (set or detected), savings, buckets with your own moves, health, forecast, jar, wait-list check (BgJob), salary-day notification (Engine).
 - Screens: `RuleActivity`, `HealthActivity`, `LeaksActivity`, `WaitListActivity`, `HabitActivity`, `FutureActivity`, `SalarySplitActivity`; sheets in `GrowPage` (hours of work, round-up jar); `Slider` helper.
+
+## Version 2.4.1 — explained simply
+- `Explain`: all Grow knowledge in kid-simple words (`TOPICS`), shown as a "What is this?" box on each Grow screen (`Explain.box`) or in sheets (`GrowPage.kid`). `RULE_STORY` holds each rule's story / good for / hard part.
+- `RuleActivity.explainRule`: tap a rule → story, your numbers, now vs rule, what changes (month / year / 5 / 10 years), then "Use this rule". `suggested()` picks the rule that fits your needs %.

@@ -153,17 +153,17 @@ public final class GoalMath {
     /** {title, what, why} for how far away the goal is. */
     public static String[] whereToKeep(int monthsLeft) {
         if (monthsLeft <= 12) return new String[]{"Under 1 year",
-                "Savings account, a sweep-in FD, or an FD/RD that ends before your date",
-                "Short goals need money that is safe and ready on the day. Growth matters less than not losing any."};
+                "Savings account, or an FD that ends before your date",
+                "A short trip 🚲 — money you need soon should sit somewhere safe, like a locker. It won't grow much, but it will surely be there on the day."};
         if (monthsLeft <= 36) return new String[]{"1 to 3 years",
-                "RD or FD, or a debt / short-duration mutual fund",
-                "A little more growth than savings, with small ups and downs. Avoid shares for money you need this soon."};
+                "RD or FD, or a debt fund",
+                "A longer trip 🚌 — the bank pays you a little extra for keeping money with it (that's interest). Small growth, tiny wobbles. Shares are too bumpy for money you need this soon."};
         if (monthsLeft <= 60) return new String[]{"3 to 5 years",
-                "Mostly FD / debt funds, with some in a balanced (hybrid) fund",
-                "You have time for a bit of risk. Move to safe options in the last year before the date."};
+                "Mostly FD or debt funds, a small part in a balanced (hybrid) fund",
+                "A long train ride 🚆 — a small part can take the faster, bumpier road. In the last year, move everything back to safe places."};
         return new String[]{"5 years or more",
                 "Equity mutual funds or an index fund through a monthly SIP; PPF for very long goals",
-                "Shares go up and down, but over 5+ years they have usually grown faster than FD. Time smooths the bumps."};
+                "A long flight ✈️ — shares go up and down like a roller-coaster, but over many years they have usually grown more than FD. Time smooths out the bumps."};
     }
 
     // ------------------------------------------------------------------ festivals (start dates; Islamic dates are approximate)

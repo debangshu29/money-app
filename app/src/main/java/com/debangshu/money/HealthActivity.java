@@ -27,29 +27,30 @@ public class HealthActivity extends Screen {
         Charts.Donut d = new Charts.Donut(this);
         d.set(new long[]{score, 100 - score}, new int[]{color(score), Ui.col(this, R.color.surface2)}, String.valueOf(score), SaveMath.grade(score));
         hero.addView(d, Ui.lp(Ui.dp(this, 170), Ui.dp(this, 170)));
-        TextView t = Ui.sub(this, "Out of 100, from five parts. Tap any part to see why.");
+        TextView t = Ui.sub(this, "Out of 100. Tap any part to see why.");
         t.setGravity(Gravity.CENTER);
         t.setPadding(0, Ui.dp(this, 8), 0, 0);
         hero.addView(t);
         add(hero);
 
+        add(Explain.box(this, "health"));
         long inc = MoneyFacts.income(this);
         String[][] info = {
                 {"🐷", "Saving", inc > 0 ? Math.round(f[0] * 100) + "% of income saved (last 3 months)" : "Income not known yet",
-                        "Aim for 20%. Move money to a goal on salary day — what you don't see, you don't spend.",
-                        "Money in − money out, averaged over the last 3 full months, as a share of income. 20% or more = full marks."},
+                        "On salary day, move some money to a goal first. Money you don't see, you don't spend.",
+                        "Out of every ₹100 that comes in, how much do you keep? Keeping ₹20 or more = full marks. (Money looks at the last 3 months.)"},
                 {"☂️", "Emergency fund", String.format(Locale.ROOT, "%.1f", f[1]) + " months of spending in the bank",
-                        "Build up to 3–6 months. Start an Emergency fund goal in Grow.",
-                        "Your bank balances and cash ÷ what you usually spend in a month. 6 months = full marks."},
+                        "Start an Emergency fund goal in Grow — even ₹500 a month is a start.",
+                        "If your income stopped today, how many months could you live on the money you have? 6 months = full marks."},
                 {"🏦", "EMIs", inc > 0 ? Math.round(f[2] * 100) + "% of income goes to EMIs" : "Income not known yet",
-                        "Keep EMIs under 30% of income. Pay off the costliest loan first.",
-                        "EMI payments in the last 3 months ÷ income. 10% or less = full marks, 40% or more = none."},
+                        "Try not to take new loans, and pay off the costliest one first.",
+                        "Out of every ₹100 you earn, how much goes to loan EMIs? ₹10 or less = full marks. ₹40 or more = zero."},
                 {"📊", "Budget", f[3] == 0 ? "On pace this month" : f[3] == 1 ? "A little over pace" : f[3] == 2 ? "Well over pace" : "No budget set",
-                        f[3] == 3 ? "Set a monthly budget in Plan — it's the simplest way to stay in control." : "Check Safe to spend on Home before bigger buys.",
-                        "Whether this budget is heading to finish within its amount, at the pace so far."},
+                        f[3] == 3 ? "Set a monthly budget in Plan — it tells you how much is safe to spend each day." : "Look at “Safe today” on Home before bigger buys.",
+                        "At the speed you're spending, will this month stay inside your budget? Inside = full marks."},
                 {"🎯", "Goals", f[4] + f[5] == 0 ? "No goals yet" : (int) f[4] + " on track · " + (int) f[5] + " behind",
-                        f[4] + f[5] == 0 ? "Set one goal — even a small one changes how you spend." : "Use the what-if sliders on a goal that's behind.",
-                        "Goals that are ahead or on track count fully; behind or not moving count half."},
+                        f[4] + f[5] == 0 ? "Set one small goal — having a reason to save changes how you spend." : "Open a goal that's behind and play with the what-if sliders.",
+                        "Are your goals moving on time? On track = full marks. Behind = half."},
         };
         add(Ui.label(this, "The five parts"));
         LinearLayout c = Ui.card(this);
@@ -89,6 +90,7 @@ public class HealthActivity extends Screen {
 
         // ---- runway
         add(Ui.label(this, "If your income stopped today"));
+        add(Explain.box(this, "runway"));
         LinearLayout rc = Ui.card(this);
         double run = f[1];
         rc.addView(Ui.text(this, run >= 24 ? "Your money lasts 2+ years" : "Your money lasts " + String.format(Locale.ROOT, "%.1f", run).replace(".0", "") + " months", 20, Ui.EXTRABOLD));
@@ -106,6 +108,7 @@ public class HealthActivity extends Screen {
         // ---- month end
         long[] fc = MoneyFacts.forecast(this);
         add(Ui.label(this, "At month end"));
+        add(Explain.box(this, "monthend"));
         LinearLayout mc = Ui.card(this);
         mc.addView(Ui.text(this, (fc[0] >= 0 ? "About " + Fmt.rs(fc[0]) : Fmt.rs(-fc[0]) + " short") + " left", 20, fc[0] >= 0 ? Ui.col(this, R.color.text) : Ui.col(this, R.color.danger), Ui.EXTRABOLD));
         mc.addView(Ui.sub(this, Fmt.rs(fc[1]) + " now − " + Fmt.rs(fc[2]) + " a day × " + fc[3] + " days − " + Fmt.rs(fc[4]) + " bills still due. Any income still to come is extra."));

@@ -176,10 +176,7 @@ public class GoalSetup extends Activity {
             body.addView(hs, Ui.margins(Ui.matchWrap(), this, 0, 6, 0, 4));
         }
         if ("emergency".equals(kind)) {
-            TextView w = Ui.sub(this, "An emergency fund is money kept aside for surprises — a job loss, a hospital bill. "
-                    + "Most people aim for 3 to 6 months of what they spend.");
-            w.setPadding(Ui.dp(this, 4), Ui.dp(this, 6), 0, 0);
-            body.addView(w);
+            body.addView(Explain.box(this, "emergency"), Ui.margins(Ui.matchWrap(), this, 0, 10, 0, 0));
         }
 
         TextView bl = Ui.text(this, "By when?", 15, Ui.BOLD);
@@ -261,8 +258,8 @@ public class GoalSetup extends Activity {
 
     private void where() {
         heading("Where will the money be?");
-        TextView why = Ui.sub(this, "Pick the bank account you'll keep it in. Money then checks that account's balance and tells you "
-                + "if you're ahead, on track or behind — by itself.");
+        TextView why = Ui.sub(this, "Tap the bank account the money will sit in. Money then watches that balance and tells you "
+                + "if you're ahead, on track or behind — all by itself.");
         why.setPadding(Ui.dp(this, 4), 0, 0, Ui.dp(this, 12));
         body.addView(why);
         Switch ex = new Switch(this);
@@ -297,7 +294,7 @@ public class GoalSetup extends Activity {
         ex.setOnCheckedChangeListener((b, on) -> existing = on);
         body.addView(ex, Ui.margins(Ui.matchWrap(), this, 4, 14, 4, 0));
         TextView tip = Ui.sub(this, "Tip: a separate account just for the goal (like your second Federal account) works best — "
-                + "money you don't see, you don't spend.");
+                + "money you don't see every day, you don't spend.");
         tip.setPadding(Ui.dp(this, 4), Ui.dp(this, 14), 0, 0);
         body.addView(tip);
     }

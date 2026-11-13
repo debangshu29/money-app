@@ -1,3 +1,9 @@
+Money 2.4.1 — explained simply 💡
+• Tap any rule (50/30/20, 60/20/20, 70/20/10, Pay yourself first) to learn it first: a simple story, what it means for YOUR salary, “you now vs with this rule”, and what changes — how much more you'd save in a month, a year, 5 and 10 years
+• ⭐ Money suggests the rule that fits how you spend today. Choose only after you understand it
+• Every Grow screen now starts with a “What is this?” box explained like you're 5 — laddoos, piggy banks, money trees, umbrellas. Close it with “Got it”; tap it to open again
+• Simpler words everywhere in Grow: money health, runway, month end, leaks, wait-list, habit price, hours of work, future you, freedom number, salary split, round-up jar, emergency fund, where goal money should sit
+
 Money 2.4 — Save more 🐷
 • Grow → Your money: your 50/30/20 split this month, Money health score, what's left at month end, how long your money lasts if income stopped, and the round-up jar
 • 50/30/20: Needs · Wants · Saved against the rule you pick (50/30/20, 60/20/20, 70/20/10 or Pay yourself first). Tap any category to move it between needs and wants

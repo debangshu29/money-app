@@ -68,6 +68,7 @@ public class RuleActivity extends Screen {
             t.setOnClickListener(v -> { monthBack = b; rebuild(); });
             seg.addView(t);
         }
+        add(Explain.box(this, "rule"));
         LinearLayout sr = Ui.hbox(this);
         sr.addView(seg);
         add(sr);
@@ -174,15 +175,17 @@ public class RuleActivity extends Screen {
         if (cats.isEmpty()) cl.addView(Ui.sub(this, "No spending yet this month."));
         add(cl);
 
-        // ---- pick a rule
-        add(Ui.label(this, "Pick your rule"));
+        // ---- pick a rule: tap to learn it first, with your own numbers
+        int sug = suggested(this);
+        add(Ui.label(this, "Pick your rule — tap one to learn it first"));
         LinearLayout pr = Ui.card(this);
         pr.setPadding(Ui.dp(this, 10), Ui.dp(this, 4), Ui.dp(this, 10), Ui.dp(this, 4));
         for (int i = 0; i < SaveMath.RULES.length; i++) {
             Object[] r = SaveMath.RULES[i];
             final int idx = i;
-            View row = Ui.navRow(this, i == ri ? "✅" : "📊", i == ri ? 0xFF0E9F6E : 0xFF94A3B8, (String) r[0] + (i == ri ? "  · yours" : ""), (String) r[4],
-                    v -> { MoneyFacts.setRule(this, idx); rebuild(); });
+            String sub = (i == sug ? "⭐ Suggested for you · " : "") + r[4];
+            View row = Ui.navRow(this, i == ri ? "✅" : "📊", i == ri ? 0xFF0E9F6E : 0xFF94A3B8, (String) r[0] + (i == ri ? "  · yours" : ""), sub,
+                    v -> explainRule(this, idx, this::rebuild));
             pr.addView(row);
         }
         add(pr);
@@ -190,6 +193,137 @@ public class RuleActivity extends Screen {
         inc2.setPadding(Ui.dp(this, 6), Ui.dp(this, 4), 0, 0);
         inc2.setOnClickListener(v -> askIncome());
         add(inc2);
+    }
+
+    /** {income, needs, wants} to compare with: last full month if it has data, else this month so far. */
+    static long[] now(android.content.Context c) {
+        long[] last = month(c, 1, null);
+        if (last[0] > 0 && last[1] + last[2] > 0) return last;
+        return month(c, 0, null);
+    }
+
+    /** The rule that fits how you spend today. */
+    static int suggested(android.content.Context c) {
+        long[] m = now(c);
+        if (m[0] <= 0) return 0;
+        int[] p = SaveMath.percents(m[0], m[1], m[2]);
+        if (p[0] <= 50) return 0;
+        if (p[0] <= 60) return 1;
+        return 2;
+    }
+
+    /** Explain one rule simply, with "now vs with this rule" for your own money, then let you choose it. */
+    static void explainRule(android.app.Activity a, int i, Runnable chosen) {
+        Object[] rule = SaveMath.RULES[i];
+        String[] story = Explain.RULE_STORY[i];
+        long[] m = now(a);
+        long inc = m[0];
+        LinearLayout b = Ui.vbox(a);
+        int p = Ui.dp(a, 22);
+        b.setPadding(p, 0, p, Ui.dp(a, 8));
+        if (i == suggested(a) && inc > 0) {
+            TextView sg = Ui.text(a, "⭐ Suggested for you — it fits how you spend today", 13, 0xFFD97706, Ui.BOLD);
+            sg.setPadding(0, 0, 0, Ui.dp(a, 10));
+            b.addView(sg);
+        }
+        TextView st = Ui.text(a, story[0], 15, Ui.col(a, R.color.text), Ui.REGULAR);
+        st.setLineSpacing(Ui.dp(a, 3), 1f);
+        b.addView(st);
+
+        int[] tgt = {(Integer) rule[1], (Integer) rule[2], (Integer) rule[3]};
+        boolean together = tgt[1] < 0;
+        if (inc > 0) {
+            // ---- with your money
+            b.addView(head(a, "With your " + Fmt.rs(inc) + " a month"));
+            LinearLayout boxes = Ui.hbox(a);
+            boxes.setBaselineAligned(false);
+            String[] lbl = together ? new String[]{"Spend freely", "", "Save first"} : NAMES;
+            int shown = 0;
+            for (int k = 0; k < 3; k++) {
+                if (together && k == 1) continue;
+                LinearLayout t = Ui.vbox(a);
+                t.setPadding(Ui.dp(a, 10), Ui.dp(a, 8), Ui.dp(a, 8), Ui.dp(a, 8));
+                t.setBackground(Ui.round((COL[k] & 0x00FFFFFF) | 0x22000000, Ui.dp(a, 14)));
+                t.addView(Ui.text(a, lbl[k] + " · " + tgt[k] + "%", 12, COL[k], Ui.BOLD));
+                t.addView(Ui.oneLine(Ui.text(a, Fmt.rs(inc * tgt[k] / 100), 15.5f, Ui.EXTRABOLD)));
+                boxes.addView(t, Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, shown++ == 0 ? 0 : 8, 0, 0, 0));
+            }
+            b.addView(boxes);
+
+            // ---- now vs with this rule
+            int[] nowPct = SaveMath.percents(inc, m[1], m[2]);
+            b.addView(head(a, "You now  vs  with this rule"));
+            b.addView(Ui.text(a, "Now", 12, Ui.col(a, R.color.text2), Ui.BOLD));
+            b.addView(bar(a, nowPct, 12), Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 8));
+            b.addView(Ui.text(a, "With " + rule[0], 12, Ui.col(a, R.color.text2), Ui.BOLD));
+            int[] rulePct = together ? new int[]{80, 0, 20} : tgt;
+            b.addView(bar(a, rulePct, 12), Ui.margins(Ui.matchWrap(), a, 0, 4, 0, 4));
+
+            // ---- what changes for you
+            b.addView(head(a, "What changes for you"));
+            long saveNow = Math.max(0, inc - m[1] - m[2]), saveRule = inc * tgt[2] / 100;
+            StringBuilder ch = new StringBuilder();
+            if (saveRule > saveNow) {
+                long more = saveRule - saveNow;
+                ch.append("🐷 You'd save ").append(Fmt.rs(more)).append(" more every month (").append(Fmt.rs(saveNow)).append(" → ").append(Fmt.rs(saveRule)).append(").\n\n");
+                ch.append("📅 In 1 year: ").append(Fmt.rs(saveRule * 12)).append(" saved.\n");
+                ch.append("🏦 Kept in an FD for 5 years (about 7%): ").append(Fmt.rs(Math.round(SaveMath.sip(saveRule / 100.0, 60, 0.07)) * 100)).append(".\n");
+                ch.append("🌱 Invested for 10 years (about 12%): ").append(Fmt.rs(Math.round(SaveMath.sip(saveRule / 100.0, 120, 0.12)) * 100)).append(".");
+            } else {
+                ch.append("👏 You already save ").append(Fmt.rs(saveNow)).append(" a month — more than this rule asks (").append(Fmt.rs(saveRule)).append(").\n\n");
+                ch.append("Following it, you could even enjoy ").append(Fmt.rs(saveNow - saveRule)).append(" more a month and still be on track. Or keep saving more — future you will love it.");
+            }
+            if (!together) {
+                long wantRule = inc * tgt[1] / 100, needRule = inc * tgt[0] / 100;
+                if (m[2] > wantRule) {
+                    long less = m[2] - wantRule;
+                    long orders = Math.max(1, less / 30000);
+                    ch.append("\n\n🎉 Wants would go down by ").append(Fmt.rs(less)).append(" a month — about ").append(orders)
+                            .append(orders == 1 ? " food order or outing" : " food orders or outings").append(" fewer.");
+                }
+                if (m[1] > needRule) {
+                    ch.append("\n\n🏠 Your needs are ").append(Fmt.rs(m[1] - needRule)).append(" more than this rule allows. Needs like rent and EMIs are hard to change quickly")
+                            .append(i < 2 ? " — a rule with more room for needs may fit you better." : ".");
+                }
+            }
+            TextView chT = Ui.text(a, ch.toString(), 14.5f, Ui.col(a, R.color.text), Ui.REGULAR);
+            chT.setLineSpacing(Ui.dp(a, 3), 1f);
+            b.addView(chT);
+        } else {
+            TextView ni = Ui.sub(a, "Tell Money your monthly income to see this rule with your own numbers.");
+            ni.setPadding(0, Ui.dp(a, 12), 0, 0);
+            b.addView(ni);
+        }
+
+        b.addView(head(a, "👍 Good for"));
+        b.addView(Ui.text(a, story[1], 14.5f, Ui.REGULAR));
+        b.addView(head(a, "⚠️ The hard part"));
+        b.addView(Ui.text(a, story[2], 14.5f, Ui.REGULAR));
+        TextView d = Ui.text(a, "Growth figures use example rates — for learning, not a promise.", 11.5f, Ui.col(a, R.color.hint), Ui.REGULAR);
+        d.setPadding(0, Ui.dp(a, 12), 0, 0);
+        b.addView(d);
+
+        android.widget.ScrollView sv = new android.widget.ScrollView(a);
+        sv.addView(b);
+        boolean mine = MoneyFacts.rule(a) == i;
+        Ui.Popup pop = new Ui.Popup(a);
+        pop.setTitle((String) rule[0]);
+        pop.setView(sv);
+        if (mine) pop.setPositiveButton("This is my rule ✓", null);
+        else pop.setPositiveButton("Use this rule", (x, y) -> {
+            MoneyFacts.setRule(a, i);
+            Ui.toast(a, rule[0] + " is your rule now");
+            if (chosen != null) chosen.run();
+        });
+        pop.setNegativeButton("Close", null);
+        if (inc <= 0) pop.setNeutralButton("Set income", (x, y) -> askIncome(a, () -> explainRule(a, i, chosen)));
+        pop.sheet().show();
+    }
+
+    private static TextView head(android.content.Context c, String s) {
+        TextView t = Ui.text(c, s, 15, Ui.BOLD);
+        t.setPadding(0, Ui.dp(c, 18), 0, Ui.dp(c, 8));
+        return t;
     }
 
     private void askIncome() { askIncome(this, this::rebuild); }

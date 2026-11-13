@@ -24,9 +24,7 @@ public class LeaksActivity extends Screen {
         long now = System.currentTimeMillis(), m30 = now - 30 * GoalMath.DAY;
         long yearly = 0;
 
-        TextView intro = Ui.sub(this, "Small things that quietly add up. Each one shows what it costs in a year — and what it could become in 10 years if invested instead.");
-        intro.setPadding(Ui.dp(this, 4), 0, 0, Ui.dp(this, 10));
-        add(intro);
+        add(Explain.box(this, "leaks"));
 
         // ---- subscriptions
         List<Ledger.Recurring> subs = new ArrayList<>();
@@ -61,7 +59,7 @@ public class LeaksActivity extends Screen {
                 row.addView(t);
                 c.addView(row);
             }
-            if (cancelYear > 0) c.addView(note("Cancelling those saves " + Fmt.rs(cancelYear) + " a year. Cancel in the app itself — Money only marks it."));
+            if (cancelYear > 0) c.addView(note("Cancelling those saves " + Fmt.rs(cancelYear) + " a year. Money only marks them — cancel inside each app."));
             add(c);
             yearly += cancelYear;
         }
@@ -78,7 +76,7 @@ public class LeaksActivity extends Screen {
                 if (n++ >= 4) break;
                 c.addView(line(e.getKey(), Fmt.rs(e.getValue())));
             }
-            c.addView(note("Most are avoidable: keep the minimum balance, pay card bills on time, turn off paid SMS alerts if your bank charges for them."));
+            c.addView(note("Most charges can be avoided: keep the minimum balance, pay card bills on time, and switch off paid SMS alerts if your bank charges for them."));
             add(c);
             yearly += feeSum;
         }
@@ -92,7 +90,7 @@ public class LeaksActivity extends Screen {
         }
         if (delN > 0) {
             LinearLayout c = leakCard("🛵", 0xFFF97316, "Food delivery", delN + " orders in 30 days · " + Fmt.rs(del), del * 12);
-            c.addView(note("Delivery fees, packing charges and higher menu prices add 20–40% to the same food. Ordering half as often saves about "
+            c.addView(note("Delivery fee + packing + higher menu prices = the same food costs much more at home. Ordering half as often saves about "
                     + Fmt.rs(del * 6) + " a year."));
             TextView go = Ui.chip(this, "🔥  Start a No-delivery challenge", false);
             go.setBackground(Ui.rippleRound(this, Ui.col(this, R.color.accent_soft), 18));
@@ -130,7 +128,7 @@ public class LeaksActivity extends Screen {
                 long[] v = l.get(i).getValue();
                 c.addView(line(l.get(i).getKey(), Fmt.rs(v[0] / Math.max(1, v[1])) + " × " + v[1]));
             }
-            c.addView(note("Each one feels like nothing. Together: " + Fmt.rs(smallSum * 12) + " a year."));
+            c.addView(note("Each one feels like nothing — like a drop from a tap. Together: " + Fmt.rs(smallSum * 12) + " a year."));
             TextView go = Ui.chip(this, "💸  See the true price of a habit", false);
             go.setBackground(Ui.rippleRound(this, Ui.col(this, R.color.accent_soft), 18));
             go.setOnClickListener(v -> startActivity(new Intent(this, HabitActivity.class)));
@@ -139,7 +137,7 @@ public class LeaksActivity extends Screen {
             yearly += smallSum * 12 / 3;
         }
 
-        if (getChildCountOfBox() <= 1) {
+        if (getChildCountOfBox() <= 1) {   // only the explanation box
             LinearLayout c = Ui.card(this);
             c.addView(Ui.text(this, "No leaks found 👍", 16, Ui.BOLD));
             c.addView(Ui.sub(this, "Nothing obvious in the last 30 days. Check again in a few weeks."));
