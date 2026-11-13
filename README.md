@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.9.2 — Scan & Pay asks “Paid?” when you're back; reads payment success screens and bank e-mails; weekly balance check.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 1.9.3 — the Accessibility screen-reading feature was removed; bank e-mails, “Paid?” after Scan & Pay and the weekly balance check stay.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -26,18 +26,15 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 
 1. Scan & Pay in Money → name, category, note (amount optional).
 2. **Open Google Pay** (or the app you picked once) → scan the same QR there and pay.
-3. Back in Money: **“Paid ₹__ to Sharma Kirana?”** → Yes → saved right away. If the bank SMS / app notification / success screen comes later, it joins this entry (no double).
+3. Back in Money: **“Paid ₹__ to Sharma Kirana?”** → Yes → saved right away. If the bank SMS / app notification comes later, it joins this entry (no double).
 
 **Catching payments that send nothing:**
 
 | Way | What it catches | Turn on |
 |---|---|---|
-| **Read payment screens** | the “Payment successful” screen in Google Pay, PhonePe, Paytm, super.money… — amount, name, UPI ID, reference, your bank account. Even ₹1. | Settings → Read payment screens → Accessibility → *Money – read payment screens*. On Android 13+: if it says “Restricted setting”, App info → ⋮ → *Allow restricted settings* first |
 | **Bank alert e-mails** | banks that e-mail small UPI payments instead of texting (HDFC) — read from Gmail's notification, only bank senders | on by default (Settings) |
 | **Add it yourself** | + → *UPI / bank*, or 🎤 “500 to Ramesh on Google Pay” | — |
 | **Weekly balance check** | type your balance once a week (notification) → anything not explained becomes *Unrecorded* while you remember | on by default; any time: Accounts → long-press → *Check balance* |
-
-Payment screens are read only for UPI apps (listed in `res/xml/screen_watch.xml`); PIN fields and anything you type are never read; only the payment is kept. Some bank apps refuse to open while an accessibility service is on — if yours does, turn it off in Settings → Read payment screens (or Android Accessibility settings).
 
 ## How quickly Money catches a payment (version 1.9.1)
 

@@ -69,7 +69,7 @@ public final class Store {
             S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
             S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
             S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals",
-            S_READ_MAIL = "read_mail", S_READ_SCREENS = "read_screens", S_BAL_CHECK = "balance_check";
+            S_READ_MAIL = "read_mail", S_BAL_CHECK = "balance_check";
 
     private Store(Context c) {
         ctx = c;

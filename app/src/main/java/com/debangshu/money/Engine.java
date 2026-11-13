@@ -164,20 +164,6 @@ public final class Engine {
         return saved;
     }
 
-    /** A payment read from the payment app's own "Payment successful" screen. */
-    public static Txn screen(Context ctx, String pkg, SmsParser.Result r, String text, long time) {
-        Txn t = new Txn();
-        t.time = time;
-        t.raw = text;
-        String app = NotifParser.appName(pkg);
-        t.sender = (app == null ? pkg : app) + " (screen)";
-        t.srcKey = "scr:" + (r.ref.isEmpty() ? Integer.toHexString((pkg + "|" + r.amount + "|" + r.merchant + "|" + (time / 600000)).hashCode()) : r.ref);
-        t.sources = Txn.SRC_APP;
-        t.account = r.account;
-        fill(ctx, t, r);
-        return save(ctx, t, false, false);
-    }
-
     /** Something you noted yourself (Scan & Pay “Paid?”, a typed or spoken UPI payment). */
     public static Txn note(Context ctx, Txn t) {
         t.sources = Txn.SRC_NOTE;

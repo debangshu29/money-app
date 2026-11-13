@@ -1,7 +1,3 @@
-Money 1.9.2 — no payment slips through
-• Scan & Pay: scan in Money → it opens Google Pay (or your app) → pay there → back in Money: “Paid ₹__ to Sharma Kirana?” → saved with the name, even with no SMS
-• NEW (turn on in Settings → Read payment screens): Money reads the “Payment successful” screen of Google Pay, PhonePe, Paytm… so even ₹1 payments are saved with name & UPI ID
-• Bank alert e-mails: payments your bank only e-mails (Gmail notification) are read too
-• Add a UPI payment yourself: + → “UPI / bank”, or say “500 to Ramesh on Google Pay”
-• Weekly balance check: type your balance once a week → missed payments show up while you remember them (also: Accounts → long-press → Check balance)
-• When the bank's message arrives later, it joins what you saved — no double entries
+Money 1.9.3
+• Removed “Read payment screens” (the Accessibility feature) completely — it also disappears from Android's Accessibility settings
+• Everything else from 1.9.2 stays: “Paid?” after Scan & Pay, bank alert e-mails, adding UPI payments by hand / voice, weekly balance check

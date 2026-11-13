@@ -65,11 +65,6 @@ public class SettingsActivity extends Activity {
                 Store.S_READ_SMS_NOTIF, null);
         sw(cap, "Read bank alert e-mails", "From Gmail's notifications — only e-mails from banks (some banks e-mail small UPI payments they don't text)",
                 Store.S_READ_MAIL, null);
-        boolean scr = ScreenWatch.enabled(this);
-        row(cap, "Read payment screens", scr && s.flag(Store.S_READ_SCREENS)
-                        ? "✓ On — saves payments from Google Pay / PhonePe / Paytm “Payment successful” screens"
-                        : "Off — catches small payments that send no SMS or notification. Tap to turn on",
-                v -> screensSetup());
         sw(cap, "Weekly balance check", "Once a week: type your balance → any payment that sent nothing shows up while you remember it",
                 Store.S_BAL_CHECK, null);
         sw(cap, "Find missed messages", "If the balance in a new SMS doesn't add up, an “Unrecorded” entry shows the difference",
@@ -239,31 +234,6 @@ public class SettingsActivity extends Activity {
                 s.end();
             }
         }).start();
-    }
-
-    private void screensSetup() {
-        boolean on = ScreenWatch.enabled(this);
-        String steps = "Money looks only at Google Pay, PhonePe, Paytm and other UPI apps, and only keeps the payment from their "
-                + "“Payment successful” screen (amount, name, UPI ID, reference). It never reads PINs or anything you type, and nothing leaves your phone.\n\n"
-                + "To turn it on:\n1. Tap “Open settings” → Installed / Downloaded apps → “Money – read payment screens” → On.\n"
-                + "2. If Android says “Restricted setting”: open App info (button below) → ⋮ (top right) → “Allow restricted settings”, then try step 1 again.\n\n"
-                + "If your bank app complains (some refuse to open while such a service is on), turn it off the same way — or tell Claude and the feature can be removed.";
-        Ui.Popup p = new Ui.Popup(this);
-        p.setTitle(on ? "Payment screens: on ✓" : "Read payment screens");
-        p.setMessage(on ? "Working. To pause it without going to Android settings, use the switch below.\n\n" + steps : steps);
-        if (on) p.setPositiveButton(Store.get(this).flag(Store.S_READ_SCREENS) ? "Pause it" : "Resume it", (d, w) -> {
-            Store.get(this).setFlag(Store.S_READ_SCREENS, !Store.get(this).flag(Store.S_READ_SCREENS));
-            build();
-        });
-        else p.setPositiveButton("Open settings", (d, w) -> {
-            Store.get(this).setFlag(Store.S_READ_SCREENS, true);
-            try { startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)); } catch (Exception ignored) { }
-        });
-        p.setNeutralButton("App info", (d, w) -> {
-            try { startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:" + getPackageName()))); }
-            catch (Exception ignored) { }
-        });
-        p.setNegativeButton("Close", null).show();
     }
 
     private void showUnread() {

@@ -30,9 +30,12 @@ Built one version at a time; each version is checked on the phone before the nex
 
 | **1.9** | Takes care of the boring stuff | ↩️ failed payment & refund tracker (kept out of spending, auto-linked refund, day-5 / day-10 reminder with the RBI T+1 / T+5 rule) · 🔔 renewals from SMS (mobile plan, insurance, PUC, FASTag low) + your own · ⏰ return & warranty dates (asked after a bill photo) · 🏦 loans & EMIs (months left, interest left, prepay savings, EMI-due reminder, in net worth) · ⭐ cashback & card points · 🎤 say a cash spend · Scan & Pay widget + quick-settings tiles | ✅ built (13 Nov 2026) |
 | **1.9.1** | Fixes | Scan & Pay passes the QR untouched + remembered UPI app + “Scan in my app” fallback when an app refuses · re-reads payment notifications still showing · more Google Pay / PhonePe wordings · unread app notifications in “Couldn't read” | ✅ built (13 Nov 2026) |
-| **1.9.2** | No payment slips through | Scan & Pay = note in Money → pay in your UPI app → “Paid ₹__?” on return · 📱 read UPI apps' payment success screens (accessibility, opt-in — remove if a bank app objects) · bank alert e-mails from Gmail notifications · add UPI payments by hand / voice · weekly balance check · noted payments merge with the later SMS | ✅ built (13 Nov 2026) — waiting for your check |
+| **1.9.2** | No payment slips through | Scan & Pay = note in Money → pay in your UPI app → “Paid ₹__?” on return · bank alert e-mails from Gmail notifications · add UPI payments by hand / voice · weekly balance check · noted payments merge with the later SMS | ✅ built (13 Nov 2026) |
+| **1.9.3** | Removed | Accessibility “read payment screens” removed at your request (didn't work on your phone) | ✅ built (13 Nov 2026) |
 
-## Ideas for later (not started)
+## Ideas for later
+
+- ❌ Tried and dropped: reading UPI apps' screens via Accessibility (1.9.2 → removed in 1.9.3) (not started)
 - Bank statement PDF import (fills names + Unrecorded from the statement's UPI lines)
 - Read bank statement PDFs / emailed statements to fill old gaps
 - Investment values (mutual funds, stocks) from statement SMS / emails

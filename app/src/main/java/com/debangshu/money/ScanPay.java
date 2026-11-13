@@ -241,7 +241,7 @@ public final class ScanPay {
 
         TextView how = Ui.text(a, "Money opens your UPI app — scan the same QR there and pay as usual (UPI apps only fully trust payments "
                 + "that start inside them). When you come back, Money asks “Paid?” and saves it with this name — or picks it up by "
-                + "itself from the bank SMS, the app's notification or its success screen. Money never sees your PIN.",
+                + "itself from the bank SMS or the app's notification. Money never sees your PIN.",
                 12, Ui.col(a, R.color.hint), Ui.REGULAR);
         how.setPadding(0, Ui.dp(a, 12), 0, 0);
         box.addView(how);
