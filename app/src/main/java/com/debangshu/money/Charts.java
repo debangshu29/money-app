@@ -195,4 +195,140 @@ public final class Charts {
             p.setShader(null);
         }
     }
+
+    /**
+     * A simple line chart: one or more series over the same x points, an optional dashed target line,
+     * money labels on the left, first/last x labels, and touch to see the values at a point.
+     */
+    public static class Line extends View {
+        private float[][] series = new float[0][];
+        private int[] colors = new int[0];
+        private boolean[] dashed = new boolean[0], filled = new boolean[0];
+        private String[] xLabels = new String[0];
+        private float target = -1;
+        private int touch = -1;
+        private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG), tp = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.Path path = new android.graphics.Path();
+        private int heightDp = 200;
+        public interface OnTouchPoint { void at(int index); }
+        private OnTouchPoint listener;
+
+        public Line(Context c) { super(c); }
+
+        /** values are rupees (floats), all series the same length. */
+        public void set(float[][] s, int[] col, boolean[] dash, boolean[] fill, String[] x, float targetLine) {
+            series = s; colors = col; dashed = dash; filled = fill; xLabels = x; target = targetLine; touch = -1;
+            invalidate();
+        }
+
+        public void height(int dp) { heightDp = dp; requestLayout(); }
+
+        public void onTouchPoint(OnTouchPoint l) { listener = l; }
+
+        @Override
+        protected void onMeasure(int w, int h) { setMeasuredDimension(MeasureSpec.getSize(w), Ui.dp(getContext(), heightDp)); }
+
+        static String money(float v) {
+            float a = Math.abs(v);
+            String s = a >= 1e7f ? String.format(java.util.Locale.ROOT, "%.1fCr", a / 1e7f)
+                    : a >= 1e5f ? String.format(java.util.Locale.ROOT, "%.1fL", a / 1e5f)
+                    : a >= 1e3f ? Math.round(a / 1e3f) + "k" : String.valueOf(Math.round(a));
+            return (v < 0 ? "-₹" : "₹") + s.replace(".0Cr", "Cr").replace(".0L", "L");
+        }
+
+        private float max() {
+            float m = Math.max(1, target);
+            for (float[] s : series) for (float v : s) m = Math.max(m, v);
+            return m * 1.08f;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent e) {
+            if (series.length == 0 || series[0].length < 2) return false;
+            float left = Ui.dp(getContext(), 44), right = getWidth() - Ui.dp(getContext(), 8);
+            int n = series[0].length;
+            int i = Math.round((e.getX() - left) / Math.max(1, right - left) * (n - 1));
+            i = Math.max(0, Math.min(n - 1, i));
+            if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_CANCEL) {
+                getParent().requestDisallowInterceptTouchEvent(false);
+            } else {
+                getParent().requestDisallowInterceptTouchEvent(true);
+                if (i != touch) { touch = i; if (listener != null) listener.at(i); invalidate(); }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            if (series.length == 0 || series[0].length < 2) return;
+            Context ctx = getContext();
+            float left = Ui.dp(ctx, 44), right = getWidth() - Ui.dp(ctx, 8), top = Ui.dp(ctx, 8), bottom = getHeight() - Ui.dp(ctx, 22);
+            float mx = max();
+            int n = series[0].length;
+            tp.setTextSize(Ui.dp(ctx, 10.5f));
+            tp.setColor(Ui.col(ctx, R.color.text2));
+            tp.setTypeface(Ui.face(ctx, Ui.SEMIBOLD));
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(Ui.dp(ctx, 1));
+            p.setPathEffect(null);
+            p.setColor(Ui.dark(ctx) ? 0x22FFFFFF : 0x14000000);
+            for (int g = 0; g <= 3; g++) {
+                float y = bottom - (bottom - top) * g / 3f;
+                c.drawLine(left, y, right, y, p);
+                tp.setTextAlign(Paint.Align.RIGHT);
+                c.drawText(money(mx * g / 3f), left - Ui.dp(ctx, 6), y + Ui.dp(ctx, 4), tp);
+            }
+            if (xLabels.length > 0) {
+                tp.setTextAlign(Paint.Align.LEFT);
+                c.drawText(xLabels[0], left, getHeight() - Ui.dp(ctx, 4), tp);
+                tp.setTextAlign(Paint.Align.RIGHT);
+                c.drawText(xLabels[xLabels.length - 1], right, getHeight() - Ui.dp(ctx, 4), tp);
+            }
+            if (target > 0) {
+                float y = bottom - (bottom - top) * target / mx;
+                p.setColor(Ui.col(ctx, R.color.text2));
+                p.setPathEffect(new android.graphics.DashPathEffect(new float[]{Ui.dp(ctx, 4), Ui.dp(ctx, 4)}, 0));
+                c.drawLine(left, y, right, y, p);
+                p.setPathEffect(null);
+            }
+            for (int k = 0; k < series.length; k++) {
+                path.reset();
+                for (int i = 0; i < n; i++) {
+                    float x = left + (right - left) * i / (float) (n - 1);
+                    float y = bottom - (bottom - top) * Math.max(0, series[k][i]) / mx;
+                    if (i == 0) path.moveTo(x, y); else path.lineTo(x, y);
+                }
+                if (filled.length > k && filled[k]) {
+                    android.graphics.Path f = new android.graphics.Path(path);
+                    f.lineTo(right, bottom);
+                    f.lineTo(left, bottom);
+                    f.close();
+                    p.setStyle(Paint.Style.FILL);
+                    p.setColor((colors[k] & 0x00FFFFFF) | 0x22000000);
+                    c.drawPath(f, p);
+                    p.setStyle(Paint.Style.STROKE);
+                }
+                p.setColor(colors[k]);
+                p.setStrokeWidth(Ui.dp(ctx, 2.2f));
+                p.setStrokeCap(Paint.Cap.ROUND);
+                p.setStrokeJoin(Paint.Join.ROUND);
+                p.setPathEffect(dashed.length > k && dashed[k] ? new android.graphics.DashPathEffect(new float[]{Ui.dp(ctx, 6), Ui.dp(ctx, 4)}, 0) : null);
+                c.drawPath(path, p);
+                p.setPathEffect(null);
+            }
+            if (touch >= 0 && touch < n) {
+                float x = left + (right - left) * touch / (float) (n - 1);
+                p.setStrokeWidth(Ui.dp(ctx, 1));
+                p.setColor(Ui.col(ctx, R.color.text2));
+                c.drawLine(x, top, x, bottom, p);
+                p.setStyle(Paint.Style.FILL);
+                for (int k = 0; k < series.length; k++) {
+                    float y = bottom - (bottom - top) * Math.max(0, series[k][touch]) / mx;
+                    p.setColor(colors[k]);
+                    c.drawCircle(x, y, Ui.dp(ctx, 4), p);
+                }
+                p.setStyle(Paint.Style.STROKE);
+            }
+        }
+    }
 }

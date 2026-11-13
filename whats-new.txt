@@ -1,3 +1,15 @@
+Money 2.3 — Grow 🌱
+• New Grow tab (Home · Activity · Insights · Plan · Grow). Pay & note is now the first button on Home
+• Goals 2.0 in 3 taps: pick what for (emergency fund, phone, trip, festival…), how much and by when, then tap the bank account the money is in
+• Money watches that account by itself: Ahead, On track or Behind by ₹X, how much you need a month, your real pace, and the month you'll reach it
+• Graph of where each goal is heading — touch any month — plus What-if sliders: save ₹X more, or spend less on food delivery / shopping, and see how much sooner
+• Split my saving: one slider for what you can save a month, shared fairly across your goals
+• Last month's leftover: “₹4,200 was left in October — put it in a goal?”
+• Festivals coming up (Durga Puja, Diwali, Christmas, Holi, Eid, Poila Baisakh) with what you spent last time — plan ahead in one tap
+• Where goal money could sit (under 1 year, 1–3, 3–5, 5+ years) — for learning, not advice
+• Goal photo, pause for a tough month, add / take out money, history
+• Badges and celebrations at 25%, 50%, 75% and 100% — even a notification the moment the bank SMS takes you over a milestone
+
 Money 2.2 — clean & precise ✨
 • New look: proper line icons everywhere (Home, Plan, Settings, insights) instead of emoji, and fewer words on every screen
 • Home is simpler: “Needs you” (only when something does) · This month (spent, budget bar, safe today, today, came in) · Add / Say it / Accounts / Ask · Money you have · Recent

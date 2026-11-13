@@ -201,7 +201,7 @@ public final class Ui {
         Object[][] m = {
                 {"🏦", R.drawable.ln_landmark}, {"💵", R.drawable.ln_banknote}, {"📅", R.drawable.ln_calendar_days}, {"💳", R.drawable.ln_credit_card},
                 {"👥", R.drawable.ln_users}, {"🔔", R.drawable.ln_bell}, {"↩️", R.drawable.ln_undo_2}, {"🏠", R.drawable.ln_house},
-                {"🏆", R.drawable.ln_target}, {"🎯", R.drawable.ln_target}, {"🔥", R.drawable.ln_flame}, {"🧾", R.drawable.ln_receipt_text},
+                {"🏆", R.drawable.ln_trophy}, {"🎯", R.drawable.ln_target}, {"🔥", R.drawable.ln_flame}, {"🧾", R.drawable.ln_receipt_text},
                 {"📄", R.drawable.ln_file_text}, {"✏️", R.drawable.ln_plus}, {"➕", R.drawable.ln_plus}, {"⚙️", R.drawable.ln_settings},
                 {"🎤", R.drawable.ln_mic}, {"💬", R.drawable.ln_sparkles}, {"📥", R.drawable.ln_inbox}, {"📍", R.drawable.ln_map_pin},
                 {"🔒", R.drawable.ln_lock}, {"💾", R.drawable.ln_hard_drive}, {"⬆️", R.drawable.ln_circle_arrow_up}, {"🏪", R.drawable.ln_store},
@@ -209,7 +209,12 @@ public final class Ui {
                 {"🛣️", R.drawable.ln_route}, {"📦", R.drawable.ln_package}, {"🧰", R.drawable.ln_wrench}, {"🎓", R.drawable.ln_graduation_cap},
                 {"🐷", R.drawable.ln_piggy_bank}, {"📊", R.drawable.ln_chart_pie}, {"💡", R.drawable.ln_lightbulb}, {"👛", R.drawable.ln_wallet},
                 {"🧮", R.drawable.ln_calculator}, {"📩", R.drawable.ln_message_square_text}, {"⚠️", R.drawable.ln_triangle_alert},
-                {"🔋", R.drawable.ln_battery_charging}, {"🗂️", R.drawable.ln_folder_open}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
+                {"🔋", R.drawable.ln_battery_charging}, {"🗂️", R.drawable.ln_folder_open},
+                {"💻", R.drawable.ln_laptop}, {"✈️", R.drawable.ln_plane}, {"🏍️", R.drawable.ln_bike}, {"🎁", R.drawable.ln_gift},
+                {"🪔", R.drawable.ln_party_popper}, {"🎉", R.drawable.ln_party_popper}, {"💍", R.drawable.ln_gem}, {"🏅", R.drawable.ln_medal},
+                {"⭐", R.drawable.ln_star}, {"📷", R.drawable.ln_camera}, {"⏸️", R.drawable.ln_pause}, {"▶️", R.drawable.ln_play},
+                {"🖼️", R.drawable.ln_image}, {"🔀", R.drawable.ln_split}, {"☂️", R.drawable.ln_umbrella}, {"📲", R.drawable.ln_scan_line},
+                {"🎄", R.drawable.ln_gift}, {"🎨", R.drawable.ln_sparkles}, {"🌙", R.drawable.ln_star}, {"🚀", R.drawable.ln_trending_up}, {"✨", R.drawable.ln_sparkles}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
         };
         for (Object[] x : m) ICONS.put((String) x[0], (Integer) x[1]);
     }

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Plan: your budget on top, a short "Needs you" list (only when something does), then every tool as a round icon,
- * four to a row, in three groups — Money · Life · Grow & tools (like Google Pay's home).
+ * four to a row, in three groups — Money · Life · Tools (like Google Pay's home). Goals live in the Grow tab.
  */
 final class PlanPage {
 
@@ -104,12 +104,12 @@ final class PlanPage {
                 Ui.action(a, "🔔", 0xFF0EA5E9, "Reminders", v -> a.startActivity(new Intent(a, Reminders.class))),
                 Ui.action(a, "↩️", 0xFFF59E0B, "Refunds", v -> a.startActivity(new Intent(a, Refunds.class))),
                 Ui.action(a, "🏠", 0xFF64748B, "Loans", v -> a.startActivity(new Intent(a, Loans.class)))));
-        body.addView(Ui.label(a, "Grow & tools"));
+        body.addView(Ui.label(a, "Tools"));
         body.addView(gridCard(
-                Ui.action(a, "🎯", 0xFFF59E0B, "Goals", v -> a.startActivity(new Intent(a, Goals.class))),
-                Ui.action(a, "🔥", 0xFFEF4444, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class))),
                 Ui.action(a, "🧾", 0xFF6366F1, "Tax", v -> a.startActivity(new Intent(a, TaxActivity.class))),
-                Ui.action(a, "📄", 0xFF0E9F6E, "Statement", v -> a.startActivity(new Intent(a, StatementActivity.class)))));
+                Ui.action(a, "📄", 0xFF0E9F6E, "Statement", v -> a.startActivity(new Intent(a, StatementActivity.class))),
+                Ui.action(a, "🔥", 0xFFEF4444, "Challenges", v -> a.startActivity(new Intent(a, Challenges.class))),
+                Ui.action(a, "🎯", 0xFFF59E0B, "Goals", v -> a.show(MainActivity.GROW))));
     }
 
     private View gridCard(View... items) {

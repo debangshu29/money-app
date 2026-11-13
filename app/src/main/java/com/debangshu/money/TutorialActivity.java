@@ -33,6 +33,8 @@ public class TutorialActivity extends Activity {
                     "Each account with its number and live balance. Two accounts at the same bank stay separate. Delete an entry and the balance goes back."},
             {"📊", 0xFF22C55E, "Know what's safe to spend",
                     "Set a monthly budget and Home shows how much you can still spend today — after the bills that are still to come."},
+            {"🎯", 0xFF0E9F6E, "Grow your money",
+                    "Set a goal, tap the account the money is in, and Money tells you if you're ahead, on track or behind — with what-if sliders to get there sooner."},
             {"🔔", 0xFF3B82F6, "Never miss a date",
                     "Card bills, renewals, EMIs, return windows and failed payments that haven't come back — Money reminds you only when it matters."},
             {"💬", 0xFF0EA5E9, "Ask anything",
@@ -212,7 +214,7 @@ public class TutorialActivity extends Activity {
         LinearLayout col = Ui.vbox(a);
         col.setPadding(Ui.dp(a, 14), 0, Ui.dp(a, 8), 0);
         col.addView(Ui.text(a, "Take the tour", 16, Ui.BOLD));
-        col.addView(Ui.text(a, "What Money does, in 8 short pages", 13, Ui.col(a, R.color.text2), Ui.REGULAR));
+        col.addView(Ui.text(a, "What Money does, in 9 short pages", 13, Ui.col(a, R.color.text2), Ui.REGULAR));
         tour.addView(col, Ui.weight1());
         tour.addView(Ui.chevron(a));
         tour.setOnClickListener(v -> start(a, false));

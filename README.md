@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.2 — clean & precise: line icons, a simpler Home, a welcome tour and Settings → Tutorials. Net worth and Rewards removed.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.3 — the Grow tab: goals linked to your real accounts (ahead / on track / behind), what-if sliders, split my saving, festival planner, badges.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -239,3 +239,9 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - Home: Needs you → This month → quick actions → Money you have → Recent.
 - `TutorialActivity`: the welcome tour (first run, and once after updating) and the Settings → Tutorials page.
 - Net worth and Rewards screens removed.
+
+## Version 2.3 — Grow
+- New 5th tab `GrowPage` (the middle Pay & note button moved to Home's first quick action).
+- `GoalMath` (plain Java, tested by T17): status (ahead / on track / behind / not moving), pace from daily snapshots, finish date, split, milestones, festival table, where-to-keep buckets.
+- `Goals` (data): goals in Store list "goals"; linked goals use the account's live balance; badges in Store obj "badges".
+- `GoalSetup` (3 steps) and `GoalActivity` (detail, projection graph `Charts.Line`, what-if sliders, photo, pause).

@@ -11,16 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** Four tabs: Home · Activity · Insights · Ask. */
+/** Five tabs: Home · Activity · Insights · Plan · Grow. */
 public class MainActivity extends Activity {
 
-    public static final int HOME = 0, ACTIVITY = 1, INSIGHTS = 2, PLAN = 3;
-    private static final String[] TABS = {"Home", "Activity", "Insights", "Plan"};
-    private static final int[] ICONS = {R.drawable.ic_home, R.drawable.ic_list, R.drawable.ic_pie, R.drawable.ic_grid};
+    public static final int HOME = 0, ACTIVITY = 1, INSIGHTS = 2, PLAN = 3, GROW = 4;
+    private static final String[] TABS = {"Home", "Activity", "Insights", "Plan", "Grow"};
+    private static final int[] ICONS = {R.drawable.ic_home, R.drawable.ic_list, R.drawable.ic_pie, R.drawable.ic_grid, R.drawable.ln_trending_up};
 
     int tab = HOME;
     private FrameLayout content;
-    private final LinearLayout[] tabViews = new LinearLayout[4];
+    private final LinearLayout[] tabViews = new LinearLayout[5];
     private final Runnable onChange = this::refreshSoon;
     private boolean pending;
 
@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
     final ActivityPage activity = new ActivityPage(this);
     final InsightsPage insights = new InsightsPage(this);
     final PlanPage plan = new PlanPage(this);
+    final GrowPage grow = new GrowPage(this);
 
     @Override
     protected void onCreate(Bundle b) {
@@ -162,6 +163,7 @@ public class MainActivity extends Activity {
             case HOME: home.refresh(); break;
             case ACTIVITY: activity.refresh(); break;
             case INSIGHTS: insights.refresh(); break;
+            case GROW: grow.refresh(); break;
             default: plan.refresh(); break;
         }
     }
@@ -169,10 +171,10 @@ public class MainActivity extends Activity {
     void show(int t) {
         tab = t;
         content.removeAllViews();
-        View v = t == HOME ? home.view() : t == ACTIVITY ? activity.view() : t == INSIGHTS ? insights.view() : plan.view();
+        View v = t == HOME ? home.view() : t == ACTIVITY ? activity.view() : t == INSIGHTS ? insights.view() : t == GROW ? grow.view() : plan.view();
         if (v.getParent() != null) ((ViewGroup) v.getParent()).removeView(v);
         content.addView(v);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             boolean on = i == t;
             LinearLayout tv = tabViews[i];
             if (tv == null) continue;
@@ -195,28 +197,23 @@ public class MainActivity extends Activity {
         show(ACTIVITY);
     }
 
-    /** Bottom bar: Home · Activity · ( Pay & note ) · Insights · Plan — the round button pops out above the bar. */
+    /** Bottom bar: Home · Activity · Insights · Plan · Grow (Pay & note is the first quick action on Home). */
     private View navBar() {
-        FrameLayout wrap = new FrameLayout(this);
-        wrap.setClipChildren(false);
-        wrap.setClipToPadding(false);
-        int lift = Ui.dp(this, 24);
-
         LinearLayout bar = Ui.hbox(this);
         bar.setBackground(Ui.round(Ui.col(this, R.color.surface), 0));
         bar.setElevation(Ui.dp(this, 8));
         bar.setPadding(0, Ui.dp(this, 6), 0, Ui.dp(this, 8));
-        for (int i = 0; i < 4; i++) {
-            if (i == 2) bar.addView(fabSlot(), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.1f));
+        for (int i = 0; i < 5; i++) {
             LinearLayout t = Ui.vbox(this);
             t.setGravity(Gravity.CENTER);
             ImageView ic = new ImageView(this);
             ic.setImageResource(ICONS[i]);
-            int ph = Ui.dp(this, 16), pv = Ui.dp(this, 5);
+            int ph = Ui.dp(this, 14), pv = Ui.dp(this, 5);
             ic.setPadding(ph, pv, ph, pv);
-            t.addView(ic, Ui.lp(Ui.dp(this, 56), Ui.dp(this, 32)));
+            t.addView(ic, Ui.lp(Ui.dp(this, 52), Ui.dp(this, 32)));
             TextView l = Ui.text(this, TABS[i], 12, Ui.SEMIBOLD);
             l.setGravity(Gravity.CENTER);
+            l.setSingleLine(true);
             l.setPadding(0, Ui.dp(this, 3), 0, 0);
             t.addView(l);
             final int idx = i;
@@ -227,59 +224,7 @@ public class MainActivity extends Activity {
             tabViews[i] = t;
             bar.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         }
-        FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        blp.topMargin = lift;
-        wrap.addView(bar, blp);
-
-        // the round button: a ring in the page colour around a green gradient circle, raised above the bar
-        int size = Ui.dp(this, 66);
-        FrameLayout fab = new FrameLayout(this);
-        android.graphics.drawable.GradientDrawable ring = new android.graphics.drawable.GradientDrawable();
-        ring.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        ring.setColor(Ui.col(this, R.color.bg));
-        fab.setBackground(ring);
-        fab.setElevation(Ui.dp(this, 14));
-        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.TL_BR, new int[]{0xFF34D399, 0xFF0E9F6E, 0xFF0B6F86});
-        g.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        ImageView core = new ImageView(this);
-        core.setImageResource(R.drawable.ic_pay);
-        core.setColorFilter(0xFFFFFFFF);
-        core.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        int ip = Ui.dp(this, 15);
-        core.setPadding(ip, ip, ip, ip);
-        core.setBackground(new android.graphics.drawable.RippleDrawable(
-                android.content.res.ColorStateList.valueOf(0x40FFFFFF), g, null));
-        int pad = Ui.dp(this, 5);
-        FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(size - 2 * pad, size - 2 * pad, Gravity.CENTER);
-        fab.addView(core, clp);
-        core.setContentDescription("Pay & note");
-        core.setOnClickListener(v -> PayNote.sheet(this));
-        core.setOnLongClickListener(v -> { TxnSheet.addManual(this); return true; });
-        core.setOnTouchListener((v, e) -> {
-            if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) fab.animate().scaleX(0.9f).scaleY(0.9f).setDuration(90).start();
-            else if (e.getAction() == android.view.MotionEvent.ACTION_UP || e.getAction() == android.view.MotionEvent.ACTION_CANCEL)
-                fab.animate().scaleX(1f).scaleY(1f).setDuration(160).setInterpolator(new android.view.animation.OvershootInterpolator(3f)).start();
-            return false;
-        });
-        FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(size, size, Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-        flp.topMargin = Ui.dp(this, 2);
-        wrap.addView(fab, flp);
-        return wrap;
-    }
-
-    /** The middle slot of the bar: room for the round button, with its label underneath. */
-    private View fabSlot() {
-        LinearLayout t = Ui.vbox(this);
-        t.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
-        View space = new View(this);
-        t.addView(space, Ui.lp(1, Ui.dp(this, 32)));
-        TextView l = Ui.text(this, "Pay & note", 12, Ui.col(this, R.color.accent), Ui.BOLD);
-        l.setGravity(Gravity.CENTER);
-        l.setPadding(0, Ui.dp(this, 3), 0, 0);
-        t.addView(l);
-        t.setOnClickListener(v -> PayNote.sheet(this));
-        return t;
+        return bar;
     }
 
     /** Top bar used by every tab: big title, then the eye (hide amounts) and settings. */

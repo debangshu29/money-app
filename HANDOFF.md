@@ -1,7 +1,7 @@
 # Money — handoff for a new Claude chat
 
 **Read this file first, then README.md and ROADMAP.md.** It holds everything from earlier chats that isn't obvious from the code.
-Last updated: 13 Nov 2026, after version **2.2** (versionCode 18, commit 336ce16).
+Last updated: 13 Nov 2026, after version **2.3** (versionCode 19).
 
 ## Who and how we work
 - Owner: **Debangshu Ghosh**, Kolkata. Claude writes all the code; Debangshu supervises and tests on his phone.
@@ -48,18 +48,16 @@ SBI, IndusInd, Union Bank, Kotak, Jupiter (Federal Bank; he has **two Federal ac
 5. Copy the changed files and `Money.apk` (from the `updates` branch) to **D:\money** through the desktop-app link. Claude can't delete files there, so tell him which ones to delete by hand.
 6. A quick check before pushing: compile against android.jar, and run the desktop tests for the plain-Java parsers (`SmsParser`, `Voice`, `StatementParser`, …).
 
-## What's next: 2.3 "Grow: your money coach" (agreed, not started)
-He said: "make it more goal specific … more helpful towards goal … so you can save more money … rules like 50 30 20 … tips … so a user can be guided and track themselves and their money."
-Planned:
-- **50/30/20 tracker**: spending sorted automatically into Needs (rent, groceries, bills, EMIs, travel to work, medicine) / Wants (food delivery, shopping, fun) / Saved. Each month shown as "Needs 54% · Wants 33% · Saved 13%" with what pushed it over. Other rules to choose from: 70/20/10, 60/20/20, pay yourself first.
-- **Goals 2.0**: link a goal to an account (e.g. the second Federal account as a "laptop pot"), "on track / behind by ₹X", the real finish date, and what-ifs ("cut food delivery by ₹1,000 a month and you reach it 2 months sooner").
-- **Emergency fund**: 3–6 months of his own Needs spending, as the first goal.
-- **Money health check**: one score from savings rate, emergency-fund months, EMIs as a share of income, budget kept and goal progress, each part with one tip.
-- **Leak finder**: subscriptions you don't use, bank fees, delivery charges, small repeated spends.
-- **Wait-list**: a 7- or 30-day wait before buying something you want.
-- **Short lessons using his own numbers**: 50/30/20, emergency fund, pay yourself first, SIP basics, which loan to pay off first, paying the full card bill, rule of 72. These are general guidance, not financial advice.
-- Grow then becomes its own Plan section again (right now Plan shows "Grow & tools": Goals, Challenges, Tax, Statement).
+## The agreed roadmap (he said OK on 13 Nov 2026)
+He wants **Grow to be ~40% of the app** — the most impactful part. Every tool must be **interactive** (sliders, live graphs) and easy to understand.
+- **2.3 Grow tab & goals — DONE**: 5th tab; Goals 2.0 (GoalSetup 3 steps, tap the bank account, live status from the account's balance, pace from daily snapshots, what-if sliders: save more / spend less on a category, projection graph `Charts.Line`, photo, pause, add/take out, history); split my saving; last month's leftover card; festival planner (`GoalMath.FESTIVALS` dates 2025–2028 — extend the table later); where goal money could sit; badges (`Goals.BADGE_LIST`) + celebrations + a notification when an SMS pushes a goal over 25/50/75/100%.
+- **2.4 Save more**: 50/30/20 (+70/20/10, pay yourself first) · leak finder · wait-list (7/30 days) · more challenges (no-delivery week, 52-week, ₹100/day) · hours of work · money health score (tap to see why) · true price of a habit (cut slider → 10-year value) · runway meter · month-end forecast · salary-day split (instant notification on salary SMS) · future you / freedom number · round-up jar · goal impact on unusual big payments.
+- **2.5 Calculators & play tools** (all sliders + live graphs, reuse `Charts.Line`): SIP / step-up · lump sum · FD · RD · PPF · NPS · gold · compare all (FD/RD/PPF/bonds/gold/MF/stocks with risk, lock-in, liquidity) · cost of waiting · money time machine (inflation on his own spends) · snowball switch (interest on interest on/off) · investment race · market crash test · tax & inflation eat · fees · credit card minimum-due trap · no-cost EMI check · lock-in timeline · rent vs buy · prepay loan or invest · share result as picture. Rates are editable examples; always "for learning, not financial advice". No internet.
+- **2.6 Three languages**: whole app in English / Hindi / Bengali (language picker; move all strings to resources; Hindi/Bengali fonts; voice entry hi-IN/bn-IN). He'll check Bengali; someone else Hindi. Do this BEFORE lessons so lessons are written in 3 languages.
+- **2.7 Learn**: 60+ one-minute lessons (FD, RD, PPF, NPS, bonds, stocks, MF, SIP, index funds, gold, insurance basics, emergency fund, inflation, compounding, risk, diversification, KYC/demat, tax basics, scams like UPI collect-request fraud) · each with "Try it" → the matching calculator · "Watch videos" button opening a YouTube search in the user's language (e.g. "FD kya hai") + RBI/SEBI investor-education links · myth busters · quiz/flashcards · tap-to-explain words · 7-day "money basics" course.
+- **2.8 Motivation**: levels Saver → Builder → Investor · more badges · no-spend calendar · Money Wrapped (yearly story) · simple mode for elders.
+Build one version at a time; he tests each.
 
 ## Waiting on him
-- Feedback and screenshots on 2.2's new look.
-- D:\money was not synced for 2.1–2.2 because the desktop link to the old chat broke. He got `money-update-2.2.zip`. He also needs to delete by hand: `ScanPay.java`, `ScreenWatch.java`, `ScreenParser.java`, `NetWorthActivity.java`, `Rewards.java`, `res\xml\screen_watch.xml`.
+- Feedback and screenshots on 2.2's look and 2.3's Grow tab.
+- D:\money: he still needs to delete by hand `NetWorthActivity.java` and `Rewards.java` (and the old `Goals` activity is now a data class — nothing to delete). device_bash on his PC failed to start, so deletes can't be done from here.

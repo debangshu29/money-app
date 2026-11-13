@@ -38,7 +38,12 @@ Built one version at a time; each version is checked on the phone before the nex
 | **2.1.1** | Right account | “Paid from” Cash / exact account (••last4) for added, spoken and noted payments · live balance in Money · delete/hide restores balance & cash wallet · move between accounts · voice “from Federal ending 1234”, asks when two match | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.1.2** | Tap your bank | “Paid from” as a 2-column grid of account buttons (bank · ••number · balance) everywhere · account buttons on the “Paid anyone?” follow-up notification · voice “paid/cut from SBI” | ✅ built (13 Nov 2026) — waiting for your check |
 | **2.2** | Clean & precise | Line icons everywhere · simpler Home (Needs you, This month, actions, Money you have, Recent) · welcome tour + Settings → Tutorials with how-tos · Net worth & Rewards removed · Plan = Money / Life / Grow & tools | ✅ built (13 Nov 2026) — waiting for your check |
-| **2.3** | Grow: your money coach | 50/30/20 (and other rules) tracker · goals linked to accounts with on-track dates · emergency fund · money health check · leak finder · wait-list · short lessons with your numbers | 🔜 next |
+| **2.3** | Grow tab & goals | Grow tab · Goals 2.0 (3-tap setup, tap your bank, ahead/on track/behind, pace, what-if sliders, projection graph, photo, pause) · split my saving · last month's leftover · festival planner · where goal money could sit · badges & celebrations | ✅ built (13 Nov 2026) — waiting for your check |
+| **2.4** | Save more | 50/30/20 · leak finder · wait-list · more challenges · hours of work · health score · true price of a habit · runway meter · month-end forecast · salary-day split · future you / freedom number · round-up jar · goal impact on big payments | 🔜 next |
+| **2.5** | Calculators & play tools | SIP / step-up · lump sum · FD · RD · PPF · NPS · gold · compare all · cost of waiting · time machine · snowball switch · investment race · crash test · tax & inflation · fees · card trap · EMI check · lock-in timeline · rent vs buy · prepay or invest · share as picture | planned |
+| **2.6** | Three languages | Whole app in English / हिंदी / বাংলা, language picker, Hindi & Bengali fonts and voice | planned |
+| **2.7** | Learn | 60+ one-minute lessons (3 languages) · Try it → calculator · Watch videos in your language · myths · quiz · word explainer · 7-day course · scam alerts | planned |
+| **2.8** | Motivation | Levels & badges · no-spend calendar · Money Wrapped · simple mode | planned |
 
 ## Ideas for later
 

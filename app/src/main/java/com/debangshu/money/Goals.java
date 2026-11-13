@@ -1,36 +1,167 @@
 package com.debangshu.money;
 
-import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.InputType;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Calendar;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Goals: "Laptop ₹60,000 by March". Shows how much to put aside each month,
- * and whether you're on track from what you actually saved lately (money in − money out).
+ * Goals 2.0 — the data. A goal is "Laptop ₹60,000 by March". Its money either sits in a bank account you picked
+ * (progress = that account's live balance) or you add it yourself. Snapshots give the real pace; milestones give badges.
+ *
+ * Stored as a list "goals" of JSON objects:
+ * id, name, emoji, kind, target, by, created, startValue, saved (added yourself), account ("" = added yourself),
+ * existing (count what was already in the account), base (account balance when linked), paused, photo, plan (₹/month),
+ * pct (last percent seen), celebrate (milestone to show), snaps [[time, value]], log [[time, amount, note]].
  */
-public class Goals extends Activity {
+final class Goals {
 
-    static final String KEY = "goals";
+    private Goals() {}
 
-    static JSONArray list(Context c) { return Store.get(c).list(KEY); }
+    static final String KEY = "goals", BADGES = "badges";
 
-    static void save(Context c, JSONArray a) { Store.get(c).putList(KEY, a); }
+    /** kind, emoji, name */
+    static final String[][] TEMPLATES = {
+            {"emergency", "🛡️", "Emergency fund"}, {"phone", "📱", "New phone"}, {"laptop", "💻", "Laptop"},
+            {"trip", "✈️", "Trip"}, {"bike", "🏍️", "Bike"}, {"gift", "🎁", "Gift"}, {"festival", "🪔", "Festival"},
+            {"study", "🎓", "Studies"}, {"wedding", "💍", "Wedding"}, {"home", "🏠", "Home"}, {"other", "🎯", "Something else"},
+    };
 
-    /** Average saved per month over the last 3 full months (money in − money out). */
+    static final int[] COLORS = {0xFF0E9F6E, 0xFF6366F1, 0xFFF59E0B, 0xFFEC4899, 0xFF0EA5E9, 0xFF8B5CF6, 0xFFEF4444};
+
+    static int color(JSONObject g) { return COLORS[(g.optString("id").hashCode() & 0x7FFFFFFF) % COLORS.length]; }
+
+    // ------------------------------------------------------------------ list
+
+    static List<JSONObject> all(Context c) {
+        JSONArray a = Store.get(c).list(KEY);
+        List<JSONObject> out = new ArrayList<>();
+        boolean fixed = false;
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < a.length(); i++) {
+            JSONObject g = a.optJSONObject(i);
+            if (g == null) continue;
+            try {   // goals from before 2.3
+                if (g.optLong("created") == 0) { g.put("created", now).put("startValue", g.optLong("saved")); fixed = true; }
+                if (!g.has("account")) { g.put("account", ""); fixed = true; }
+            } catch (Exception ignored) { }
+            out.add(g);
+        }
+        if (fixed) saveAll(c, out);
+        return out;
+    }
+
+    static List<JSONObject> active(Context c) {
+        List<JSONObject> out = new ArrayList<>();
+        for (JSONObject g : all(c)) if (!g.optBoolean("paused") && current(c, g) < g.optLong("target")) out.add(g);
+        return out;
+    }
+
+    static JSONObject byId(Context c, String id) {
+        for (JSONObject g : all(c)) if (g.optString("id").equals(id)) return g;
+        return null;
+    }
+
+    static void saveAll(Context c, List<JSONObject> l) {
+        JSONArray a = new JSONArray();
+        for (JSONObject g : l) a.put(g);
+        Store.get(c).putList(KEY, a);
+    }
+
+    static void put(Context c, JSONObject g) {
+        List<JSONObject> l = all(c);
+        boolean found = false;
+        for (int i = 0; i < l.size(); i++) if (l.get(i).optString("id").equals(g.optString("id"))) { l.set(i, g); found = true; }
+        if (!found) l.add(g);
+        saveAll(c, l);
+    }
+
+    static void delete(Context c, String id) {
+        List<JSONObject> l = all(c), out = new ArrayList<>();
+        for (JSONObject g : l) if (!g.optString("id").equals(id)) out.add(g);
+        saveAll(c, out);
+        File f = photo(c, id);
+        if (f.exists()) //noinspection ResultOfMethodCallIgnored
+            f.delete();
+    }
+
+    /** Make a new goal. account "" = you add the money yourself. */
+    static JSONObject create(Context c, String kind, String emoji, String name, long target, long by, String account, boolean existing) {
+        JSONObject g = new JSONObject();
+        long now = System.currentTimeMillis();
+        try {
+            g.put("id", Screen.id()).put("kind", kind).put("emoji", emoji).put("name", name).put("target", target).put("by", by)
+                    .put("created", now).put("saved", 0L).put("account", account == null ? "" : account).put("existing", existing);
+            if (account != null && !account.isEmpty()) {
+                long[] lv = Noted.liveOf(c, account);
+                g.put("base", lv == null || lv[0] < 0 ? 0 : lv[0]);
+            }
+            g.put("startValue", current(c, g));
+            g.put("pct", percent(c, g));
+        } catch (Exception ignored) { }
+        put(c, g);
+        award(c, "first_goal");
+        if (all(c).size() >= 3) award(c, "dreamer");
+        if (account != null && !account.isEmpty()) award(c, "real_home");
+        if ("emergency".equals(kind)) award(c, "safety_net");
+        if ("festival".equals(kind)) award(c, "festival_ready");
+        return g;
+    }
+
+    static File photo(Context c, String id) { return new File(new File(c.getFilesDir(), "goals"), id + ".jpg"); }
+
+    // ------------------------------------------------------------------ numbers
+
+    /** Money in the goal now. */
+    static long current(Context c, JSONObject g) {
+        String acc = g.optString("account");
+        if (!acc.isEmpty()) {
+            long[] lv = Noted.liveOf(c, acc);
+            if (lv != null && lv[0] >= 0) return Math.max(0, lv[0] - (g.optBoolean("existing", true) ? 0 : g.optLong("base")));
+        }
+        return Math.max(0, g.optLong("saved"));
+    }
+
+    static int percent(Context c, JSONObject g) {
+        long t = Math.max(1, g.optLong("target"));
+        return (int) Math.min(100, current(c, g) * 100 / t);
+    }
+
+    static long[][] snaps(JSONObject g) {
+        JSONArray a = g.optJSONArray("snaps");
+        if (a == null) return new long[0][];
+        long[][] out = new long[a.length()][];
+        for (int i = 0; i < a.length(); i++) { JSONArray p = a.optJSONArray(i); out[i] = new long[]{p.optLong(0), p.optLong(1)}; }
+        return out;
+    }
+
+    /** Keep one value per day (up to ~8 months) — that's how the real pace is measured. */
+    static boolean snapshot(JSONObject g, long value) {
+        try {
+            JSONArray a = g.optJSONArray("snaps");
+            if (a == null) { a = new JSONArray(); g.put("snaps", a); }
+            long now = System.currentTimeMillis();
+            if (a.length() > 0) {
+                JSONArray last = a.optJSONArray(a.length() - 1);
+                if (Fmt.startOfDay(last.optLong(0)) == Fmt.startOfDay(now)) {
+                    if (last.optLong(1) == value) return false;
+                    a.put(a.length() - 1, new JSONArray().put(now).put(value));
+                    return true;
+                }
+            }
+            a.put(new JSONArray().put(now).put(value));
+            while (a.length() > 240) a.remove(0);
+            return true;
+        } catch (Exception e) { return false; }
+    }
+
+    /** Average money in − money out per month over the last 3 full months. */
     static long monthlySaving(Context c) {
         List<Txn> all = Store.get(c).txns();
         long ms = Fmt.startOfMonth(System.currentTimeMillis());
@@ -46,212 +177,149 @@ public class Goals extends Activity {
         return n == 0 ? 0 : sum / n;
     }
 
-    static int monthsLeft(long by) {
-        if (by <= 0) return 0;
-        Calendar a = Fmt.cal(System.currentTimeMillis()), b = Fmt.cal(by);
-        int m = (b.get(Calendar.YEAR) - a.get(Calendar.YEAR)) * 12 + b.get(Calendar.MONTH) - a.get(Calendar.MONTH);
-        return Math.max(1, m);
-    }
-
-    /** One line for the Plan tile. */
-    static String summary(Context c) {
-        JSONArray a = list(c);
-        if (a.length() == 0) return "Save for something — a laptop, a trip";
-        long saved = 0, target = 0;
-        for (int i = 0; i < a.length(); i++) { saved += a.optJSONObject(i).optLong("saved"); target += a.optJSONObject(i).optLong("target"); }
-        return a.length() + (a.length() == 1 ? " goal · " : " goals · ") + Math.round(saved * 100.0 / Math.max(1, target)) + "% saved";
-    }
-
-    static float progress(Context c) {
-        JSONArray a = list(c);
-        long saved = 0, target = 0;
-        for (int i = 0; i < a.length(); i++) { saved += a.optJSONObject(i).optLong("saved"); target += a.optJSONObject(i).optLong("target"); }
-        return target == 0 ? -1 : saved / (float) target;
-    }
-
-    // ------------------------------------------------------------------ screen
-
-    private LinearLayout box;
-
-    @Override
-    protected void onCreate(Bundle b) {
-        super.onCreate(b);
-        Ui.bars(this);
-        LinearLayout root = Ui.vbox(this);
-        root.addView(Screens.bar(this, "Goals"));
-        ScrollView sv = new ScrollView(this);
-        box = Ui.vbox(this);
-        box.setPadding(Ui.dp(this, 16), 0, Ui.dp(this, 16), Ui.dp(this, 32));
-        sv.addView(box);
-        root.addView(sv, new LinearLayout.LayoutParams(-1, 0, 1));
-        setContentView(root);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (Lock.needed(this)) startActivity(new Intent(this, LockActivity.class));
-        build();
-    }
-
-    private void build() {
-        box.removeAllViews();
-        JSONArray a = list(this);
-        long saving = monthlySaving(this);
-        long needAll = 0;
-        for (int i = 0; i < a.length(); i++) {
-            JSONObject g = a.optJSONObject(i);
-            long left = Math.max(0, g.optLong("target") - g.optLong("saved"));
-            if (left > 0 && g.optLong("by") > 0) needAll += left / monthsLeft(g.optLong("by"));
+    /** Average spending per month over the last 3 full months. */
+    static long monthlySpend(Context c) {
+        List<Txn> all = Store.get(c).txns();
+        long ms = Fmt.startOfMonth(System.currentTimeMillis());
+        long sum = 0;
+        int n = 0;
+        for (int k = 1; k <= 3; k++) {
+            long out = Ledger.spent(all, Fmt.addMonths(ms, -k), Fmt.addMonths(ms, -k + 1));
+            if (out == 0) continue;
+            sum += out;
+            n++;
         }
-        LinearLayout hero = Ui.card(this);
-        hero.addView(Ui.text(this, "You usually save", 13, Ui.col(this, R.color.text2), Ui.SEMIBOLD));
-        hero.addView(Ui.text(this, Fmt.rs(Math.max(0, saving)) + " a month", 26, Ui.EXTRABOLD));
-        hero.addView(Ui.sub(this, saving <= 0 ? "Lately more went out than came in — goals need a little room."
-                : needAll == 0 ? "Money in − money out, average of the last 3 months."
-                : needAll <= saving ? "✓ Enough for all your goals (" + Fmt.rs(needAll) + " a month needed)"
-                : "Goals need " + Fmt.rs(needAll) + " a month — " + Fmt.rs(needAll - saving) + " more than you usually save"));
-        box.addView(hero, Ui.margins(Ui.matchWrap(), this, 0, 4, 0, 12));
+        return n == 0 ? 0 : sum / n;
+    }
 
-        for (int i = 0; i < a.length(); i++) box.addView(goalCard(a.optJSONObject(i), saving), Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
-        if (a.length() == 0) {
-            TextView e = Ui.sub(this, "No goals yet. A goal is something you're saving for — Money shows how much to put aside each month.");
-            e.setPadding(Ui.dp(this, 4), 0, 0, Ui.dp(this, 12));
-            box.addView(e);
+    /** "Wants" you could spend less on: category → average per month (last 3 months), biggest first. */
+    static LinkedHashMap<String, Long> wants(Context c) {
+        List<Txn> all = Store.get(c).txns();
+        long now = System.currentTimeMillis();
+        long from = Fmt.addMonths(Fmt.startOfMonth(now), -3), to = Fmt.startOfMonth(now);
+        double months = 3;
+        if (Ledger.spent(all, from, to) == 0) { from = Fmt.startOfMonth(now); to = now; months = Math.max(0.3, GoalMath.months(from, now)); }
+        String[] want = {Cats.FOOD, Cats.SHOP, Cats.FUN, Cats.SUBS, Cats.TRAVEL, Cats.PERSONAL, Cats.GIFTS};
+        Map<String, Long> by = Ledger.byCategory(all, from, to);
+        List<Map.Entry<String, Long>> l = new ArrayList<>();
+        for (String w : want) if (by.containsKey(w) && by.get(w) > 0) l.add(new java.util.AbstractMap.SimpleEntry<>(w, Math.round(by.get(w) / months)));
+        java.util.Collections.sort(l, (x, y) -> Long.compare(y.getValue(), x.getValue()));
+        LinkedHashMap<String, Long> out = new LinkedHashMap<>();
+        for (Map.Entry<String, Long> e : l) out.put(e.getKey(), e.getValue());
+        return out;
+    }
+
+    /** Status of one goal. */
+    static GoalMath.Status status(Context c, JSONObject g) {
+        long now = System.currentTimeMillis();
+        long cur = current(c, g);
+        long pace = GoalMath.pace(snaps(g), now);
+        if (g.optString("account").isEmpty() && pace < 0) pace = manualPace(g, now);
+        long fallback = g.optLong("plan");
+        if (fallback <= 0) {
+            int n = Math.max(1, active(c).size());
+            fallback = Math.max(0, monthlySaving(c) / n);
         }
-        TextView add = Ui.button(this, "＋  New goal", true);
-        add.setOnClickListener(v -> edit(null));
-        box.addView(add);
+        return GoalMath.status(now, cur, g.optLong("target"), g.optLong("created"), g.optLong("startValue"), g.optLong("by"),
+                pace, fallback, g.optBoolean("paused"));
     }
 
-    private View goalCard(JSONObject g, long saving) {
-        LinearLayout c = Ui.card(this);
-        long target = g.optLong("target"), saved = g.optLong("saved"), by = g.optLong("by");
-        float f = saved / (float) Math.max(1, target);
-        LinearLayout h = Ui.hbox(this);
-        h.addView(Ui.badge(this, g.optString("emoji", "🎯"), 0xFF10B981, 44));
-        LinearLayout col = Ui.vbox(this);
-        col.setPadding(Ui.dp(this, 12), 0, 0, 0);
-        col.addView(Ui.text(this, g.optString("name"), 16, Ui.BOLD));
-        col.addView(Ui.sub(this, Fmt.rs(saved) + " of " + Fmt.rs(target) + (by > 0 ? " · by " + Fmt.MON[Fmt.cal(by).get(Calendar.MONTH)] + " " + Fmt.cal(by).get(Calendar.YEAR) : "")));
-        h.addView(col, Ui.weight1());
-        h.addView(Ui.text(this, Math.round(f * 100) + "%", 16, Ui.col(this, R.color.accent), Ui.EXTRABOLD));
-        c.addView(h);
-        Charts.Progress pr = new Charts.Progress(this);
-        pr.set(f, Ui.col(this, R.color.accent));
-        c.addView(pr, Ui.margins(Ui.matchWrap(), this, 0, 12, 0, 8));
-        long left = Math.max(0, target - saved);
-        String line;
-        if (left == 0) line = "🎉 Reached!";
-        else if (by > 0) {
-            long per = left / monthsLeft(by);
-            line = "Put aside " + Fmt.rs(per) + " a month · " + (saving >= per ? "on track ✓" : "a stretch — you usually save " + Fmt.rs(Math.max(0, saving)));
-        } else line = saving > 0 ? "At your usual saving: about " + (left / saving + 1) + " months" : Fmt.rs(left) + " to go";
-        c.addView(Ui.text(this, line, 13, Ui.col(this, R.color.text2), Ui.SEMIBOLD));
-        LinearLayout r = Ui.hbox(this);
-        r.setPadding(0, Ui.dp(this, 10), 0, 0);
-        TextView addM = Ui.chip(this, "＋ Add money", true);
-        TextView take = Ui.chip(this, "− Take out", false);
-        take.setBackground(Ui.rippleRound(this, Ui.col(this, R.color.surface2), 18));
-        TextView more = Ui.chip(this, "Edit", false);
-        more.setBackground(Ui.rippleRound(this, Ui.col(this, R.color.surface2), 18));
-        String id = g.optString("id");
-        addM.setOnClickListener(v -> money(id, 1));
-        take.setOnClickListener(v -> money(id, -1));
-        more.setOnClickListener(v -> edit(g));
-        r.addView(addM, Ui.margins(Ui.lp(-2, -2), this, 0, 0, 8, 0));
-        r.addView(take, Ui.margins(Ui.lp(-2, -2), this, 0, 0, 8, 0));
-        r.addView(more);
-        c.addView(r);
-        return c;
+    /** For goals you fill yourself: what you've added per month since you started (after the first 2 weeks). */
+    private static long manualPace(JSONObject g, long now) {
+        double m = GoalMath.months(g.optLong("created"), now);
+        if (m < 0.5) return -1;
+        return Math.round((g.optLong("saved") - g.optLong("startValue")) / Math.max(1.0, m));
     }
 
-    private void money(String id, int sign) {
-        LinearLayout b = Ui.vbox(this);
-        int p = Ui.dp(this, 24);
-        b.setPadding(p, 0, p, 0);
-        EditText e = new EditText(this);
-        e.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        e.setHint("₹");
-        e.setTextSize(22);
-        e.setTypeface(Ui.face(this, Ui.BOLD));
-        b.addView(e);
-        new Ui.Popup(this).setTitle(sign > 0 ? "Put aside" : "Take out").setView(b)
-                .setPositiveButton("Save", (d, w) -> {
-                    long v = SmsParser.paise(e.getText().toString().trim());
-                    if (v <= 0) return;
-                    JSONArray a = list(this);
-                    for (int i = 0; i < a.length(); i++) {
-                        JSONObject g = a.optJSONObject(i);
-                        if (!id.equals(g.optString("id"))) continue;
-                        try { g.put("saved", Math.max(0, g.optLong("saved") + sign * v)); } catch (Exception ignored) { }
-                        if (sign > 0 && g.optLong("saved") >= g.optLong("target")) Ui.toast(this, "🎉 Goal reached: " + g.optString("name"));
+    static String statusLine(GoalMath.Status s) {
+        switch (s.kind) {
+            case GoalMath.REACHED: return "Reached";
+            case GoalMath.PAUSED: return "Paused";
+            case GoalMath.AHEAD: return "Ahead — done by " + Fmt.date(s.finish);
+            case GoalMath.ON_TRACK: return "On track — done by " + Fmt.date(s.finish);
+            case GoalMath.BEHIND: return s.gap > 0 ? "Behind by " + Fmt.rs(s.gap) : "A bit behind — save " + Fmt.rs(s.catchUp) + " more a month";
+            case GoalMath.NO_DATE: return s.finish > 0 ? "At this pace: " + Fmt.date(s.finish) : "No date set";
+            default: return "Not moving yet — " + (s.needPerMonth > 0 ? Fmt.rs(s.needPerMonth) + " a month needed" : "add some money");
+        }
+    }
+
+    static int statusColor(Context c, GoalMath.Status s) {
+        switch (s.kind) {
+            case GoalMath.REACHED: case GoalMath.AHEAD: case GoalMath.ON_TRACK: return Ui.col(c, R.color.success);
+            case GoalMath.BEHIND: return 0xFFD97706;
+            default: return Ui.col(c, R.color.text2);
+        }
+    }
+
+    // ------------------------------------------------------------------ milestones & badges
+
+    /**
+     * Look at every goal: save today's value, notice milestones crossed (25 / 50 / 75 / 100 %).
+     * With notify, a milestone also posts a notification right away (e.g. after the bank's SMS).
+     */
+    static void check(Context c, boolean notify) {
+        List<JSONObject> l = all(c);
+        boolean changed = false;
+        for (JSONObject g : l) {
+            long cur = current(c, g);
+            if (snapshot(g, cur)) changed = true;
+            int was = g.optInt("pct", 0);
+            int now = (int) Math.min(100, cur * 100 / Math.max(1, g.optLong("target")));
+            if (now != was) {
+                try {
+                    g.put("pct", now);
+                    List<Integer> hit = GoalMath.crossed(was, now);
+                    if (!hit.isEmpty()) {
+                        int m = hit.get(hit.size() - 1);
+                        g.put("celebrate", m);
+                        award(c, m == 25 ? "quarter" : m == 50 ? "halfway" : m == 75 ? "almost" : "reached");
+                        if (notify && Alerts.canNotify(c)) {
+                            Alerts.channels(c);
+                            Alerts.post(c, Alerts.CH_ALERTS, 32000 + (g.optString("id").hashCode() & 0x3FF),
+                                    m == 100 ? "🏆 Goal reached: " + g.optString("name") : "🎉 " + g.optString("name") + " is " + m + "% there",
+                                    Fmt.rs(cur) + " of " + Fmt.rs(g.optLong("target")) + (m == 100 ? " — well done!" : " — keep going"), null);
+                        }
                     }
-                    save(this, a);
-                    build();
-                })
-                .setNegativeButton("Cancel", null).show();
+                } catch (Exception ignored) { }
+                changed = true;
+            }
+        }
+        if (changed) saveAll(c, l);
     }
 
-    private void edit(JSONObject g) {
-        LinearLayout b = Ui.vbox(this);
-        int p = Ui.dp(this, 24);
-        b.setPadding(p, 0, p, 0);
-        EditText name = new EditText(this);
-        name.setHint("What for? e.g. Laptop");
-        name.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        EditText emoji = new EditText(this);
-        emoji.setHint("Emoji (optional) e.g. 💻");
-        EditText target = new EditText(this);
-        target.setHint("Target amount (₹)");
-        target.setInputType(InputType.TYPE_CLASS_NUMBER);
-        for (EditText e : new EditText[]{name, emoji, target}) { e.setTypeface(Ui.face(this, Ui.REGULAR)); b.addView(e); }
-        final long[] by = {g == null ? 0 : g.optLong("by")};
-        TextView when = Ui.chip(this, by[0] > 0 ? "📅 By " + Fmt.date(by[0]) : "📅 Pick a date (optional)", false);
-        when.setBackground(Ui.rippleRound(this, Ui.col(this, R.color.surface2), 18));
-        when.setOnClickListener(v -> {
-            Calendar k = Calendar.getInstance();
-            if (by[0] > 0) k.setTimeInMillis(by[0]); else k.add(Calendar.MONTH, 6);
-            new DatePickerDialog(this, (dp, y, m, d) -> {
-                Calendar c = Calendar.getInstance();
-                c.set(y, m, d, 12, 0, 0);
-                by[0] = c.getTimeInMillis();
-                when.setText("📅 By " + Fmt.date(by[0]));
-            }, k.get(Calendar.YEAR), k.get(Calendar.MONTH), k.get(Calendar.DAY_OF_MONTH)).show();
-        });
-        LinearLayout wr = Ui.hbox(this);
-        wr.setPadding(0, Ui.dp(this, 10), 0, 0);
-        wr.addView(when);
-        b.addView(wr);
-        if (g != null) {
-            name.setText(g.optString("name"));
-            emoji.setText(g.optString("emoji"));
-            target.setText(String.valueOf(g.optLong("target") / 100));
-        }
-        Ui.Popup pp = new Ui.Popup(this);
-        pp.setTitle(g == null ? "New goal" : "Edit goal").setView(b)
-                .setPositiveButton("Save", (d, w) -> {
-                    long t = SmsParser.paise(target.getText().toString().trim());
-                    String n = name.getText().toString().trim();
-                    if (t <= 0 || n.isEmpty()) { Ui.toast(this, "Add a name and a target"); return; }
-                    JSONArray a = list(this);
-                    try {
-                        JSONObject x = null;
-                        if (g != null) for (int i = 0; i < a.length(); i++) if (g.optString("id").equals(a.optJSONObject(i).optString("id"))) x = a.optJSONObject(i);
-                        if (x == null) { x = new JSONObject().put("id", java.util.UUID.randomUUID().toString()).put("saved", 0L); a.put(x); }
-                        String em = emoji.getText().toString().trim();
-                        x.put("name", n).put("emoji", em.isEmpty() ? "🎯" : em).put("target", t).put("by", by[0]);
-                    } catch (Exception ignored) { }
-                    save(this, a);
-                    build();
-                })
-                .setNegativeButton("Cancel", null);
-        if (g != null) pp.setNeutralButton("Delete", (d, w) -> {
-            JSONArray a = list(this), out = new JSONArray();
-            for (int i = 0; i < a.length(); i++) if (!g.optString("id").equals(a.optJSONObject(i).optString("id"))) out.put(a.optJSONObject(i));
-            save(this, out);
-            build();
-        });
-        pp.show();
+    /** id, emoji, title, how to earn it */
+    static final String[][] BADGE_LIST = {
+            {"first_goal", "🎯", "First goal", "Set up your first goal"},
+            {"real_home", "🏦", "Real home", "Link a goal to a bank account"},
+            {"quarter", "⭐", "Quarter way", "Reach 25% of a goal"},
+            {"halfway", "🏅", "Halfway", "Reach 50% of a goal"},
+            {"almost", "🚀", "Almost there", "Reach 75% of a goal"},
+            {"reached", "🏆", "Goal reached", "Finish a goal"},
+            {"planner", "🔀", "Planner", "Split your saving across goals"},
+            {"safety_net", "☂️", "Safety net", "Start an emergency fund"},
+            {"festival_ready", "🪔", "Festival ready", "Plan ahead for a festival"},
+            {"saver", "🐷", "Saver", "Put last month's leftover into a goal"},
+            {"dreamer", "✨", "Dreamer", "Have 3 goals going"},
+    };
+
+    static boolean has(Context c, String id) { return Store.get(c).obj(BADGES).has(id); }
+
+    /** Returns true the first time. */
+    static boolean award(Context c, String id) {
+        JSONObject b = Store.get(c).obj(BADGES);
+        if (b.has(id)) return false;
+        try { b.put(id, System.currentTimeMillis()); } catch (Exception ignored) { }
+        Store.get(c).putObj(BADGES, b);
+        try {   // remember to show it once
+            JSONObject p = Store.get(c).obj("badgeNew");
+            p.put(id, true);
+            Store.get(c).putObj("badgeNew", p);
+        } catch (Exception ignored) { }
+        return true;
+    }
+
+    static String[] badge(String id) {
+        for (String[] b : BADGE_LIST) if (b[0].equals(id)) return b;
+        return null;
     }
 }

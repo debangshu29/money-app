@@ -99,7 +99,8 @@
         <activity android:name=".AccountsActivity" android:exported="false" />
         <activity android:name=".BillsActivity" android:exported="false" />
         <activity android:name=".People" android:exported="false" />
-        <activity android:name=".Goals" android:exported="false" />
+        <activity android:name=".GoalActivity" android:exported="false" />
+        <activity android:name=".GoalSetup" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".Challenges" android:exported="false" />
         <activity android:name=".TaxActivity" android:exported="false" />
         <activity android:name=".CardsActivity" android:exported="false" />

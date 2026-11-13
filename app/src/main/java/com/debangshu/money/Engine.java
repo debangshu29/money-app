@@ -208,6 +208,9 @@ public final class Engine {
         if (isNew[0] && !saved.credit && Cats.CASH.equals(saved.category) && saved.raw.toLowerCase(java.util.Locale.ROOT).contains("atm")) Cash.atm(ctx, saved);
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);
         if (!s.inBatch() && !saved.account.isEmpty()) {
+            try { Goals.check(ctx, true); } catch (Exception ignored) { }   // a goal's account moved: milestone?
+        }
+        if (!s.inBatch() && !saved.account.isEmpty()) {
             for (Txn g : s.txns()) {
                 if ((g.sources & Txn.SRC_GAP) != 0 && g.review && saved.account.equals(g.account)
                         && System.currentTimeMillis() - g.time < 6L * 3600000) Alerts.askName(ctx, g, false);
