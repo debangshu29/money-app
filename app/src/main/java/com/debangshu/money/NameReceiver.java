@@ -36,6 +36,12 @@ public class NameReceiver extends BroadcastReceiver {
             category = intent.getStringExtra("guessCat");
         }
         if (name == null || name.isEmpty()) { if (nm != null) nm.cancel(nid); return; }
+        if (NAME.equals(intent.getAction())) {          // "Ramesh - test" → name + what for
+            String[] nr = ReasonLogic.nameAndReason(name);
+            name = nr[0];
+            if (!nr[1].isEmpty() && t.note.isEmpty()) { t.note = nr[1]; s.update(t); }
+            if (name.isEmpty()) { if (nm != null) nm.cancel(nid); return; }
+        }
         Alerts.applyName(c, t, name, category);
         Alerts.post(c, Alerts.CH_ASK, nid, "Saved ✓ " + name,
                 Fmt.plain(t.amount) + " · " + Cats.emoji(t.category) + " " + t.category

@@ -65,6 +65,20 @@ public class SettingsActivity extends Activity {
                 Store.S_READ_SMS_NOTIF, null);
         sw(cap, "Read bank alert e-mails", "From Gmail's notifications — only e-mails from banks (some banks e-mail small UPI payments they don't text)",
                 Store.S_READ_MAIL, null);
+        sw(cap, "Ask “what for?” right after a payment", "Only for new people / places or odd amounts — regulars get their usual note by themselves",
+                Store.S_ASK_REASON, null);
+        boolean uw = UsageWatch.allowed(this);
+        sw(cap, "“Paid anyone?” after using a UPI app", !uw ? "⚠️ Needs Usage access — tap the row below"
+                        : "✓ A minute after you leave Google Pay / PhonePe… if no payment message came",
+                Store.S_USAGE, on -> { if (on && !UsageWatch.allowed(this)) usageSetup(); });
+        if (s.flag(Store.S_USAGE) && !uw) row(cap, "Allow Usage access", "Lets Money see WHEN a UPI app was open — never what's on the screen", v -> usageSetup());
+        boolean ca = Contacts.allowed(this);
+        sw(cap, "Names from your contacts", !ca ? "For UPI IDs that are just a phone number — needs Contacts permission"
+                        : "✓ 9830012345@ybl → the name in your contacts (looked up on the phone, never stored)",
+                Store.S_CONTACTS, on -> { if (on && !Contacts.allowed(this)) Contacts.ask(this); });
+        row(cap, "Check with a bank statement", "Adds what Money missed, fills in names — PDF (even locked), CSV or Excel",
+                v -> startActivity(new Intent(this, StatementActivity.class)));
+        sw(cap, "Monthly statement reminder", "Early each month: “Check last month with your bank statement”", Store.S_STMT, null);
         sw(cap, "Weekly balance check", "Once a week: type your balance → any payment that sent nothing shows up while you remember it",
                 Store.S_BAL_CHECK, null);
         sw(cap, "Find missed messages", "If the balance in a new SMS doesn't add up, an “Unrecorded” entry shows the difference",
@@ -236,6 +250,24 @@ public class SettingsActivity extends Activity {
         }).start();
     }
 
+    private void usageSetup() {
+        new Ui.Popup(this).setTitle("Allow Usage access")
+                .setMessage("Money only learns WHEN Google Pay, PhonePe or another UPI app was open — not what you did there.\n\n"
+                        + "If you leave the app and no payment message arrives within a minute, Money asks “Paid anyone?”. "
+                        + "Quick visits (under 12 seconds) are ignored.\n\nNext screen: find Money → turn on “Permit usage access”.")
+                .setPositiveButton("Open settings", (d, w) -> UsageWatch.openSettings(this))
+                .setNegativeButton("Not now", null).show();
+    }
+
+    private void contactsResult(int req) {
+        if (req == Contacts.REQ && Contacts.allowed(this)) {
+            new Thread(() -> {
+                int n = Contacts.nameAll(getApplicationContext());
+                runOnUiThread(() -> { if (n > 0) Ui.toast(this, n + (n == 1 ? " payment" : " payments") + " named from your contacts"); build(); });
+            }).start();
+        }
+    }
+
     private void showUnread() {
         List<String[]> list = Store.get(this).unread();
         LinearLayout b = Ui.vbox(this);
@@ -317,6 +349,7 @@ public class SettingsActivity extends Activity {
     public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
         super.onRequestPermissionsResult(req, perms, res);
         if (req == Locator.REQ_FG && Locator.allowed(this)) Locator.ask(this);
+        contactsResult(req);
         build();
     }
 

@@ -76,7 +76,11 @@ public class AccountsActivity extends Activity {
         }
         box.addView(c, Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
 
-        TextView tip = Ui.sub(this, "Tap an account to rename it, correct a wrong balance, merge two that are the same, or delete it.");
+        TextView stmt = Ui.button(this, "📄  Check with a bank statement", false);
+        stmt.setOnClickListener(v -> startActivity(new Intent(this, StatementActivity.class)));
+        box.addView(stmt, Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
+
+        TextView tip = Ui.sub(this, "Tap an account to rename it, correct a wrong balance, merge two that are the same, check the balance or delete it.");
         tip.setPadding(Ui.dp(this, 4), 0, Ui.dp(this, 4), Ui.dp(this, 8));
         box.addView(tip);
         List<String> del = s.deletedAccounts();

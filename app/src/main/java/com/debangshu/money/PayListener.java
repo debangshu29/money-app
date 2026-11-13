@@ -23,15 +23,26 @@ public class PayListener extends NotificationListenerService {
     public static volatile boolean connected = false;
     private static volatile PayListener instance;
 
+    private final android.os.Handler loop = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable watch = new Runnable() {
+        @Override public void run() {
+            new Thread(() -> { try { UsageWatch.tick(getApplicationContext()); } catch (Exception ignored) { } }).start();
+            loop.postDelayed(this, 30000);
+        }
+    };
+
     @Override public void onListenerConnected() {
         connected = true;
         instance = this;
         readShowing();   // anything posted while Money wasn't listening (phone restart, battery saver…)
+        loop.removeCallbacks(watch);
+        loop.postDelayed(watch, 5000);   // "paid anyone on Google Pay?" checks
     }
 
     @Override public void onListenerDisconnected() {
         connected = false;
         instance = null;
+        loop.removeCallbacks(watch);
     }
 
     /** App opened: re-read payment notifications still in the shade, or ask Android to reconnect the listener. */

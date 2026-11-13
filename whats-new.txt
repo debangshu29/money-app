@@ -1,3 +1,7 @@
-Money 1.9.3
-• Removed “Read payment screens” (the Accessibility feature) completely — it also disappears from Android's Accessibility settings
-• Everything else from 1.9.2 stays: “Paid?” after Scan & Pay, bank alert e-mails, adding UPI payments by hand / voice, weekly balance check
+Money 2.0 — remember WHY you paid ✨
+• Pay & note (middle button): pick any UPI app on your phone → pay there → back in Money: “Paid ₹__ to __ for __?” with one-tap reasons
+• “₹1 to Ramesh — what for?” the moment a payment arrives — only for new people / places or odd amounts. Regulars get their usual note by themselves
+• “Paid anyone on Google Pay?” a minute after you leave a UPI app, if no payment message came (turn on Usage access in Settings)
+• Check with a bank statement: open or share the PDF (even locked), CSV or Excel → missed payments added with name, UPI ID and your UPI note
+• Names from your contacts for UPI IDs that are just a phone number
+• “Who was it?” now takes a reason too: “Ramesh - test”

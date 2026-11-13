@@ -91,7 +91,9 @@ public final class Alerts {
         boolean recent = System.currentTimeMillis() - t.time < 2L * 3600000;
         if (!recent) return;
         Locator.tag(c, t);
+        Contacts.name(c, t);
         askName(c, t, false);
+        if (!t.unnamed()) Reasons.maybeAsk(c, t);
         String who = t.merchant.isEmpty() ? "" : " · " + t.merchant;
 
         if ((t.sources & Txn.SRC_GAP) == 0 && t.isSpend()) {
@@ -174,7 +176,7 @@ public final class Alerts {
         String title = Fmt.plain(t.amount) + (gap ? " left your account with no message" : " paid at " + Fmt.time(t.time))
                 + (t.place.isEmpty() ? "" : " " + t.place);
         String text = g != null ? "Probably " + g.name + "? (" + g.times + (g.times == 1 ? " time" : " times") + " before, same spot / amount)"
-                : "Who was it? Type a name — Money remembers it" + (t.vpa.isEmpty() ? "." : " for this UPI ID.");
+                : "Who was it, and what for? e.g. “Ramesh - test”. Money remembers the name" + (t.vpa.isEmpty() ? "." : " for this UPI ID.");
 
         android.content.Intent open = new android.content.Intent(c, MainActivity.class).putExtra("txn", t.id)
                 .setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -185,7 +187,7 @@ public final class Alerts {
         // the typed text must be added to this intent, so it has to stay mutable
         PendingIntent pName = PendingIntent.getBroadcast(c, nid, nameI, PendingIntent.FLAG_UPDATE_CURRENT
                 | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
-        android.app.RemoteInput ri = new android.app.RemoteInput.Builder(NameReceiver.KEY).setLabel("Who was it? e.g. Sharma Kirana").build();
+        android.app.RemoteInput ri = new android.app.RemoteInput.Builder(NameReceiver.KEY).setLabel("Who & what for? e.g. Ramesh - test").build();
         Notification.Action aName = new Notification.Action.Builder(
                 android.graphics.drawable.Icon.createWithResource(c, R.drawable.ic_notify), "Type name", pName).addRemoteInput(ri).build();
 

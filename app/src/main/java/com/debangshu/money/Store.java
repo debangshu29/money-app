@@ -69,7 +69,8 @@ public final class Store {
             S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
             S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
             S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals",
-            S_READ_MAIL = "read_mail", S_BAL_CHECK = "balance_check";
+            S_READ_MAIL = "read_mail", S_BAL_CHECK = "balance_check",
+            S_STMT = "statement_remind", S_ASK_REASON = "ask_reason", S_USAGE = "usage_watch", S_CONTACTS = "contact_names";
 
     private Store(Context c) {
         ctx = c;
@@ -192,7 +193,7 @@ public final class Store {
         return k.isEmpty() ? null : nameRules.get(k);
     }
 
-    /** Scan & Pay: remember a UPI ID's name and category (also fixes earlier payments to it). */
+    /** Remember a UPI ID's name and category (also fixes earlier payments to it). */
     public synchronized void learnVpa(String vpa, String name, String cat) {
         if (vpa == null || vpa.isEmpty()) return;
         String k = "vpa:" + vpa.toLowerCase(java.util.Locale.ROOT);

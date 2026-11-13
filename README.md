@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 1.9.3 — the Accessibility screen-reading feature was removed; bank e-mails, “Paid?” after Scan & Pay and the weekly balance check stay.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.0 — Pay & note, “what for?” only for unusual payments, “Paid anyone?” after using a UPI app, bank statement check, names from contacts.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -12,7 +12,7 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 |---|---|
 | 🏠 **Home** | **Safe to spend today** (with a budget) or *Spent this month* · Today ⇄ Month: Money out / Money in (tap for where it went) · Balances · Latest 5 · strips for “needs a look” and bills due soon |
 | 📄 **Activity** | **List ⇄ Calendar** — the calendar colours each day by spending (green within your daily budget share, red over); tap a day for its payments · search · filters · **+** for a cash spend |
-| ⭕ **Scan & Pay** | the round button |
+| ⭕ **Pay & note** | the round button: pick a UPI app, pay, then note who & what for |
 | 📊 **Insights** | **Ask** bar · any month: spent / in / saved + **savings score** + **📄 Report** (PDF) · categories · day by day · top places · **Where you spend** · **Prices you pay** · **Charges & fees** |
 | 🧩 **Plan** | *Everyday:* Budget · Bills & subscriptions · Accounts · Cash wallet · Renewals & reminders · Refunds — *Grow:* Goals · Challenges — *Together:* People · Net worth — *Tools:* Tax helper · Credit cards · Loans & EMIs · Cashback & rewards |
 
@@ -20,11 +20,23 @@ You never type an amount. Money reads your **bank SMS** and **payment notificati
 
 **Cash wallet** (Plan → Cash wallet): ATM withdrawals go into the wallet instead of counting as spending. Every few days Money asks “how much cash is left?” (type it in the notification); the difference counts as cash spent. You can still note a cash spend with **+** in Activity.
 
+## Remember why you paid (version 2.0)
+
+| What | How it works |
+|---|---|
+| **Pay & note** (middle button) | Shows every UPI app on your phone → tap one → pay there as usual → back in Money: **“Paid ₹__ to __ for __?”** with one-tap reasons (and the people / places you pay often). If the bank SMS or app notification already came, it only asks *what for*. Long-press the button: add a payment by hand. Also on the widget and the quick-settings tile. |
+| **“What for?” right away** | The moment a payment is caught: **“₹1 to Ramesh — what for?”** with 2 one-tap reasons + ✏️ Type. **Only when it's unusual** — a new person or place, or a much bigger amount than usual. Regulars (the same kirana for milk) get their usual note by themselves, no question. |
+| **“Paid anyone on Google Pay?”** | With **Usage access** (Settings → *“Paid anyone?” after using a UPI app*), Money sees *when* a UPI app was open — never what was on screen. About a minute after you leave it, if no payment message came, it asks; type “50 Ramesh for test” in the notification. Visits under 12 seconds (a balance check) are ignored. |
+| **Check with a bank statement** | Settings / Accounts → *Check with a bank statement*, or share the file to Money. PDF (password asked, not saved), CSV or Excel (.xlsx). Money matches every row, **adds what it missed** (name, UPI ID and the note you typed in the UPI app, when your bank prints it), fills in missing details, and lists anything Money has that the bank doesn't. A reminder comes early each month. |
+| **Names from contacts** | UPI IDs that are just a phone number (9830012345@ybl) get the name from your contacts — looked up on the phone, never stored. |
+
+**Answering in a notification:** “Who was it?” takes a reason too — *Ramesh - test*.
+
 ## No payment slips through (version 1.9.2)
 
-**Why Scan & Pay can't pay directly:** UPI apps (Google Pay, PhonePe…) only fully trust payments that start inside them; a payment link sent by another app is often refused (“limit”, “security reasons”) unless that app is a registered payment partner. So Money no longer tries: it **notes first, you pay in your app**.
+**Why Money can't pay directly (1.9.2 → 2.0):** UPI apps (Google Pay, PhonePe…) only fully trust payments that start inside them; a payment link sent by another app is often refused (“limit”, “security reasons”) unless that app is a registered payment partner. So Money doesn't try: you pay in your app, Money asks *what for* (2.0: **Pay & note**).
 
-1. Scan & Pay in Money → name, category, note (amount optional).
+1. (1.9.2) Scan & Pay in Money → name, category, note — replaced in 2.0 by **Pay & note** (no scanning in Money).
 2. **Open Google Pay** (or the app you picked once) → scan the same QR there and pay.
 3. Back in Money: **“Paid ₹__ to Sharma Kirana?”** → Yes → saved right away. If the bank SMS / app notification comes later, it joins this entry (no double).
 
@@ -54,7 +66,7 @@ Some banks don't text small UPI payments (HDFC: no SMS for UPI payments up to �
 - **Loans & EMIs** — loans appear from EMI payments and lender SMS (“EMI of ₹4,567 received”, “principal outstanding …”). Add what's left + the interest rate once → months left, interest left, and **what a prepayment saves** (₹10k / ₹50k / ₹1L / any). A reminder 2 days before the EMI; loans count in Net worth.
 - **Cashback & rewards** — every cashback credit this financial year, where it came from, and each card's reward points balance (from the bank's points SMS).
 - **Say a cash spend** — 🎤 in Activity → +, in the cash wallet, on the widget or the tile: “200 for chai”, “spent two hundred and fifty on auto”, “chai 20 and samosa 30”. Uses the phone's own voice typing; Undo right after.
-- **Scan & Pay without opening the app** — long-press the home screen → Widgets → *Money – Scan & Pay · cash*; or pull down the quick settings → ✏️ edit → drag in **Scan & Pay** / **Cash spend**. With app lock on, it asks for the lock first.
+- **Pay & note without opening the app** — long-press the home screen → Widgets → *Money – Pay & note*; or pull down the quick settings → ✏️ edit → drag in **Pay & note** / **Say a payment**. With app lock on, it asks for the lock first.
 
 ## People, goals and the bigger picture (version 1.8)
 
@@ -76,7 +88,7 @@ Long-press (or tap) an account in **Balances**:
 - **Same as another account (merge):** for duplicates (e.g. a debit card shown separately from its bank account) — all its payments move over, and future messages too.
 - **Delete account:** keep its payments in your history, or delete them too (for accounts that aren't really yours). Deleted accounts don't come back from new messages; bring one back in *Settings → Your data → Deleted accounts*.
 
-## Scan & Pay (version 1.4)
+## Scan & Pay (version 1.4 — replaced by Pay & note in 2.0)
 
 Tap the round **Scan & Pay** button in the middle of the bottom bar:
 1. Scan the shop's UPI QR (Google's scanner opens — Money itself needs no camera permission).

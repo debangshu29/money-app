@@ -10,8 +10,8 @@ android {
         applicationId 'com.debangshu.money'
         minSdk 24          // Android 7.0 and newer
         targetSdk 34
-        versionCode 12
-        versionName '1.9.3'
+        versionCode 13
+        versionName '2.0'
     }
 
     // One fixed key for this app, so every new APK installs as an update and keeps your data.
@@ -52,6 +52,5 @@ android {
 }
 
 dependencies {
-    // Scan & Pay: Google's QR scanner (Google Play services shows the camera; Money needs no camera permission)
-    implementation 'com.google.android.gms:play-services-code-scanner:16.1.0'
+    implementation 'com.tom-roush:pdfbox-android:2.0.27.0'   // reads bank statement PDFs (on the phone)
 }

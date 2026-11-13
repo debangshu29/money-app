@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-/** Small home-screen widget: Scan & Pay, and a mic to say a cash spend. */
+/** Small home-screen widget: Pay & note, and a mic to say a payment. */
 public class PayWidget extends AppWidgetProvider {
 
     @Override
@@ -20,7 +20,7 @@ public class PayWidget extends AppWidgetProvider {
             int[] ids = m.getAppWidgetIds(new ComponentName(c, PayWidget.class));
             if (ids == null || ids.length == 0) return;
             RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget_pay);
-            Intent scan = new Intent(c, MainActivity.class).putExtra("scan", true)
+            Intent scan = new Intent(c, MainActivity.class).putExtra("pay", true)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             v.setOnClickPendingIntent(R.id.wp_scan, PendingIntent.getActivity(c, 31, scan, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
             Intent voice = new Intent(c, VoiceActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

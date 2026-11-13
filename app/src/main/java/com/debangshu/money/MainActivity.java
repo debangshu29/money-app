@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
         handle(i);
     }
 
-    /** Scan & Pay / cash spend asked for from the widget or a quick-settings tile — done once the app is unlocked. */
+    /** Pay & note / cash spend asked for from the widget or a quick-settings tile — done once the app is unlocked. */
     private String pendingAction;
 
     private void handle(Intent i) {
@@ -79,7 +79,11 @@ public class MainActivity extends Activity {
             if (t != null) TxnSheet.show(this, t);
         }
         if (i.getBooleanExtra("showUpdate", false)) Updater.maybePrompt(this, true);
-        if (i.getBooleanExtra("scan", false)) { pendingAction = "scan"; i.removeExtra("scan"); }
+        if (i.getBooleanExtra("scan", false) || i.getBooleanExtra("pay", false)) { pendingAction = "pay"; i.removeExtra("scan"); i.removeExtra("pay"); }
+        if (i.getStringExtra("paidOn") != null) {
+            pendingAction = "paid:" + i.getLongExtra("paidAt", 0) + ":" + i.getStringExtra("paidOn");
+            i.removeExtra("paidOn");
+        }
         if (i.getStringExtra("balCheck") != null) { pendingAction = "bal:" + i.getStringExtra("balCheck"); i.removeExtra("balCheck"); }
         if (i.getBooleanExtra("addCash", false)) { pendingAction = "cash"; i.removeExtra("addCash"); }
         if (i.hasExtra("filterLabel")) {
@@ -101,11 +105,18 @@ public class MainActivity extends Activity {
         new Thread(() -> { try { Engine.catchUp(getApplicationContext()); } catch (Exception ignored) { } }).start();
         PayListener.refresh(getApplicationContext());
         Updater.maybePrompt(this, false);
-        if (!Lock.needed(this)) ScanPay.askIfPaid(this);
+        if (!Lock.needed(this)) PayNote.onReturn(this);
+        new Thread(() -> { try { UsageWatch.tick(getApplicationContext()); } catch (Exception ignored) { } }).start();
         if (pendingAction != null && !Lock.needed(this)) {
             String p = pendingAction;
             pendingAction = null;
-            if (p.equals("scan")) { show(HOME); ScanPay.start(this); }
+            if (p.equals("pay")) PayNote.sheet(this);
+            else if (p.startsWith("paid:")) {
+                String[] q = p.split(":", 3);
+                android.app.NotificationManager nm = getSystemService(android.app.NotificationManager.class);
+                if (nm != null) nm.cancel(31000 + (int) ((Long.parseLong(q[1]) / 1000) & 0x3FF));
+                PayNote.ask(this, null, q[2], Long.parseLong(q[1]));
+            }
             else if (p.startsWith("bal:")) BalanceCheck.ask(this, p.substring(4));
             else TxnSheet.addManual(this);
         }
@@ -128,7 +139,6 @@ public class MainActivity extends Activity {
         super.onActivityResult(req, res, data);
         Updater.onCleanupResult(this, req, res, data);
         Photos.onResult(this, req, res, data);
-        ScanPay.onResult(this, req, res, data);
     }
 
     @Override
@@ -182,7 +192,7 @@ public class MainActivity extends Activity {
         show(ACTIVITY);
     }
 
-    /** Bottom bar: Home · Activity · ( Scan & Pay ) · Insights · Ask — the round button pops out above the bar. */
+    /** Bottom bar: Home · Activity · ( Pay & note ) · Insights · Plan — the round button pops out above the bar. */
     private View navBar() {
         FrameLayout wrap = new FrameLayout(this);
         wrap.setClipChildren(false);
@@ -230,7 +240,7 @@ public class MainActivity extends Activity {
                 android.graphics.drawable.GradientDrawable.Orientation.TL_BR, new int[]{0xFF34D399, 0xFF0E9F6E, 0xFF0B6F86});
         g.setShape(android.graphics.drawable.GradientDrawable.OVAL);
         ImageView core = new ImageView(this);
-        core.setImageResource(R.drawable.ic_qr_scan);
+        core.setImageResource(R.drawable.ic_pay);
         core.setColorFilter(0xFFFFFFFF);
         core.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         int ip = Ui.dp(this, 15);
@@ -240,9 +250,9 @@ public class MainActivity extends Activity {
         int pad = Ui.dp(this, 5);
         FrameLayout.LayoutParams clp = new FrameLayout.LayoutParams(size - 2 * pad, size - 2 * pad, Gravity.CENTER);
         fab.addView(core, clp);
-        core.setContentDescription("Scan & Pay");
-        core.setOnClickListener(v -> ScanPay.start(this));
-        core.setOnLongClickListener(v -> { ScanPay.typeUpi(this); return true; });
+        core.setContentDescription("Pay & note");
+        core.setOnClickListener(v -> PayNote.sheet(this));
+        core.setOnLongClickListener(v -> { TxnSheet.addManual(this); return true; });
         core.setOnTouchListener((v, e) -> {
             if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) fab.animate().scaleX(0.9f).scaleY(0.9f).setDuration(90).start();
             else if (e.getAction() == android.view.MotionEvent.ACTION_UP || e.getAction() == android.view.MotionEvent.ACTION_CANCEL)
@@ -261,11 +271,11 @@ public class MainActivity extends Activity {
         t.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
         View space = new View(this);
         t.addView(space, Ui.lp(1, Ui.dp(this, 32)));
-        TextView l = Ui.text(this, "Scan & Pay", 12, Ui.col(this, R.color.accent), Ui.BOLD);
+        TextView l = Ui.text(this, "Pay & note", 12, Ui.col(this, R.color.accent), Ui.BOLD);
         l.setGravity(Gravity.CENTER);
         l.setPadding(0, Ui.dp(this, 3), 0, 0);
         t.addView(l);
-        t.setOnClickListener(v -> ScanPay.start(this));
+        t.setOnClickListener(v -> PayNote.sheet(this));
         return t;
     }
 

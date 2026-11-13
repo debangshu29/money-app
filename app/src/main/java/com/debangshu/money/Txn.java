@@ -12,7 +12,9 @@ public final class Txn {
     // where it was seen (several can be set when the same payment came from SMS and from an app)
     public static final int SRC_SMS = 1, SRC_APP = 2, SRC_GAP = 4, SRC_MANUAL = 8,
             /** noted by you (Scan & Pay “Paid?”, a typed / spoken UPI payment): joins the bank SMS / notification when it comes */
-            SRC_NOTE = 16;
+            SRC_NOTE = 16,
+            /** added from a bank statement you imported */
+            SRC_STMT = 32;
 
     public String id;
     public long time;

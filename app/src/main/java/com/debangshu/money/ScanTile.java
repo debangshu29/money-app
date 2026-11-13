@@ -6,7 +6,7 @@ import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
-/** Quick-settings tile: pull down the notification shade → Scan & Pay. */
+/** Quick-settings tile: pull down the notification shade → Pay & note. */
 public class ScanTile extends TileService {
 
     @Override
@@ -18,7 +18,7 @@ public class ScanTile extends TileService {
     }
 
     @Override
-    public void onClick() { open(this, new Intent(this, MainActivity.class).putExtra("scan", true), 41); }
+    public void onClick() { open(this, new Intent(this, MainActivity.class).putExtra("pay", true), 41); }
 
     @SuppressWarnings("deprecation")
     static void open(TileService s, Intent i, int req) {

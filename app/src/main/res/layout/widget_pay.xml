@@ -21,14 +21,14 @@
         <ImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/ic_qr_scan"
+            android:src="@drawable/ic_pay"
             android:tint="#FFFFFFFF" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:maxLines="1"
-            android:text="Scan &amp; Pay"
+            android:text="Pay &amp; note"
             android:textColor="#FFFFFFFF"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:maxLines="1"
-            android:text="Cash spend"
+            android:text="Say it"
             android:textColor="#FFFFFFFF"
             android:textSize="13sp"
             android:textStyle="bold" />

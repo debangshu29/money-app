@@ -164,7 +164,7 @@ public final class Engine {
         return saved;
     }
 
-    /** Something you noted yourself (Scan & Pay “Paid?”, a typed or spoken UPI payment). */
+    /** Something you noted yourself (Pay & note “Paid?”, a typed or spoken UPI payment). */
     public static Txn note(Context ctx, Txn t) {
         t.sources = Txn.SRC_NOTE;
         if (t.srcKey.isEmpty()) t.srcKey = "note:" + t.time;
@@ -199,7 +199,6 @@ public final class Engine {
             s.touchAccount(saved, card, wallet);
             if (!saved.account.isEmpty()) s.setGaps(saved.account, Ledger.gaps(s.txns(), saved.account));
         }
-        if (!s.inBatch() && saved.kind != Txn.SNAPSHOT) ScanPay.match(ctx, saved);   // started from Scan & Pay? → name + category
         if (isNew[0] && !s.inBatch() && saved.kind == Txn.NORMAL) People.autoMatch(ctx, saved);   // someone paying you back?
         if (isNew[0] && !saved.credit && Cats.CASH.equals(saved.category) && saved.raw.toLowerCase(java.util.Locale.ROOT).contains("atm")) Cash.atm(ctx, saved);
         if (isNew[0] && !s.inBatch() && saved.kind != Txn.SNAPSHOT) Alerts.afterNew(ctx, saved);

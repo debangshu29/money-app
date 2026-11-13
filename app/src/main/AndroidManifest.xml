@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- "Paid anyone on Google Pay?": WHEN a UPI app was open, never what was on screen (you allow it in Settings) -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <!-- names for UPI IDs that are just a phone number (looked up on the phone only) -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- read bank SMS (stays on the phone) -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -26,7 +31,7 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:mimeType="application/vnd.android.package-archive" />
         </intent>
-        <!-- Scan & Pay: find the UPI apps on the phone (Google Pay, PhonePe, Paytm, BHIM…) -->
+        <!-- Pay & note: find the UPI apps on the phone (Google Pay, PhonePe, Paytm, BHIM…) -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="upi" />
@@ -174,10 +179,30 @@
         </receiver>
 
         <receiver android:name=".BalanceCheck" android:exported="false" />
+        <receiver android:name=".Reasons" android:exported="false" />
+        <!-- bank statement: open from Money, or share a PDF / CSV / Excel file to Money -->
+        <activity android:name=".StatementActivity" android:exported="true" android:label="Check with Money">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="text/csv" />
+                <data android:mimeType="text/comma-separated-values" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="text/csv" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            </intent-filter>
+        </activity>
 
         <!-- quick-settings tiles -->
         <service android:name=".ScanTile" android:exported="true" android:label="@string/tile_scan"
-            android:icon="@drawable/ic_qr_scan" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:icon="@drawable/ic_pay" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
         </service>
         <service android:name=".VoiceTile" android:exported="true" android:label="@string/tile_voice"
