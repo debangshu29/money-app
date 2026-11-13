@@ -80,6 +80,7 @@ public class MainActivity extends Activity {
         }
         if (i.getBooleanExtra("showUpdate", false)) Updater.maybePrompt(this, true);
         if (i.getBooleanExtra("scan", false)) { pendingAction = "scan"; i.removeExtra("scan"); }
+        if (i.getStringExtra("balCheck") != null) { pendingAction = "bal:" + i.getStringExtra("balCheck"); i.removeExtra("balCheck"); }
         if (i.getBooleanExtra("addCash", false)) { pendingAction = "cash"; i.removeExtra("addCash"); }
         if (i.hasExtra("filterLabel")) {
             activity.setQuick(i.getIntExtra("filterQuick", 0));
@@ -100,10 +101,12 @@ public class MainActivity extends Activity {
         new Thread(() -> { try { Engine.catchUp(getApplicationContext()); } catch (Exception ignored) { } }).start();
         PayListener.refresh(getApplicationContext());
         Updater.maybePrompt(this, false);
+        if (!Lock.needed(this)) ScanPay.askIfPaid(this);
         if (pendingAction != null && !Lock.needed(this)) {
             String p = pendingAction;
             pendingAction = null;
             if (p.equals("scan")) { show(HOME); ScanPay.start(this); }
+            else if (p.startsWith("bal:")) BalanceCheck.ask(this, p.substring(4));
             else TxnSheet.addManual(this);
         }
     }

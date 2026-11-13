@@ -24,7 +24,7 @@ public class VoiceActivity extends Activity {
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN")
                 .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
-                .putExtra(RecognizerIntent.EXTRA_PROMPT, "Say a cash spend — e.g. “200 for chai”");
+                .putExtra(RecognizerIntent.EXTRA_PROMPT, "Say a payment — “200 for chai” or “500 to Ramesh on Google Pay”");
         try { startActivityForResult(i, REQ); }
         catch (Exception e) {
             Ui.toast(this, "Voice typing isn't available on this phone — type it instead");
@@ -53,21 +53,39 @@ public class VoiceActivity extends Activity {
         List<Txn> saved = new ArrayList<>();
         StringBuilder msg = new StringBuilder();
         long total = 0;
+        boolean anyCash = false, anyUpi = false;
+        String acc = Noted.defaultAccount(this);
         for (Voice.Item it : items) {
-            Txn t = Cash.spend(this, it.paise, it.what, it.category);
+            Txn t;
+            if (it.upi) {
+                String nm = it.what.equals("Cash spend") ? "" : it.what;
+                t = Noted.add(this, it.paise, nm, it.category, "", "", acc);
+                anyUpi = true;
+            } else {
+                t = Cash.spend(this, it.paise, it.what, it.category);
+                anyCash = true;
+            }
             saved.add(t);
             total += it.paise;
-            msg.append(Cats.emoji(it.category)).append("  ").append(Fmt.plain(it.paise)).append(" · ").append(it.what).append('\n');
+            msg.append(Cats.emoji(t.category)).append("  ").append(Fmt.plain(it.paise)).append(" · ").append(it.what).append('\n');
         }
-        msg.append(Cash.on(this) ? "\nTaken from your cash wallet (" + Fmt.plain(Cash.balance(this)) + " left)." : "\nSaved as cash spending.");
+        if (anyUpi) msg.append("\nSaved as UPI from ").append(Noted.label(this, acc)).append(" — the bank's message joins it if one comes.");
+        if (anyCash) msg.append(Cash.on(this) ? "\nTaken from your cash wallet (" + Fmt.plain(Cash.balance(this)) + " left)." : "\nSaved as cash spending.");
+        msg.append("\n\nTip: say “by UPI” or “on Google Pay” for online payments.");
         long tot = total;
         new Ui.Popup(this).setTitle(items.size() == 1 ? "Saved ✓" : "Saved " + items.size() + " ✓  (" + Fmt.plain(tot) + ")")
                 .setMessage(msg.toString().trim())
                 .setPositiveButton("OK", (d, w) -> finish())
                 .setNeutralButton("Undo", (d, w) -> {
                     Store s = Store.get(this);
-                    for (Txn t : saved) { t.kind = Txn.IGNORED; t.note = "Undone"; s.update(t); }
-                    if (Cash.on(this)) Cash.refund(this, tot);
+                    long cashBack = 0;
+                    for (Txn t : saved) {
+                        t.kind = Txn.IGNORED;
+                        t.note = "Undone";
+                        s.update(t);
+                        if (Cash.ACCOUNT.equals(t.account)) cashBack += t.amount;
+                    }
+                    if (Cash.on(this) && cashBack > 0) Cash.refund(this, cashBack);
                     Ui.toast(this, "Undone");
                     finish();
                 })

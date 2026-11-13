@@ -14,7 +14,8 @@ public final class AccountMenu {
 
     public static void show(Activity a, Account ac) {
         String[] opts = {"✏️  Rename", "🔧  Correct the balance", "🔗  Same as another account (merge)",
-                ac.hidden ? "➕  Count in total balance" : "➖  Don't count in total balance", "📄  Show its payments", "🗑️  Delete account"};
+                ac.hidden ? "➕  Count in total balance" : "➖  Don't count in total balance", "📄  Show its payments",
+                "🔍  Check balance — find missed payments", "🗑️  Delete account"};
         new Ui.Popup(a).setTitle(ac.display()).setItems(opts, (d, w) -> {
             switch (w) {
                 case 0: rename(a, ac); break;
@@ -26,6 +27,7 @@ public final class AccountMenu {
                             .addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP)
                             .putExtra("filterCat", "acc:" + ac.key).putExtra("filterLabel", ac.display()));
                     break;
+                case 5: BalanceCheck.ask(a, ac.key); break;
                 default: delete(a, ac); break;
             }
         }).show();

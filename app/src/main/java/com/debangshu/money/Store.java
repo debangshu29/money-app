@@ -68,7 +68,8 @@ public final class Store {
             S_EACH = "notify_each", S_AUTO_BACKUP = "auto_backup", S_ATM_SPEND = "atm_is_spend", S_AUTO_UPDATE = "auto_update",
             S_GAPS = "find_gaps", S_READ_APPS = "read_apps", S_READ_SMS_NOTIF = "read_sms_notif",
             S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
-            S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals";
+            S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals",
+            S_READ_MAIL = "read_mail", S_READ_SCREENS = "read_screens", S_BAL_CHECK = "balance_check";
 
     private Store(Context c) {
         ctx = c;
@@ -370,6 +371,23 @@ public final class Store {
             if (t.limit >= 0 && t.time >= a.limitTime) { a.limit = t.limit; a.limitTime = t.time; }
         }
         if (any || old != null) accounts.put(key, a);
+    }
+
+    /** "My balance is ₹X now" (weekly check): a balance point like an SMS's — anything not explained shows as Unrecorded. */
+    public synchronized void checkBalance(String key, long paise) {
+        Txn t = new Txn();
+        t.id = UUID.randomUUID().toString();
+        t.time = System.currentTimeMillis();
+        t.kind = Txn.SNAPSHOT;
+        t.sources = Txn.SRC_NOTE;
+        t.account = key;
+        t.srcKey = "check:" + t.time;
+        t.raw = "Balance checked by you";
+        t.balance = paise;
+        txns.add(t);
+        Account a = accounts.get(key);
+        if (a != null) { a.balance = paise; a.balanceTime = t.time; }
+        changed();
     }
 
     /** "The balance is wrong": saves the right balance as of now (the missed-SMS check starts again from here). */

@@ -173,6 +173,14 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_pay_info" />
         </receiver>
 
+        <!-- reads UPI apps' "Payment successful" screens (you turn it on in Accessibility settings) -->
+        <service android:name=".ScreenWatch" android:exported="true" android:label="@string/screen_watch_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/screen_watch" />
+        </service>
+        <receiver android:name=".BalanceCheck" android:exported="false" />
+
         <!-- quick-settings tiles -->
         <service android:name=".ScanTile" android:exported="true" android:label="@string/tile_scan"
             android:icon="@drawable/ic_qr_scan" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">

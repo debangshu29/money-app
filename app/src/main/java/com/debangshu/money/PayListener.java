@@ -62,8 +62,10 @@ public class PayListener extends NotificationListenerService {
         String pkg = sbn.getPackageName();
         boolean payApp = NotifParser.appName(pkg) != null;
         boolean smsApp = NotifParser.isSmsApp(pkg);
-        if (!payApp && !smsApp) return;
+        boolean mailApp = NotifParser.isMailApp(pkg);
+        if (!payApp && !smsApp && !mailApp) return;
         Store s = Store.get(this);
+        if (mailApp) { if (s.flag(Store.S_READ_MAIL)) mail(sbn); return; }
         if (payApp && !s.flag(Store.S_READ_APPS)) return;
         if (smsApp && !s.flag(Store.S_READ_SMS_NOTIF)) return;
         Notification n = sbn.getNotification();
@@ -98,6 +100,36 @@ public class PayListener extends NotificationListenerService {
                 else Engine.sms(getApplicationContext(), fTitle, fText, time, Engine.FROM_SMS_NOTIF);
             } catch (Exception ignored) { }
         }).start();
+    }
+
+    /** A bank alert e-mail: Gmail shows sender as the title and "subject + preview" as the big text. */
+    private void mail(StatusBarNotification sbn) {
+        Notification n = sbn.getNotification();
+        if (n == null || n.extras == null) return;
+        Bundle x = n.extras;
+        final long time = sbn.getPostTime();
+        java.util.List<String[]> items = new java.util.ArrayList<>();
+        if ((n.flags & Notification.FLAG_GROUP_SUMMARY) == 0) {
+            String from = str(x.getCharSequence(Notification.EXTRA_TITLE));
+            String body = str(x.getCharSequence(Notification.EXTRA_BIG_TEXT));
+            if (body.isEmpty()) body = str(x.getCharSequence(Notification.EXTRA_TEXT));
+            if (!from.isEmpty() && !body.isEmpty()) items.add(new String[]{from, body});
+        }
+        CharSequence[] lines = x.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);   // inbox style: "Sender  Subject"
+        if (lines != null) for (CharSequence l : lines) {
+            String t = str(l);
+            int sp = t.indexOf("  ");
+            if (sp > 0) items.add(new String[]{t.substring(0, sp).trim(), t.substring(sp).trim()});
+        }
+        for (String[] it : items) {
+            String key = "mail|" + it[0] + "|" + it[1];
+            synchronized (seen) {
+                Long when = seen.get(key);
+                if (when != null && System.currentTimeMillis() - when < 86400000L) continue;
+                seen.put(key, System.currentTimeMillis());
+            }
+            new Thread(() -> { try { Engine.mail(getApplicationContext(), it[0], it[1], time); } catch (Exception ignored) { } }).start();
+        }
     }
 
     private static String str(CharSequence c) { return c == null ? "" : c.toString().trim(); }

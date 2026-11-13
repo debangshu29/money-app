@@ -48,6 +48,16 @@ public final class NotifParser {
             "com.android.messaging", "com.miui.smsextra", "com.oneplus.mms", "com.coloros.mms", "com.vivo.message",
             "com.truecaller", "com.microsoft.android.smsorganizer", "com.motorola.messaging", "com.asus.message"};
 
+    /** Mail apps: only bank alert e-mails are read from their notifications (sender + subject + preview). */
+    public static final String[] MAIL_APPS = {
+            "com.google.android.gm", "com.microsoft.office.outlook", "com.yahoo.mobile.client.android.mail",
+            "com.samsung.android.email.provider", "ch.protonmail.android", "com.zoho.mail"};
+
+    public static boolean isMailApp(String pkg) {
+        for (String s : MAIL_APPS) if (s.equals(pkg)) return true;
+        return false;
+    }
+
     public static String appName(String pkg) {
         for (String[] a : PAY_APPS) if (a[0].equals(pkg)) return a[1];
         return null;

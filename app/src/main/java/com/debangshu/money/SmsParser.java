@@ -30,6 +30,7 @@ public final class SmsParser {
         public String ref = "";
         public long balance = -1;
         public long limit = -1;
+        public long time = -1;         // when it happened, if the text says (payment screens opened from history)
         public boolean atm, refund, cardPayment, selfTransfer;
         public boolean viaCard;        // a debit card number, not the account number
         // card bill
@@ -116,7 +117,7 @@ public final class SmsParser {
     private static final Pattern VPA = Pattern.compile("([a-zA-Z0-9][a-zA-Z0-9._-]{1,60}@[a-zA-Z][a-zA-Z0-9]{1,20})(?![.a-zA-Z0-9])");
     private static final Pattern[] REF = {
             Pattern.compile("UPI/(?:P2[MAP]|DR|CR)/([0-9]{9,16})", CI),
-            Pattern.compile("\\b(?:upi\\s*ref(?:erence)?|ref(?:erence)?|refno|utr|rrn|txn\\s*id|upi)\\s*(?:no\\.?|number|id)?\\s*[:.#-]?\\s*([0-9]{9,16})\\b", CI),
+            Pattern.compile("\\b(?:upi\\s*ref(?:erence)?|ref(?:erence)?|refno|utr|rrn|txn\\s*id|upi(?:\\s*transaction)?\\s*reference)\\s*(?:no\\.?|number|id)?\\s*(?:is\\s*)?[:.#-]?\\s*([0-9]{9,16})\\b", CI),
     };
 
     private static final Pattern OTP = Pattern.compile("\\botp\\b|one[ -]time[ -]pass|verification code|\\bcode is\\b|security code", CI);

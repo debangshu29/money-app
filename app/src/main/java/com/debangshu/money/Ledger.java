@@ -44,6 +44,14 @@ public final class Ledger {
             if (e.kind == Txn.SNAPSHOT || (e.sources & (Txn.SRC_GAP | Txn.SRC_MANUAL)) != 0) continue;
             if (e.credit != n.credit || e.amount != n.amount) continue;
             long dt = Math.abs(e.time - n.time);
+            if ((e.sources & Txn.SRC_NOTE) != 0 && (e.sources & (Txn.SRC_SMS | Txn.SRC_APP)) == 0) {
+                // you noted it yourself; the bank / app message for it is joining now
+                if (dt <= 3L * 3600000 && (e.account.isEmpty() || n.account.isEmpty() || sameAccount(e.account, n.account)) && dt < bestDt) {
+                    bestDt = dt;
+                    best = e;
+                }
+                continue;
+            }
             if (!n.srcKey.isEmpty() && n.srcKey.equals(e.srcKey) && dt <= 6L * 3600000) return e;
             if (!e.ref.isEmpty() && !n.ref.isEmpty()) {
                 if (e.ref.equals(n.ref) && dt < 3L * 86400000) return e;
@@ -64,6 +72,11 @@ public final class Ledger {
 
     /** Puts what {@code from} knows into {@code into} (the saved one). */
     public static void merge(Txn into, Txn from) {
+        if ((into.sources & Txn.SRC_NOTE) != 0 && (into.sources & (Txn.SRC_SMS | Txn.SRC_APP)) == 0
+                && (from.sources & (Txn.SRC_SMS | Txn.SRC_APP)) != 0) {
+            into.time = from.time;               // the bank's time is the real one
+            if (!from.account.isEmpty()) into.account = from.account;
+        }
         boolean fromSms = (from.sources & Txn.SRC_SMS) != 0;
         boolean fromApp = (from.sources & Txn.SRC_APP) != 0;
         into.sources |= from.sources;
@@ -217,7 +230,7 @@ public final class Ledger {
         List<Txn> c = new ArrayList<>();
         for (Txn x : all) {
             if (!x.account.isEmpty() || used.contains(x) || x.kind == Txn.IGNORED || x.kind == Txn.SNAPSHOT) continue;
-            if ((x.sources & Txn.SRC_APP) == 0) continue;
+            if ((x.sources & (Txn.SRC_APP | Txn.SRC_NOTE)) == 0) continue;
             if (x.time <= from - 5L * 60000 || x.time > to + 5L * 60000) continue;
             c.add(x);
         }

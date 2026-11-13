@@ -324,6 +324,18 @@ public final class TxnSheet {
         LinearLayout box = Ui.vbox(a);
         int p = Ui.dp(a, 24);
         box.setPadding(p, 0, p, 0);
+        boolean[] upi = {false};
+        String[] acc = {Noted.defaultAccount(a)};
+        LinearLayout kind = Ui.hbox(a);
+        TextView cashC = Ui.chip(a, "💵  Cash", true), upiC = Ui.chip(a, "📱  UPI / bank", false);
+        kind.addView(cashC, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 8, 0));
+        kind.addView(upiC);
+        box.addView(kind, Ui.margins(Ui.matchWrap(), a, 0, 0, 0, 8));
+        TextView info = Ui.sub(a, "");
+        info.setPadding(0, 0, 0, Ui.dp(a, 4));
+        box.addView(info);
+        TextView mic = Ui.chip(a, "🎤  Say it instead — “200 for chai”", false);
+        box.addView(mic, Ui.margins(Ui.lp(-2, -2), a, 0, 4, 0, 6));
         EditText amt = new EditText(a);
         amt.setHint("Amount (₹)");
         amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -332,23 +344,35 @@ public final class TxnSheet {
         what.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         amt.setTypeface(Ui.face(a, Ui.REGULAR));
         what.setTypeface(Ui.face(a, Ui.REGULAR));
-        TextView info = Ui.sub(a, "Only for cash — everything paid by UPI, card or bank is added by itself."
-                + (Cash.on(a) ? " Taken from your cash wallet (" + Fmt.plain(Cash.balance(a)) + ")." : ""));
-        info.setPadding(0, 0, 0, Ui.dp(a, 8));
-        box.addView(info);
         box.addView(amt);
         box.addView(what);
-        TextView mic = Ui.chip(a, "🎤  Say it instead — “200 for chai”", true);
-        box.addView(mic, 1, Ui.margins(Ui.lp(-2, -2), a, 0, 0, 0, 6));
+        TextView from = Noted.accountChip(a, acc);
+        box.addView(from, Ui.margins(Ui.lp(-2, -2), a, 0, 8, 0, 0));
+        Runnable paint = () -> {
+            boolean u = upi[0];
+            for (TextView c : new TextView[]{cashC, upiC}) {
+                boolean on = (c == upiC) == u;
+                c.setBackground(Ui.rippleRound(a, on ? Ui.col(a, R.color.accent) : Ui.col(a, R.color.surface2), 18));
+                c.setTextColor(on ? 0xFFFFFFFF : Ui.col(a, R.color.text));
+            }
+            from.setVisibility(u ? View.VISIBLE : View.GONE);
+            what.setHint(u ? "Paid to / what for (e.g. Ramesh — test)" : "What for (e.g. vegetables)");
+            info.setText(u ? "For a UPI or bank payment that sent no SMS or notification. If the bank's message comes later, it joins this one."
+                    : "Cash you spent." + (Cash.on(a) ? " Taken from your cash wallet (" + Fmt.plain(Cash.balance(a)) + ")." : ""));
+        };
+        cashC.setOnClickListener(v -> { upi[0] = false; paint.run(); });
+        upiC.setOnClickListener(v -> { upi[0] = true; paint.run(); });
+        paint.run();
         android.app.AlertDialog[] cd = new android.app.AlertDialog[1];
         mic.setOnClickListener(v -> { if (cd[0] != null) cd[0].dismiss(); VoiceActivity.start(a); });
         Ui.Popup pop = new Ui.Popup(a);
-        pop.setTitle("Cash spent").setView(box)
+        pop.setTitle("Add a payment").setView(box)
                 .setPositiveButton("Add", (d, w) -> {
                     long paise = SmsParser.paise(amt.getText().toString());
                     if (paise <= 0) { Ui.toast(a, "Enter an amount"); return; }
-                    Txn t = Cash.spend(a, paise, what.getText().toString().trim(), null);
-                    if (Cats.OTHER.equals(t.category)) pickCategory(a, t, null);
+                    String wh = what.getText().toString().trim();
+                    Txn t = upi[0] ? Noted.add(a, paise, wh, null, "", "", acc[0]) : Cash.spend(a, paise, wh, null);
+                    if (Cats.OTHER.equals(t.category) || t.category.isEmpty()) pickCategory(a, t, null);
                 })
                 .setNegativeButton("Cancel", null);
         cd[0] = pop.show();

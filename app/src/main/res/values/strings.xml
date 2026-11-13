@@ -6,4 +6,6 @@
     <string name="widget_pay_label">Money – Scan &amp; Pay · cash</string>
     <string name="tile_scan">Scan &amp; Pay</string>
     <string name="tile_voice">Cash spend</string>
+    <string name="screen_watch_label">Money – read payment screens</string>
+    <string name="screen_watch_desc">Saves payments from the \"Payment successful\" screen of Google Pay, PhonePe, Paytm and other UPI apps — so small payments that send no SMS or notification are still recorded with a name. Only those apps are read, never PINs or anything you type, and nothing leaves your phone.</string>
 </resources>

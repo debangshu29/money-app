@@ -184,7 +184,7 @@ public final class ScanPay {
         TextView id = Ui.sub(a, "UPI ID: " + u.pa + (known != null ? "  ·  🧠 you named it before" : ""));
         box.addView(id);
 
-        box.addView(label(a, "Amount"));
+        box.addView(label(a, "Amount (optional)"));
         LinearLayout ar = Ui.hbox(a);
         ar.addView(Ui.text(a, "₹", 26, Ui.EXTRABOLD));
         EditText amt = new EditText(a);
@@ -197,7 +197,7 @@ public final class ScanPay {
         ar.addView(amt, Ui.weight1());
         box.addView(ar);
         if (u.fixedAmount) box.addView(Ui.sub(a, "Amount set by the shop's QR"));
-        else box.addView(Ui.sub(a, "Optional — leave it empty to type it in your UPI app"));
+        else box.addView(Ui.sub(a, "Leave it empty if you'll type it in your UPI app — Money asks when you're back"));
 
         box.addView(label(a, "Category"));
         LinearLayout chips = Ui.hbox(a);
@@ -236,41 +236,33 @@ public final class ScanPay {
         box.addView(note);
 
         String app = appLabel(a, preferred(a));
-        TextView with = Ui.chip(a, "Pay with: " + (app == null ? "choose your UPI app" : app) + "  ▾", false);
-        with.setOnClickListener(v -> pickApp(a, pkg -> with.setText("Pay with: " + appLabel(a, pkg) + "  ▾")));
+        TextView with = Ui.chip(a, "Pay in: " + (app == null ? "choose your UPI app" : app) + "  ▾", false);
         box.addView(with, Ui.margins(Ui.lp(-2, -2), a, 0, 6, 0, 0));
 
-        TextView how = Ui.text(a, (u.person()
-                ? "Paying a person: some UPI apps refuse payments that start in another app (“limit”, “security reasons”). "
-                  + "If that happens, tap “Scan in my app” and scan the same QR there — Money still names it.\n\n"
-                : "Your UPI app opens with the shop's QR exactly as printed — you enter your UPI PIN there as usual. ")
-                + "Money never sees your PIN or touches your money.", 12, Ui.col(a, R.color.hint), Ui.REGULAR);
+        TextView how = Ui.text(a, "Money opens your UPI app — scan the same QR there and pay as usual (UPI apps only fully trust payments "
+                + "that start inside them). When you come back, Money asks “Paid?” and saves it with this name — or picks it up by "
+                + "itself from the bank SMS, the app's notification or its success screen. Money never sees your PIN.",
+                12, Ui.col(a, R.color.hint), Ui.REGULAR);
         how.setPadding(0, Ui.dp(a, 12), 0, 0);
         box.addView(how);
 
         AlertDialog d = new Ui.Popup(a).sheet().setTitle("Scan & Pay").setView(Ui.capHeight(sv, 0.72f))
-                .setPositiveButton("Pay", null)
-                .setNeutralButton("Scan in my app", null)
+                .setPositiveButton(app == null ? "Open my UPI app" : "Open " + app, null)
                 .setNegativeButton("Cancel", null).create();
+        with.setOnClickListener(v -> pickApp(a, pkg -> {
+            with.setText("Pay in: " + appLabel(a, pkg) + "  ▾");
+            android.widget.Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (b != null) b.setText("Open " + appLabel(a, pkg));
+        }));
         d.setOnShowListener(x -> {
             Ui.style(d, true);
             d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                long paise = SmsParser.paise(amt.getText().toString().trim());
-                if (paise < 0) paise = 0;
-                String nm = name.getText().toString().trim();
-                remember(a, u, nm, cat[0], paise, note.getText().toString().trim());
-                d.dismiss();
-                long pp = paise;
-                if (preferred(a) == null) pickApp(a, pkg -> pay(a, u, pp));
-                else pay(a, u, pp);
-            });
-            d.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
                 long paise = Math.max(0, SmsParser.paise(amt.getText().toString().trim()));
                 String nm = name.getText().toString().trim();
                 remember(a, u, nm, cat[0], paise, note.getText().toString().trim());
                 d.dismiss();
-                openApp(a);
-                Ui.toast(a, "Scan the same QR there — Money will name the payment " + (nm.isEmpty() ? "" : "“" + nm + "”"));
+                if (preferred(a) == null) pickApp(a, pkg -> openApp(a));
+                else openApp(a);
             });
         });
         d.show();
@@ -416,6 +408,61 @@ public final class ScanPay {
                     pickApp(a, pkg -> pay(a, u, fa));
                 })
                 .setNegativeButton("Cancel payment", (d, w) -> clearPending(a)).show();
+    }
+
+    // ------------------------------------------------------------------ "Paid?" when you come back
+
+    /** Back in Money after "Open Google Pay": did you pay? Saves it now (the bank SMS / notification joins it later). */
+    public static void askIfPaid(Activity a) {
+        SharedPreferences p = Store.get(a).prefs();
+        String js = p.getString("pendingPay", null);
+        if (js == null) return;
+        JSONObject j;
+        try { j = new JSONObject(js); } catch (Exception e) { clearPending(a); return; }
+        long when = j.optLong("t"), now = System.currentTimeMillis();
+        if (j.optBoolean("asked") || now - when < 6000) return;
+        if (now - when > 30L * 60000) { clearPending(a); return; }
+        try { p.edit().putString("pendingPay", j.put("asked", true).toString()).apply(); } catch (Exception ignored) { }
+
+        String nm = j.optString("name");
+        String who = nm.isEmpty() ? j.optString("vpa") : nm;
+        LinearLayout b = Ui.vbox(a);
+        int pd = Ui.dp(a, 24);
+        b.setPadding(pd, 0, pd, 0);
+        LinearLayout ar = Ui.hbox(a);
+        ar.addView(Ui.text(a, "₹", 26, Ui.EXTRABOLD));
+        EditText amt = new EditText(a);
+        amt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        amt.setHint("amount");
+        amt.setTextSize(26);
+        amt.setTypeface(Ui.face(a, Ui.EXTRABOLD));
+        if (j.optLong("amt") > 0) amt.setText(Fmt.plain(j.optLong("amt")).replace("₹", "").replace(",", ""));
+        ar.addView(amt, Ui.weight1());
+        b.addView(ar);
+        String[] acc = {Noted.defaultAccount(a)};
+        b.addView(Noted.accountChip(a, acc), Ui.margins(Ui.lp(-2, -2), a, 0, 6, 0, 0));
+        TextView t = Ui.sub(a, "Saved now with the name, category and note you chose. If the bank's SMS or the app's notification comes later, it joins this — no double entry.");
+        t.setPadding(0, Ui.dp(a, 10), 0, 0);
+        b.addView(t);
+        AlertDialog d = new Ui.Popup(a).setTitle("Paid " + who + "?").setView(b)
+                .setPositiveButton("Yes, save it", null)
+                .setNeutralButton("Not paid", (x, w) -> clearPending(a))
+                .setNegativeButton("Later", null).create();
+        d.setOnShowListener(x -> {
+            Ui.style(d, false);
+            d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                long paise = SmsParser.paise(amt.getText().toString().trim());
+                if (paise <= 0) { amt.setError("How much?"); return; }
+                // already picked up by itself (SMS / notification / screen) while you were away?
+                String cur = Store.get(a).prefs().getString("pendingPay", null);
+                if (cur == null) { d.dismiss(); Ui.toast(a, "Already saved ✓"); return; }
+                clearPending(a);
+                Noted.add(a, paise, j.optString("name"), j.optString("cat"), j.optString("note"), j.optString("vpa"), acc[0]);
+                d.dismiss();
+                Ui.toast(a, "Saved ✓ " + Fmt.plain(paise) + (nm.isEmpty() ? "" : " to " + nm));
+            });
+        });
+        d.show();
     }
 
     // ------------------------------------------------------------------ remembering who it was

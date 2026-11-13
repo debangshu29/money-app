@@ -143,6 +143,55 @@ public final class Engine {
         return save(ctx, t, false, false);
     }
 
+    /** A bank alert e-mail, read from the mail app's notification (Gmail…): read like an SMS when it's from a bank. */
+    public static Txn mail(Context ctx, String from, String body, long time) {
+        if (from == null || body == null || body.trim().isEmpty()) return null;
+        String lo = (from + " " + body).toLowerCase(java.util.Locale.ROOT);
+        if (SmsParser.bankOf(from, lo).isEmpty() && !lo.matches("(?s).*(insta ?alert|alerts?@|bank|card).*")) return null;
+        SmsParser.Result r = SmsParser.parse(from, body);
+        if (r == null || r.bill || !r.txn) return null;
+        Txn t = new Txn();
+        t.time = time;
+        t.raw = body.trim();
+        t.sender = "E-mail · " + from.trim();
+        t.srcKey = "mail:" + Integer.toHexString((from + "|" + t.raw).hashCode());
+        t.sources = Txn.SRC_APP;
+        t.account = r.account;
+        t.balance = r.balance;
+        fill(ctx, t, r);
+        Txn saved = save(ctx, t, r.card, r.wallet);
+        notices(ctx, from, body, time, saved);
+        return saved;
+    }
+
+    /** A payment read from the payment app's own "Payment successful" screen. */
+    public static Txn screen(Context ctx, String pkg, SmsParser.Result r, String text, long time) {
+        Txn t = new Txn();
+        t.time = time;
+        t.raw = text;
+        String app = NotifParser.appName(pkg);
+        t.sender = (app == null ? pkg : app) + " (screen)";
+        t.srcKey = "scr:" + (r.ref.isEmpty() ? Integer.toHexString((pkg + "|" + r.amount + "|" + r.merchant + "|" + (time / 600000)).hashCode()) : r.ref);
+        t.sources = Txn.SRC_APP;
+        t.account = r.account;
+        fill(ctx, t, r);
+        return save(ctx, t, false, false);
+    }
+
+    /** Something you noted yourself (Scan & Pay “Paid?”, a typed or spoken UPI payment). */
+    public static Txn note(Context ctx, Txn t) {
+        t.sources = Txn.SRC_NOTE;
+        if (t.srcKey.isEmpty()) t.srcKey = "note:" + t.time;
+        if (t.sender.isEmpty()) t.sender = "Noted by you";
+        return save(ctx, t, false, false);
+    }
+
+    /** Re-run the missed-message check for one account (after a balance check). */
+    public static void regaps(Context ctx, String account) {
+        Store s = Store.get(ctx);
+        synchronized (s) { s.setGaps(account, Ledger.gaps(s.txns(), account)); }
+    }
+
     private static void fill(Context ctx, Txn t, SmsParser.Result r) {
         t.amount = r.amount;
         t.credit = r.credit;
