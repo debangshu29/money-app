@@ -102,10 +102,16 @@ public final class Ui {
         @Override public void setText(CharSequence text, BufferType type) { super.setText(Lang.t(text), type); }
     }
 
+    /** Simple mode makes every text a bit bigger (1 = normal). */
+    public static float scale = 1f;
+
+    /** Read the simple-mode setting (at start-up and when it changes). */
+    public static void applySimple(Context c) { scale = Store.get(c).flag(Store.S_SIMPLE) ? 1.18f : 1f; }
+
     public static TextView text(Context c, CharSequence s, float sp, int color, int weight) {
         TextView t = new LText(c);
         t.setText(s);
-        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp * scale);
         t.setTextColor(color);
         t.setTypeface(face(c, weight));
         t.setIncludeFontPadding(true);
@@ -233,6 +239,8 @@ public final class Ui {
                 {"💰", R.drawable.ln_coins}, {"🪙", R.drawable.ln_coins}, {"🧓", R.drawable.ln_armchair}, {"⚖️", R.drawable.ln_scale},
                 {"⛄", R.drawable.ln_snowflake}, {"🏁", R.drawable.ln_flag}, {"📉", R.drawable.ln_trending_down}, {"⏰", R.drawable.ln_alarm_clock},
                 {"⌛", R.drawable.ln_hourglass}, {"✂️", R.drawable.ln_scissors}, {"🏷️", R.drawable.ln_tag}, {"🔑", R.drawable.ln_key_round}, {"🌱", R.drawable.ln_sprout}, {"🎯", R.drawable.ln_target}, {"✅", R.drawable.ln_file_check}, {"⚡", R.drawable.ln_zap}, {"💸", R.drawable.ln_hand_coins},
+                {"🧱", R.drawable.ln_brick_wall}, {"🌳", R.drawable.ln_tree_deciduous}, {"🗓️", R.drawable.ln_calendar_check},
+                {"👑", R.drawable.ln_crown}, {"👣", R.drawable.ln_footprints}, {"📖", R.drawable.ln_book_open},
         };
         for (Object[] x : m) ICONS.put((String) x[0], (Integer) x[1]);
     }
@@ -467,7 +475,7 @@ public final class Ui {
         fonts(w.getDecorView());
         TextView msg = d.findViewById(android.R.id.message);
         if (msg != null) {
-            msg.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+            msg.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15 * scale);
             msg.setLineSpacing(dp(c, 3), 1f);
             msg.setTextColor(col(c, R.color.text2));
         }
@@ -496,7 +504,7 @@ public final class Ui {
         Context c = b.getContext();
         b.setAllCaps(false);
         b.setTypeface(face(c, BOLD));
-        b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14 * scale);
         b.setTextColor(text);
         b.setStateListAnimator(null);
         b.setMinHeight(dp(c, 42));

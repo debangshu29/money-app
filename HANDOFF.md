@@ -1,7 +1,7 @@
 # Money — handoff for a new Claude chat
 
 **Read this file first, then README.md and ROADMAP.md.** It holds everything from earlier chats that isn't obvious from the code.
-Last updated: 14 Nov 2026, after version **2.7** (versionCode 25).
+Last updated: 14 Nov 2026, after version **2.8** (versionCode 26).
 
 ## Who and how we work
 - Owner: **Debangshu Ghosh**, Kolkata. Claude writes all the code; Debangshu supervises and tests on his phone.
@@ -57,7 +57,7 @@ He wants **Grow to be ~40% of the app** — the most impactful part. Every tool 
 - **2.6 Three languages — DONE (part 1)**: `Lang` + `assets/lang/strings.tsv` (English⇥Hindi⇥Bengali; code keeps English, `Lang.t` translates at display time through `Ui.text`/LText, LSwitch, Popup, toasts, Alerts, Reasons, charts). About 1,060 texts done: tabs, Home, Grow, goals, Save more, Explain, all calculators, challenges. Bengali uses Kolkata wording and normal 0–9 digits. Picker on tour page 1 and Settings. Voice: `Lang.speech()` + `Voice.local()` (basic). To find what is still English: `python3 tools/lang_missing.py` (lists texts per file; regexes/pref keys/file names in that list are not real text — skip them). To add one: append a line to strings.tsv.
 - **2.6.1 Languages part 2 — DONE**: whole app translated (~2,270 lines), notifications/widget wrapped in `Lang.t`, Ask answers via `Ask.Answer.tpl` + `Lang.answer`. He'll check Bengali; someone else Hindi — fix words by editing strings.tsv. Ask only understands English questions (Hindi/Bengali questions = later idea). New English text added in code must get a strings.tsv line (run `python3 tools/lang_missing.py`). Write 2.7 lessons in all 3 languages from the start.
 - **2.7 Learn — DONE**: 61 lessons + 13 myths + 10 scams + 20 quiz questions + 41 words in `assets/learn/learn.json` (en/hi/bn inside the JSON, not strings.tsv). He asked: "with every logic provide logical fact to proof" — so every lesson has a `proof` with a real, dated fact and its official source link, and the maths with his own numbers. Facts checked 14 Nov 2026; quarterly small-savings rates and CPI need updating over time.
-- **2.8 Motivation**: levels Saver → Builder → Investor · more badges · no-spend calendar · Money Wrapped (yearly story) · simple mode for elders.
+- **2.8 Motivation — DONE**: `MotiMath` (T20) + `Motivation` + `LevelActivity`, `NoSpendActivity`, `WrappedActivity`; simple mode (`Store.S_SIMPLE`, `Ui.scale`). Every claim has a source or is the user's own maths (habit study: Lally et al. 2010, doi 10.1002/ejsp.674 — 66 days average, 18–254, one missed day doesn't undo it). New texts are in strings.tsv (translation sources: /tmp/lang/tr10.txt in the build chat). The roadmap after 2.8 is open — ask him what's next (ideas list in ROADMAP).
 Build one version at a time; he tests each.
 
 ## Waiting on him

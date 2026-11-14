@@ -70,7 +70,9 @@ public final class Store {
             S_LOCATION = "save_location", S_PLACE_NAMES = "place_names", S_ASK_NAME = "ask_name",
             S_FRAUD = "fraud_watch", S_REMIND = "remind_renewals",
             S_READ_MAIL = "read_mail", S_BAL_CHECK = "balance_check",
-            S_STMT = "statement_remind", S_ASK_REASON = "ask_reason", S_USAGE = "usage_watch", S_CONTACTS = "contact_names";
+            S_STMT = "statement_remind", S_ASK_REASON = "ask_reason", S_USAGE = "usage_watch", S_CONTACTS = "contact_names",
+            /** 2.8: bigger text and just Home · Activity · Insights (for parents and grandparents) */
+            S_SIMPLE = "simple_mode";
 
     private Store(Context c) {
         ctx = c;
@@ -83,7 +85,7 @@ public final class Store {
 
     public boolean flag(String key) {
         boolean def = !(key.equals(S_LOCK) || key.equals(S_SECURE) || key.equals(S_EACH) || key.equals(S_SETUP) || key.equals(S_HIDE)
-                || key.equals(S_LOCATION));
+                || key.equals(S_LOCATION) || key.equals(S_SIMPLE));
         return prefs.getBoolean(key, def);
     }
 

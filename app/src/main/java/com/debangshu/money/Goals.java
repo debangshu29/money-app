@@ -308,6 +308,15 @@ final class Goals {
             {"learner", "🎓", "Money basics", "Finish the 7-day money basics course"},
             {"quiz", "🧠", "Quiz whiz", "Score 8 or more in the money quiz"},
             {"reader", "📚", "Bookworm", "Learn 20 lessons"},
+            {"nospend1", "🌱", "First no-spend day", "Have a whole day with no spending on wants"},
+            {"streak3", "🔥", "On a roll", "3 no-spend days in a row"},
+            {"streak7", "⚡", "Week of will", "7 no-spend days in a row"},
+            {"nospend10", "🗓️", "Ten-day month", "10 no-spend days in one month"},
+            {"nospend30", "👑", "Mindful", "30 no-spend days in all"},
+            {"in_green", "💰", "In the green", "Spend less than you earn in a month"},
+            {"steady", "📈", "Steady saver", "Save 10% of what comes in, 3 months in a row"},
+            {"sip_habit", "🌳", "SIP habit", "Invest in 3 different months"},
+            {"wrapped", "🎁", "Looked back", "Watch your Money Wrapped"},
     };
 
     static boolean has(Context c, String id) { return Store.get(c).obj(BADGES).has(id); }

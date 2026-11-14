@@ -105,6 +105,9 @@
         <activity android:name=".LearnActivity" android:exported="false" />
         <activity android:name=".LessonActivity" android:exported="false" />
         <activity android:name=".QuizActivity" android:exported="false" />
+        <activity android:name=".LevelActivity" android:exported="false" />
+        <activity android:name=".NoSpendActivity" android:exported="false" />
+        <activity android:name=".WrappedActivity" android:exported="false" />
         <activity android:name=".RuleActivity" android:exported="false" />
         <activity android:name=".LeaksActivity" android:exported="false" />
         <activity android:name=".HabitActivity" android:exported="false" />

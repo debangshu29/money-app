@@ -45,7 +45,7 @@ Built one version at a time; each version is checked on the phone before the nex
 | **2.6** | Three languages | Language picker (welcome page + Settings) · tabs, Home, Grow and all calculators in English / हिंदी / বাংলা · notifications & pop-ups · basic Hindi/Bengali voice | ✅ built (14 Nov 2026) — waiting for your check |
 | **2.6.1** | Languages, part 2 | Every remaining screen, notification and the widget in हिंदी / বাংলা · Ask answers in your language | ✅ built (14 Nov 2026) — waiting for your check |
 | **2.7** | Learn | 61 one-minute lessons in 3 languages, each with your numbers + “why this is true” sources · Try it → calculator · videos in your language · 7-day course · quiz & flashcards · myth busters · scam alerts + 1930 · tap-a-word meanings | ✅ built (14 Nov 2026) — waiting for your check |
-| **2.8** | Motivation | Levels & badges · no-spend calendar · Money Wrapped · simple mode | planned |
+| **2.8** | Motivation | Levels Starter → Saver → Builder → Investor → Money tree (3 real steps each, never go down) · no-spend calendar with streaks & target · Money Wrapped year story + share · 9 badges · simple mode for parents | ✅ built (14 Nov 2026) — waiting for your check |
 
 ## Ideas for later
 

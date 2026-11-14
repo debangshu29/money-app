@@ -7,6 +7,7 @@ public class MoneyApp extends Application {
     public void onCreate() {
         super.onCreate();
         Lang.init(this);
+        Ui.applySimple(this);
         Fmt.hide = false;
         if (Store.get(this).flag(Store.S_HIDE)) HomePage.hideAll(this);
         Lock.track(this);

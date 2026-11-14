@@ -123,6 +123,10 @@ public class SettingsActivity extends Activity {
         lc.setPadding(Ui.dp(this, 10), Ui.dp(this, 2), Ui.dp(this, 10), Ui.dp(this, 2));
         String cur = Lang.NAMES[java.util.Arrays.asList(Lang.CODES).indexOf(Lang.code())];
         lc.addView(Ui.navRow(this, "🌐", 0xFF0EA5E9, "Language · भाषा · ভাষা", cur, v -> Lang.choose(this)));
+        sw(lc, "Simple mode", "Bigger text, just 3 tabs — easy for parents", Store.S_SIMPLE, on -> {
+            Ui.applySimple(this);
+            recreate();
+        });
         box.addView(lc, Ui.margins(Ui.matchWrap(), this, 0, 0, 0, 12));
 
         LinearLayout c = Ui.card(this);

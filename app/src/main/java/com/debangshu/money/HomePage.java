@@ -119,6 +119,15 @@ final class HomePage {
         if (bal != null) body.addView(bal, gap());
         View latest = latest(s);
         if (latest != null) body.addView(latest, gap());
+        if (s.flag(Store.S_SIMPLE)) {   // simple mode has no Grow tab: keep the two things that protect and teach
+            LinearLayout sc = Ui.card(a);
+            sc.setPadding(Ui.dp(a, 10), Ui.dp(a, 4), Ui.dp(a, 10), Ui.dp(a, 4));
+            sc.addView(Ui.navRow(a, "🚨", 0xFFDC2626, "Stay safe from scams", "Tricks fraudsters use, and what to do",
+                    v -> LearnActivity.open(a, "scams")));
+            sc.addView(Ui.navRow(a, "🎓", 0xFF8B5CF6, "Learn money basics", "1-minute lessons",
+                    v -> a.startActivity(new Intent(a, LearnActivity.class))));
+            body.addView(sc, gap());
+        }
         Fmt.hide = false;
         scroll.post(() -> scroll.scrollTo(0, y));
     }

@@ -59,10 +59,8 @@ public class Challenges extends Activity {
                 case "delivery": if (DELIVERY.matcher(m).find()) return false; break;
                 case "shopping": if (SHOPPING.matcher(m).find()) return false; break;
                 case "daily": sum += x.amount; break;
-                default:
-                    String c = x.category;
-                    if (!(Cats.BILLS.equals(c) || Cats.HOME.equals(c) || Cats.EMI.equals(c) || Cats.INVEST.equals(c)
-                            || Cats.INSURE.equals(c) || Cats.SUBS.equals(c) || Cats.RECHARGE.equals(c))) return false;
+                default:   // same rule as the no-spend calendar
+                    if (MotiMath.want(x)) return false;
             }
         }
         return !"daily".equals(t) || sum <= ch.optLong("limit");

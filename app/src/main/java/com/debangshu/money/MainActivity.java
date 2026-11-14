@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** Five tabs: Home · Activity · Insights · Plan · Grow. */
+/** Five tabs: Home · Activity · Insights · Plan · Grow (simple mode: just Home · Activity · Insights). */
 public class MainActivity extends Activity {
 
     public static final int HOME = 0, ACTIVITY = 1, INSIGHTS = 2, PLAN = 3, GROW = 4;
@@ -19,6 +19,7 @@ public class MainActivity extends Activity {
     private static final int[] ICONS = {R.drawable.ic_home, R.drawable.ic_list, R.drawable.ic_pie, R.drawable.ic_grid, R.drawable.ln_trending_up};
 
     int tab = HOME;
+    private boolean simple;            // simple mode when the screen was built
     private FrameLayout content;
     private final LinearLayout[] tabViews = new LinearLayout[5];
     private final Runnable onChange = this::refreshSoon;
@@ -46,12 +47,15 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
+        Ui.applySimple(this);
+        simple = Store.get(this).flag(Store.S_SIMPLE);
         LinearLayout root = Ui.vbox(this);
         content = new FrameLayout(this);
         root.addView(content, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         root.addView(navBar());
         setContentView(root);
         if (b != null) tab = b.getInt("tab", HOME);
+        if (simple && tab > INSIGHTS) tab = HOME;
         show(tab);
         Store.get(this).listen(onChange);
         handle(getIntent());
@@ -101,6 +105,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (content != null && simple != Store.get(this).flag(Store.S_SIMPLE)) { recreate(); return; }   // simple mode switched in Settings
         if (Lock.needed(this)) { startActivity(new Intent(this, LockActivity.class)); }
         Ui.bars(this);
         Alerts.rollPlan(this);
@@ -203,7 +208,7 @@ public class MainActivity extends Activity {
         bar.setBackground(Ui.round(Ui.col(this, R.color.surface), 0));
         bar.setElevation(Ui.dp(this, 8));
         bar.setPadding(0, Ui.dp(this, 6), 0, Ui.dp(this, 8));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < (simple ? 3 : 5); i++) {
             LinearLayout t = Ui.vbox(this);
             t.setGravity(Gravity.CENTER);
             ImageView ic = new ImageView(this);

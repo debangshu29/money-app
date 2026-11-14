@@ -58,6 +58,20 @@ final class GrowPage {
         View left = leftover(goals);
         if (left != null) body.addView(left, gap());
 
+        // ---- 2.8: your level, no-spend days, Money Wrapped
+        Motivation.Facts mf = Motivation.check(a, false);
+        body.addView(levelCard(), gap());
+        LinearLayout mt = Ui.hbox(a);
+        mt.setBaselineAligned(false);
+        long nowM = System.currentTimeMillis();
+        int free = MotiMath.monthFree(mf.wants, Fmt.startOfMonth(nowM), mf.start, mf.today);
+        mt.addView(tile("🗓️", 0xFF0E9F6E, "No-spend days", Lang.t("This month: " + free) + (mf.cur > 0 ? "  🔥" + mf.cur : ""),
+                v -> a.startActivity(new Intent(a, NoSpendActivity.class))), new LinearLayout.LayoutParams(0, -2, 1));
+        int wy = Motivation.wrapYear(nowM);
+        mt.addView(tile("🎁", 0xFFDB2777, "Money Wrapped", Motivation.wrapSeason(nowM) ? Lang.t("Your " + wy + " is ready") : Lang.t(wy + " so far"),
+                v -> WrappedActivity.open(a, wy)), Ui.margins(new LinearLayout.LayoutParams(0, -2, 1), a, 10, 0, 0, 0));
+        body.addView(mt, gap());
+
         // ---- your money at a glance
         body.addView(Ui.label(a, "Your money"));
         body.addView(ruleCard(), gap());
@@ -131,6 +145,31 @@ final class GrowPage {
 
         scroll.post(() -> scroll.scrollTo(0, y));
         showCelebrations(a);
+    }
+
+    /** Your level, how far to the next one (tap for the steps). */
+    private View levelCard() {
+        int lv = Motivation.level(a);
+        String[] cur = Motivation.LEVELS[lv];
+        boolean top = lv >= Motivation.STEPS.length;
+        LinearLayout c = Ui.card(a);
+        c.setPadding(Ui.dp(a, 16), Ui.dp(a, 14), Ui.dp(a, 14), Ui.dp(a, 14));
+        LinearLayout r = Ui.hbox(a);
+        r.addView(Ui.iconBadge(a, cur[1], LevelActivity.COLORS[lv], 48));
+        LinearLayout col = Ui.vbox(a);
+        col.setPadding(Ui.dp(a, 14), 0, Ui.dp(a, 6), 0);
+        col.addView(Ui.text(a, Lang.t("Level " + (lv + 1) + " of 5"), 12, Ui.col(a, R.color.text2), Ui.BOLD));
+        col.addView(Ui.text(a, cur[2], 18, Ui.EXTRABOLD));
+        int done = top ? 3 : Motivation.stepsDone(a, lv + 1);
+        col.addView(Ui.text(a, top ? "Top level — keep growing" : Lang.t(done + " of 3 steps to " + Lang.t(Motivation.LEVELS[lv + 1][2])),
+                12.5f, Ui.col(a, R.color.text2), Ui.SEMIBOLD));
+        r.addView(col, Ui.weight1());
+        r.addView(Ui.chevron(a));
+        c.addView(r);
+        if (!top) c.addView(LearnActivity.meter(a, done / 3f, LevelActivity.COLORS[lv + 1]), Ui.margins(Ui.matchWrap(), a, 0, 12, 0, 0));
+        c.setBackground(Ui.rippleRound(a, Ui.col(a, R.color.surface), 22));
+        c.setOnClickListener(v -> a.startActivity(new Intent(a, LevelActivity.class)));
+        return c;
     }
 
     /** Lesson to read now + quiz, myths, scam alerts and all lessons. */
@@ -705,7 +744,16 @@ final class GrowPage {
     static void showCelebrations(Activity a) {
         if (showing || a.isFinishing()) return;
         String title = null, text = null, icon = "🎉";
-        for (JSONObject g : Goals.all(a)) {
+        int lvNew = Motivation.takeLevelNew(a);
+        if (lvNew > 0) {
+            String[] l = Motivation.LEVELS[lvNew];
+            icon = l[1];
+            title = Lang.t("You're now a " + Lang.t(l[2]) + "!");
+            text = Lang.t(l[3]) + ". " + (lvNew < Motivation.STEPS.length
+                    ? Lang.t("Next: " + Lang.t(Motivation.LEVELS[lvNew + 1][2]) + " — see the steps in Your level.")
+                    : Lang.t("That's the top level. Well done!"));
+        }
+        if (title == null) for (JSONObject g : Goals.all(a)) {
             int m = g.optInt("celebrate", 0);
             if (m <= 0) continue;
             g.remove("celebrate");
@@ -739,11 +787,17 @@ final class GrowPage {
             TextView nl = Ui.text(a, news.size() == 1 ? "New badge" : news.size() + " new badges", 13, Ui.col(a, R.color.text2), Ui.BOLD);
             nl.setPadding(0, Ui.dp(a, title == null ? 0 : 18), 0, Ui.dp(a, 8));
             b.addView(nl);
-            LinearLayout row = Ui.hbox(a);
-            row.setGravity(Gravity.CENTER);
+            LinearLayout row = null;
+            int k = 0;
             for (String id : news) {
                 String[] bd = Goals.badge(id);
                 if (bd == null) continue;
+                if (k++ % 3 == 0) {   // three to a row, so many at once still fit
+                    row = Ui.hbox(a);
+                    row.setGravity(Gravity.CENTER);
+                    row.setPadding(0, 0, 0, Ui.dp(a, 10));
+                    b.addView(row);
+                }
                 LinearLayout v = Ui.vbox(a);
                 v.setGravity(Gravity.CENTER_HORIZONTAL);
                 v.addView(Ui.iconBadge(a, bd[1], 0xFFF59E0B, 52));
@@ -753,7 +807,6 @@ final class GrowPage {
                 v.addView(t);
                 row.addView(v, Ui.margins(Ui.lp(Ui.dp(a, 84), -2), a, 4, 0, 4, 0));
             }
-            b.addView(row);
             Store.get(a).putObj("badgeNew", new JSONObject());
         }
         showing = true;

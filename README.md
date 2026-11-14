@@ -1,6 +1,6 @@
 # Money — automatic spending tracker for Android
 
-**Latest: version 2.7 — Learn: 61 one-minute money lessons in English, हिंदी and বাংলা, each with proof and sources, plus quiz, myths, scam alerts and a 7-day course.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
+**Latest: version 2.8 — Motivation: levels with clear steps, a no-spend calendar, Money Wrapped (your year in money), 9 new badges and a simple mode for parents.** Download: https://github.com/debangshu29/money-app/releases/download/latest/Money.apk
 
 You never type an amount. Money reads your **bank SMS** and **payment notifications** (Google Pay, PhonePe, Paytm, CRED, bank apps) on your phone and fills everything in by itself: amount, who you paid, category, account and balance.
 
@@ -277,3 +277,10 @@ Every push to `main` → GitHub Actions builds and signs `Money.apk` → publish
 - `Learn`: loads the JSON, progress (`store obj "learn"`: done, quizBest, courseStart, nudged), your-numbers vars, 7-day course + daily nudge (BgJob), Try it / videos / links, and `Learn.link(activity, textView)` which underlines money words (also used in Explain boxes and calculator explanations).
 - Screens: `LearnActivity` (hub; modes myths / scams / words), `LessonActivity`, `QuizActivity` (quiz or flashcards). Grow tab shows “Learn in 1 minute” + the course card.
 - Facts were checked on 14 Nov 2026 (rates: PPF 7.1%, SSY/SCSS 8.2%, NSC 7.7%, KVP 7.5%, PO savings 4%, EPF 8.25%; CPI Sep 2026 5.54%; DICGC ₹5 lakh; new regime ₹12 lakh + ₹75,000; SEBI F&O FY26 87.7% lost; NPCI P2P collect stopped 1 Oct 2025; SEBI digital gold caution 8 Nov 2025). Update learn.json when rates change.
+
+## Version 2.8 — Motivation
+- `MotiMath` (plain Java, tested by T20): no-spend days (`want()` = a spend that isn't a need — bills, rent, EMI, investments, insurance, subscriptions, recharge — and isn't an "Unrecorded" gap), `wantsByDay`, `streaks`, `monthFree`, `avgWantDay`; Money Wrapped numbers (`wrap(all, year, now)`: in/out/kept, categories, top want, most-paid name, biggest payment, months, busiest weekday, small payments, no-spend days, same months last year, persona, "10% less on your top want as a 10-year SIP at 12%" — only with 3+ months of data); `savedMonths`, `investMonths`. The no-spend challenge uses the same rule.
+- `Motivation`: levels (store obj "moti": level, steps {id: time}, levelNew, target, wrapNote). 3 steps per level (`STEPS`), each from real data (`facts()`); a step stays done once reached and levels never go down. Runway and health steps wait until a full month of spending is known. `check()` runs on the Grow tab, the no-spend and level screens, and in BgJob (notification on a new level; one "Wrapped is ready" notification on 31 Dec or 1–7 Jan). Saves only when something changed (saving refreshes every screen).
+- Screens: `LevelActivity` (ladder, steps with progress, "Why this order?" with sources), `NoSpendActivity` (month calendar, streaks, target, your numbers, why it works — Lally et al. 2010 habit study), `WrappedActivity` (tap-through story cards, year chips, share as picture). Grow shows the level card + No-spend / Wrapped tiles; level-ups celebrate like badges.
+- 9 badges added to `Goals.BADGE_LIST`. New Lucide icons: brick-wall, tree-deciduous, calendar-check, crown, footprints, book-open.
+- Simple mode (`Store.S_SIMPLE`, Settings under Language): `Ui.scale` = 1.18 for all text, tabs Home · Activity · Insights only, Home adds Scam alerts + Learn rows. MainActivity recreates itself when it changes.
